@@ -66,7 +66,7 @@ Agrikart solves these problems by creating a structured platform for renting far
 ---
 
 ## **Technical Stack**
-- **Frontend**: React Native (for cross-platform mobile app development).
+- **Frontend**: React js (for cross-platform mobile app development).
 - **Backend**: Node.js with Express.js (for server-side logic).
 - **Database**: MongoDB (for storing user and equipment data).
 - **AI/ML**: Python (for recommendation systems and dynamic pricing).
