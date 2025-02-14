@@ -36,7 +36,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-yellow-500" />
-                <span className="text-gray-400">info@rentalpro.com</span>
+                <span className="text-gray-400">info@agrikart.com</span>
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-yellow-500" />
@@ -62,7 +62,7 @@ const Footer = () => {
         </div>
         
         <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-          <p>&copy; 2024 Rental Pro. All rights reserved.</p>
+          <p>&copy; 2024 Agricart. All rights reserved.</p>
         </div>
       </div>
     </footer>

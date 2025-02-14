@@ -7,7 +7,7 @@ const Testimonials = () => {
       name: "John Anderson",
       role: "Grain Farmer",
       image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-1.2.1&auto=format&fit=crop&w=200&q=80",
-      text: "The quality of equipment and service from Farm Rental Pro has been exceptional. Their seasonal rental program perfectly aligns with our farming calendar.",
+      text: "The quality of equipment and service from Farm Agricart has been exceptional. Their seasonal rental program perfectly aligns with our farming calendar.",
       rating: 5
     },
     {
