@@ -131,6 +131,6 @@ Agrikart solves these problems by creating a structured platform for renting far
 ---
 
 ## **Conclusion**
-Agrikart is a game-changer for the agricultural sector, providing a scalable and sustainable solution to the challenges of farm equipment accessibility. By leveraging modern technologies like AI, blockchain, and IoT, Agrikart not only improves productivity but also fosters a sense of community among farmers. With its innovative features and user-centric design, Agrikart is poised to revolutionize farming practices locally, nationally, and globally.
+Agrikart is a game-changer for the agricultural sector, providing a scalable and sustainable solution to the challenges of farm equipment accessibility. By leveraging modern technologies like AI, blockchain, and IoT, Agrikart not only improves productivity but also fosters a sense of community among farmers. With its innovative features and user-centric design, Agrikart is poised to revolutionize farming practices locally, nationally, and globally. 
 
 ---
