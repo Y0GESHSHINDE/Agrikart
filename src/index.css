@@ -1,0 +1,87 @@
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Poppins", serif;
+  top: 0 !important;
+  position: static !important;
+}
+
+/* Google Translate customization */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  font-family: inherit !important;
+  color: #666;
+}
+
+.goog-te-gadget-simple {
+  background-color: white !important;
+  border: 1px solid #e0e0e0 !important;
+  padding: 8px !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+  display: inline-block;
+}
+
+.goog-te-menu-value {
+  color: #333 !important;
+  margin: 0 !important;
+}
+
+.goog-te-menu-value span {
+  color: #333 !important;
+}
+
+.goog-te-menu2 {
+  max-width: 100%;
+  border-radius: 4px !important;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Animation for the floating button */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#google_translate_element {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+/* Hide Google Translate attribution */
+.goog-logo-link {
+  display: none !important;
+}
+
+.goog-te-gadget span {
+  display: none !important;
+}
+
+.goog-te-gadget {
+  color: transparent !important;
+}
+
+.goog-te-gadget-icon {
+  display: none !important;
+}
