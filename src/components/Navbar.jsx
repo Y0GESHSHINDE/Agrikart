@@ -25,7 +25,7 @@ const Navbar = () => {
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-2 text-2xl font-bold text-green-700">
                 <Tractor size={32} />
-                <span>FARM RENTAL PRO</span>
+                <span>AGRICART</span>
               </div>
               <div className="hidden md:flex items-center space-x-6">
                 <a href="#" className="text-gray-700 hover:text-green-600">

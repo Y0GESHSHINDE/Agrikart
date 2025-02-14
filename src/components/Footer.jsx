@@ -7,7 +7,7 @@ const Footer = () => {
       <div className="container mx-auto px-4 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">RENTAL PRO</h3>
+            <h3 className="text-xl font-bold mb-4">AGRICART</h3>
             <p className="text-gray-400 mb-4">Your trusted partner for professional equipment rentals.</p>
             <div className="flex space-x-4">
               <Facebook className="w-5 h-5 cursor-pointer hover:text-yellow-500" />
