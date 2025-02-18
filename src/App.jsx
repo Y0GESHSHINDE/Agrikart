@@ -1,24 +1,18 @@
 import React from "react";
-import Navbar from "./components/Navbar";
-import Hero from "./components/Hero";
-import Categories from "./components/Categories";
-import Features from "./components/Features";
-import SeasonalDeals from "./components/SeasonalDeals";
-import Testimonials from "./components/Testimonials";
-import Footer from "./components/Footer";
-
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import LandingPage from "./layouts/LandingPage";
+import HomePage from "./layouts/HomePage";
+import ProfilePage from "./layouts/ProfilePage";
 
 function App() {
   return (
-    <div className="min-h-screen relative">
-      <Navbar />
-      <Hero />
-      <Categories />
-      <Features />
-      <SeasonalDeals />
-      <Testimonials />
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
+    </Router>
   );
 }
 
