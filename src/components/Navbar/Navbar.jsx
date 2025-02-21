@@ -1,5 +1,6 @@
 import React, { useState } from "react";
-import { Search, Menu, Phone, MapPin, User, Tractor } from "lucide-react";
+import { Search, Menu, Tractor } from "lucide-react";
+import { SignInButton, SignUpButton } from "@clerk/clerk-react";
 
 const Navbar = () => {
   // State for managing mobile menu visibility
@@ -47,8 +48,22 @@ const Navbar = () => {
                   placeholder="Search farming equipment..."
                   className="pl-4 pr-10 py-2 border rounded-lg md:w-40 lg:w-60 xl:w-72 focus:outline-none focus:ring-2 focus:ring-green-500"
                 />
-                <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
+                <Search
+                  className="absolute right-3 top-2.5 text-gray-400"
+                  size={20}
+                />
               </div>
+              {/* Authentication Buttons */}
+              <SignInButton>
+                <button className="text-sm px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                  Login
+                </button>
+              </SignInButton>
+              <SignUpButton>
+                <button className="text-sm px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                  Sign Up
+                </button>
+              </SignUpButton>
               <button className="md:hidden" onClick={toggleMobileMenu}>
                 <Menu size={24} />
               </button>
@@ -73,6 +88,16 @@ const Navbar = () => {
               <a href="#" className="block text-gray-700 hover:text-green-600">
                 Training
               </a>
+              <SignInButton>
+                <button className="block w-full text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                  Login
+                </button>
+              </SignInButton>
+              <SignUpButton>
+                <button className="block w-full text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                  Sign Up
+                </button>
+              </SignUpButton>
             </div>
           )}
         </div>
