@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
+
 import { Search, Menu, Tractor } from "lucide-react";
 import {
   SignInButton,
@@ -75,6 +77,12 @@ const Navbar = () => {
 
               {/* User Profile Button - Show only when signed in */}
               <SignedIn>
+                <Link
+                  to="/profile"
+                  className="text-sm px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 mr-2"
+                >
+                  My Profile
+                </Link>
                 <UserButton afterSignOutUrl="/" />
               </SignedIn>
 
@@ -118,8 +126,14 @@ const Navbar = () => {
               </SignedOut>
 
               <SignedIn>
+                <Link
+                  to="/profile"
+                  className="text-sm px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700 mr-2"
+                >
+                  My Profile
+                </Link>
                 <div className="flex items-center justify-center">
-                    <UserButton afterSignOutUrl="/" />
+                  <UserButton afterSignOutUrl="/" />
                 </div>
               </SignedIn>
             </div>
