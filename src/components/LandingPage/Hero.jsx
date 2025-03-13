@@ -2,7 +2,7 @@ import React from 'react';
 
 const Hero = () => {
   return (
-    <div className="relative h-[600px]">
+    <div className="relative h-screen">
       <div 
         className="absolute inset-0 bg-cover bg-center"
         style={{
@@ -14,7 +14,7 @@ const Hero = () => {
       
       <div className="relative container mx-auto px-4 h-full flex items-center">
         <div className="max-w-2xl text-white">
-          <h1 className="text-5xl font-bold mb-6">Professional Farming Equipment Rentals</h1>
+          <h1 className="text-6xl font-bold mb-6">Professional Farming Equipment Rentals</h1>
           <p className="text-xl mb-8">From tractors to harvesters, we provide the equipment you need for a successful harvest season.</p>
           <div className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
             <button className="bg-green-600 text-white px-8 py-3 rounded-lg font-semibold hover:bg-green-700 transition">
@@ -22,9 +22,6 @@ const Hero = () => {
             </button>
             <button className="bg-white text-green-700 px-8 py-3 rounded-lg font-semibold hover:bg-gray-100 transition">
               Seasonal Rentals
-            </button>
-            <button className="bg-transparent text-white border-2 border-white px-8 py-3 rounded-lg font-semibold hover:bg-white hover:text-green-700 transition">
-              Get a Quote
             </button>
           </div>
         </div>

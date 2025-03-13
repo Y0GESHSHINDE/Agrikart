@@ -32,7 +32,7 @@ const Footer = () => {
             <div className="space-y-4">
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-yellow-500" />
-                <span className="text-gray-400">1-800-667-9328</span>
+                <span className="text-gray-400">9284385845</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-yellow-500" />
@@ -40,7 +40,7 @@ const Footer = () => {
               </div>
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-yellow-500" />
-                <span className="text-gray-400">500 Main Street, NY 10001</span>
+                <span className="text-gray-400">Pune, Maharashtra</span>
               </div>
             </div>
           </div>
@@ -54,7 +54,7 @@ const Footer = () => {
                 placeholder="Your email"
                 className="px-4 py-2 rounded-l-lg w-full focus:outline-none text-black"
               />
-              <button className="bg-yellow-500 text-black px-4 py-2 rounded-r-lg font-semibold hover:bg-yellow-600">
+              <button className="bg-green-800 text-white px-4 py-2 rounded-r-lg font-semibold hover:bg-green-900">
                 Subscribe
               </button>
             </div>
