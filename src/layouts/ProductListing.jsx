@@ -1,0 +1,601 @@
+import { useState } from "react";
+import Navbar from "../components/Navbar/Navbar";
+import {
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  Filter,
+  Search,
+  Star,
+} from "lucide-react";
+
+// Sample product data with ratings added
+const farmingEquipment = [
+  {
+    id: 1,
+    name: "Heavy Duty Tractor",
+    category: "Tractors",
+    price: 45000,
+    horsepower: 120,
+    condition: "New",
+    rating: 4.7,
+    image:
+      "https://unsplash.com/photos/green-and-yellow-tractor-in-garage-SPzzE4TYxZ0",
+    description:
+      "Powerful tractor suitable for large farms with advanced features and high durability.",
+  },
+  {
+    id: 2,
+    name: "Compact Harvester",
+    category: "Harvesters",
+    price: 35000,
+    horsepower: 90,
+    condition: "Used",
+    rating: 4.2,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Efficient harvester for medium-sized farms with good fuel economy.",
+  },
+  {
+    id: 3,
+    name: "Irrigation System Pro",
+    category: "Irrigation",
+    price: 12000,
+    coverage: "50 acres",
+    condition: "New",
+    rating: 4.8,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Advanced irrigation system with smart controls and water conservation features.",
+  },
+  {
+    id: 4,
+    name: "Seed Drill Machine",
+    category: "Planting",
+    price: 8500,
+    width: "12 feet",
+    condition: "New",
+    rating: 4.5,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Precision seed drill for accurate planting with adjustable depth control.",
+  },
+  {
+    id: 5,
+    name: "Utility Tractor",
+    category: "Tractors",
+    price: 28000,
+    horsepower: 75,
+    condition: "Used",
+    rating: 3.9,
+    image: "/placeholder.svg?height=200&width=300",
+    description: "Versatile utility tractor ideal for small to medium farms.",
+  },
+  {
+    id: 6,
+    name: "Sprayer System",
+    category: "Sprayers",
+    price: 15000,
+    capacity: "500 gallons",
+    condition: "New",
+    rating: 4.6,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "High-capacity sprayer with precision nozzles and electronic controls.",
+  },
+  {
+    id: 7,
+    name: "Rotary Tiller",
+    category: "Tillage",
+    price: 6000,
+    width: "8 feet",
+    condition: "Used",
+    rating: 4.0,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Heavy-duty rotary tiller for soil preparation with adjustable depth.",
+  },
+  {
+    id: 8,
+    name: "Hay Baler",
+    category: "Hay Equipment",
+    price: 22000,
+    baleSize: "Standard",
+    condition: "New",
+    rating: 4.4,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Efficient hay baler with automatic tying system and high capacity.",
+  },
+  {
+    id: 9,
+    name: "Combine Harvester",
+    category: "Harvesters",
+    price: 120000,
+    horsepower: 350,
+    condition: "New",
+    rating: 4.9,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "High-capacity combine harvester with advanced grain separation technology.",
+  },
+  {
+    id: 10,
+    name: "Manure Spreader",
+    category: "Fertilizing",
+    price: 18000,
+    capacity: "10 tons",
+    condition: "New",
+    rating: 4.3,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Efficient manure spreader with wide distribution pattern and durable construction.",
+  },
+  {
+    id: 11,
+    name: "Compact Tractor",
+    category: "Tractors",
+    price: 15000,
+    horsepower: 35,
+    condition: "Used",
+    rating: 4.1,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Versatile compact tractor perfect for small farms and landscaping.",
+  },
+  {
+    id: 12,
+    name: "Disc Harrow",
+    category: "Tillage",
+    price: 9500,
+    width: "15 feet",
+    condition: "New",
+    rating: 4.2,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Heavy-duty disc harrow for efficient soil preparation and residue management.",
+  },
+  {
+    id: 13,
+    name: "Grain Drill",
+    category: "Planting",
+    price: 25000,
+    width: "20 feet",
+    condition: "New",
+    rating: 4.7,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Precision grain drill with advanced seed metering and depth control.",
+  },
+  {
+    id: 14,
+    name: "Potato Harvester",
+    category: "Harvesters",
+    price: 32000,
+    capacity: "5 tons/hour",
+    condition: "Used",
+    rating: 3.8,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Specialized potato harvester with gentle handling system to minimize damage.",
+  },
+  {
+    id: 15,
+    name: "Drip Irrigation Kit",
+    category: "Irrigation",
+    price: 7500,
+    coverage: "20 acres",
+    condition: "New",
+    rating: 4.5,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Water-efficient drip irrigation system with automated controls and filters.",
+  },
+  {
+    id: 16,
+    name: "Fertilizer Spreader",
+    category: "Fertilizing",
+    price: 11000,
+    capacity: "2000 lbs",
+    condition: "New",
+    rating: 4.3,
+    image: "/placeholder.svg?height=200&width=300",
+    description:
+      "Precision fertilizer spreader with variable rate application and GPS mapping.",
+  },
+];
+
+// Available filter options
+const categories = [
+  "All",
+  "Tractors",
+  "Harvesters",
+  "Irrigation",
+  "Planting",
+  "Sprayers",
+  "Tillage",
+  "Hay Equipment",
+  "Fertilizing",
+];
+const conditions = ["All", "New", "Used"];
+const priceRanges = [
+  "All",
+  "Under $10,000",
+  "$10,000-$25,000",
+  "$25,000-$50,000",
+  "Over $50,000",
+];
+
+// Star Rating component
+const StarRating = ({ rating }) => {
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 >= 0.5;
+    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+
+    return (
+       
+        <div className="flex items-center">
+            {[...Array(fullStars)].map((_, i) => (
+                <Star
+                    key={`full-${i}`}
+                    className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                />
+            ))}
+
+            {hasHalfStar && (
+                <div className="relative">
+                    <Star className="w-4 h-4 text-yellow-400" />
+                    <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
+                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                    </div>
+                </div>
+            )}
+
+            {[...Array(emptyStars)].map((_, i) => (
+                <Star key={`empty-${i}`} className="w-4 h-4 text-yellow-400" />
+            ))}
+
+            <span className="ml-1 text-sm text-gray-600">{rating.toFixed(1)}</span>
+        </div>
+    );
+};
+
+export default function ProductListing() {
+  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [selectedCondition, setSelectedCondition] = useState("All");
+  const [selectedPriceRange, setSelectedPriceRange] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const productsPerPage = 8;
+
+  // Filter products based on selected filters
+  const filteredProducts = farmingEquipment.filter((product) => {
+    // Category filter
+    if (selectedCategory !== "All" && product.category !== selectedCategory) {
+      return false;
+    }
+
+    // Condition filter
+    if (
+      selectedCondition !== "All" &&
+      product.condition !== selectedCondition
+    ) {
+      return false;
+    }
+
+    // Price range filter
+    if (selectedPriceRange !== "All") {
+      if (selectedPriceRange === "Under $10,000" && product.price >= 10000) {
+        return false;
+      } else if (
+        selectedPriceRange === "$10,000-$25,000" &&
+        (product.price < 10000 || product.price > 25000)
+      ) {
+        return false;
+      } else if (
+        selectedPriceRange === "$25,000-$50,000" &&
+        (product.price < 25000 || product.price > 50000)
+      ) {
+        return false;
+      } else if (
+        selectedPriceRange === "Over $50,000" &&
+        product.price <= 50000
+      ) {
+        return false;
+      }
+    }
+
+    // Search query filter
+    if (
+      searchQuery &&
+      !product.name.toLowerCase().includes(searchQuery.toLowerCase()) &&
+      !product.description.toLowerCase().includes(searchQuery.toLowerCase())
+    ) {
+      return false;
+    }
+
+    return true;
+  });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(
+    indexOfFirstProduct,
+    indexOfLastProduct
+  );
+
+  // Change page
+const paginate = (pageNumber) => setCurrentPage(pageNumber);
+const nextPage = () =>
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+
+// Reset to first page when filters change
+const handleFilterChange = (filterFn, value) => {
+    setCurrentPage(1);
+    filterFn(value);
+  };
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+      <div className="container mx-auto px-4 py-8">
+        <h1 className="text-3xl font-bold text-green-800 mb-6">
+          Farming Equipment
+        </h1>
+
+        {/* Search Bar */}
+        <div className="relative mb-6">
+          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+            <Search className="h-5 w-5 text-gray-400" />
+          </div>
+          <input
+            type="text"
+            className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5"
+            placeholder="Search equipment..."
+            value={searchQuery}
+            onChange={(e) => handleFilterChange(setSearchQuery, e.target.value)}
+          />
+        </div>
+
+        {/* Filter Section */}
+        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
+          <div className="flex items-center mb-4">
+            <Filter className="h-5 w-5 text-green-700 mr-2" />
+            <h2 className="text-xl font-semibold text-green-800">Filters</h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* Category Filter */}
+            <div className="mb-4">
+              <label
+                htmlFor="category"
+                className="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Category
+              </label>
+              <div className="relative">
+                <select
+                  id="category"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 appearance-none"
+                  value={selectedCategory}
+                  onChange={(e) =>
+                    handleFilterChange(setSelectedCategory, e.target.value)
+                  }
+                >
+                  {categories.map((category) => (
+                    <option key={category} value={category}>
+                      {category}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* Condition Filter */}
+            <div className="mb-4">
+              <label
+                htmlFor="condition"
+                className="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Condition
+              </label>
+              <div className="relative">
+                <select
+                  id="condition"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 appearance-none"
+                  value={selectedCondition}
+                  onChange={(e) =>
+                    handleFilterChange(setSelectedCondition, e.target.value)
+                  }
+                >
+                  {conditions.map((condition) => (
+                    <option key={condition} value={condition}>
+                      {condition}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+
+            {/* Price Range Filter */}
+            <div className="mb-4">
+              <label
+                htmlFor="price"
+                className="block mb-2 text-sm font-medium text-gray-700"
+              >
+                Price Range
+              </label>
+              <div className="relative">
+                <select
+                  id="price"
+                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 appearance-none"
+                  value={selectedPriceRange}
+                  onChange={(e) =>
+                    handleFilterChange(setSelectedPriceRange, e.target.value)
+                  }
+                >
+                  {priceRanges.map((range) => (
+                    <option key={range} value={range}>
+                      {range}
+                    </option>
+                  ))}
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                  <ChevronDown className="h-4 w-4" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Results Count */}
+        <div className="mb-4">
+          <p className="text-gray-700">
+            Showing {indexOfFirstProduct + 1}-
+            {Math.min(indexOfLastProduct, filteredProducts.length)} of{" "}
+            {filteredProducts.length} products
+          </p>
+        </div>
+
+        {/* Product Grid */}
+        {filteredProducts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {currentProducts.map((product) => (
+              <div
+                key={product.id}
+                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+              >
+                <img
+                  src={product.image || "/placeholder.svg"}
+                  alt={product.name}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-4">
+                  <div className="flex justify-between items-start mb-2">
+                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
+                      {product.name}
+                    </h3>
+                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
+                      {product.condition}
+                    </span>
+                  </div>
+
+                  {/* Star Rating */}
+                  <div className="mb-2">
+                    <StarRating rating={product.rating} />
+                  </div>
+
+                  <p className="text-gray-600 text-sm mb-3 line-clamp-3">
+                    {product.description}
+                  </p>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xl font-bold text-green-700">
+                      ${product.price.toLocaleString()}
+                    </span>
+                    <span className="text-sm text-gray-500">
+                      {product.category}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white p-8 rounded-lg shadow text-center">
+            <p className="text-gray-700 text-lg">
+              No products match your filters. Try adjusting your criteria.
+            </p>
+          </div>
+        )}
+
+        {/* Pagination */}
+        {filteredProducts.length > 0 && (
+          <div className="flex justify-center items-center mt-8">
+            <nav className="flex items-center">
+              <button
+                onClick={prevPage}
+                disabled={currentPage === 1}
+                className={`flex items-center justify-center px-3 py-2 mr-2 rounded-md ${
+                  currentPage === 1
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-green-700 hover:bg-green-50"
+                } border border-gray-300`}
+              >
+                <ChevronLeft className="h-5 w-5" />
+                <span className="sr-only">Previous</span>
+              </button>
+
+              <div className="hidden sm:flex">
+                {[...Array(totalPages)].map((_, index) => {
+                  const pageNumber = index + 1;
+                  // Show limited page numbers with ellipsis for better UX
+                  if (
+                    pageNumber === 1 ||
+                    pageNumber === totalPages ||
+                    (pageNumber >= currentPage - 1 &&
+                      pageNumber <= currentPage + 1)
+                  ) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => paginate(pageNumber)}
+                        className={`px-4 py-2 mx-1 rounded-md ${
+                          currentPage === pageNumber
+                            ? "bg-green-600 text-white"
+                            : "bg-white text-green-700 hover:bg-green-50"
+                        } border border-gray-300`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  } else if (
+                    (pageNumber === currentPage - 2 && pageNumber > 1) ||
+                    (pageNumber === currentPage + 2 && pageNumber < totalPages)
+                  ) {
+                    return (
+                      <span key={pageNumber} className="px-2">
+                        ...
+                      </span>
+                    );
+                  }
+                  return null;
+                })}
+              </div>
+
+              {/* Mobile pagination - just show current/total */}
+              <div className="sm:hidden">
+                <span className="px-4 py-2 bg-white border border-gray-300 rounded-md">
+                  {currentPage} / {totalPages}
+                </span>
+              </div>
+
+              <button
+                onClick={nextPage}
+                disabled={currentPage === totalPages}
+                className={`flex items-center justify-center px-3 py-2 ml-2 rounded-md ${
+                  currentPage === totalPages
+                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    : "bg-white text-green-700 hover:bg-green-50"
+                } border border-gray-300`}
+              >
+                <ChevronRight className="h-5 w-5" />
+                <span className="sr-only">Next</span>
+              </button>
+            </nav>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import { Search, Menu, Tractor } from "lucide-react";
-import { SignInButton, SignUpButton } from "@clerk/clerk-react";
+import {
+  SignInButton,
+  SignUpButton,
+  UserButton,
+  SignedIn,
+  SignedOut,
+} from "@clerk/clerk-react";
 
 const Navbar = () => {
   // State for managing mobile menu visibility
@@ -12,10 +18,10 @@ const Navbar = () => {
   };
 
   return (
-    <nav className="bg-white shadow-lg">
+    <nav className="bg-white shadow-lg border border-gray-200">
       <div className="mx-auto">
         {/* Main Navbar */}
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-3 ">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-8">
               <div className="flex items-center space-x-2 text-2xl font-bold text-green-700">
@@ -53,17 +59,25 @@ const Navbar = () => {
                   size={20}
                 />
               </div>
-              {/* Authentication Buttons */}
-              <SignInButton>
-                <button className="text-sm px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                  Login
-                </button>
-              </SignInButton>
-              <SignUpButton>
-                <button className="text-sm px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                  Sign Up
-                </button>
-              </SignUpButton>
+              {/* Authentication Buttons - Show only when signed out */}
+              <SignedOut>
+                <SignInButton>
+                  <button className="text-sm px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Login
+                  </button>
+                </SignInButton>
+                <SignUpButton>
+                  <button className="text-sm px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+
+              {/* User Profile Button - Show only when signed in */}
+              <SignedIn>
+                <UserButton afterSignOutUrl="/" />
+              </SignedIn>
+
               <button className="md:hidden" onClick={toggleMobileMenu}>
                 <Menu size={24} />
               </button>
@@ -88,16 +102,26 @@ const Navbar = () => {
               <a href="#" className="block text-gray-700 hover:text-green-600">
                 Training
               </a>
-              <SignInButton>
-                <button className="block w-full text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
-                  Login
-                </button>
-              </SignInButton>
-              <SignUpButton>
-                <button className="block w-full text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
-                  Sign Up
-                </button>
-              </SignUpButton>
+
+              {/* Mobile authentication controls */}
+              <SignedOut>
+                <SignInButton>
+                  <button className="block w-full text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
+                    Login
+                  </button>
+                </SignInButton>
+                <SignUpButton>
+                  <button className="block w-full text-sm px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+                    Sign Up
+                  </button>
+                </SignUpButton>
+              </SignedOut>
+
+              <SignedIn>
+                <div className="flex items-center justify-center">
+                    <UserButton afterSignOutUrl="/" />
+                </div>
+              </SignedIn>
             </div>
           )}
         </div>
