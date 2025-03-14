@@ -47,7 +47,7 @@ const ProfileInfo = () => {
         </div>
 
         {/* Other Information Sections */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4  mt-6">
           {/* Add & Delete Instruments */}
           <div className="bg-white p-6 rounded-xl shadow-md text-center border border-gray-300">
             <h2 className="text-lg font-semibold mb-3">Manage Instruments</h2>
@@ -58,22 +58,15 @@ const ProfileInfo = () => {
           {/* Instrument Rented */}
           <div className="bg-white p-6 rounded-xl shadow-md text-center border border-gray-300">
             <h2 className="text-lg font-semibold mb-3">Instrument Rented</h2>
-            <p className="text-gray-700">You have rented 3 instruments.</p>
-            <button className="bg-gray-700 text-white px-5 py-2 rounded-lg mt-3">View Rentals</button>
-          </div>
-
-          {/* Instrument to Put on Rent */}
-          <div className="bg-white p-6 rounded-xl shadow-md text-center border border-gray-300">
-            <h2 className="text-lg font-semibold mb-3">Instrument to Put on Rent</h2>
-            <p className="text-gray-700">You have 2 instruments available for rent.</p>
-            <button className="bg-gray-700 text-white px-5 py-2 rounded-lg mt-3">List Instruments</button>
+            <p className="text-gray-700 mb-5">You have rented 3 instruments.</p>
+            <Link to={"/rented-instruments"} className="bg-gray-700 text-white px-5 py-2 rounded-lg mt-3">View Rentals</Link>
           </div>
 
           {/* Money Earned */}
           <div className="bg-white p-6 rounded-xl shadow-md text-center border border-gray-300">
             <h2 className="text-lg font-semibold mb-3">Money Earned</h2>
-            <p className="text-gray-700">Total: $1500</p>
-            <button className="bg-gray-700 text-white px-5 py-2 rounded-lg mt-3">View Earnings</button>
+            <p className="text-gray-700 mb-5 ">Total: $1500</p>
+            <Link to={"/money-earned"} className="bg-gray-700 text-white px-5 py-2 rounded-lg mt-3">View Earnings</Link>
           </div>
 
           {/* Contracts */}
