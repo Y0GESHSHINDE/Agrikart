@@ -153,9 +153,6 @@ const Navbar = () => {
             >
               My Profile
             </Link>
-            <div className="mt-2 flex justify-center">
-              <UserButton afterSignOutUrl="/" />
-            </div>
           </SignedIn>
         </div>
       </div>

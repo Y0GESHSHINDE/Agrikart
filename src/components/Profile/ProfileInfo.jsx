@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "../Navbar/Navbar";
+import { Link } from "react-router-dom";
 
 const ProfileInfo = () => {
   const userInfo = {
@@ -49,9 +50,9 @@ const ProfileInfo = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
           {/* Add & Delete Instruments */}
           <div className="bg-white p-6 rounded-xl shadow-md text-center border border-gray-300">
-            <h2 className="text-lg font-semibold mb-3">Add & Delete Instruments</h2>
-            <button className="bg-green-500 text-white px-5 py-2 rounded-lg mr-2">Add Instrument</button>
-            <button className="bg-red-500 text-white px-5 py-2 rounded-lg mt-2">Delete Instrument</button>
+            <h2 className="text-lg font-semibold mb-3">Manage Instruments</h2>
+            <p className="text-gray-700 mb-5 ">Manage your all instruments</p>
+            <Link to={"/manage-instruments"} className="bg-gray-700 text-white px-5 py-2 rounded-lg ">Manage Instruments</Link>
           </div>
 
           {/* Instrument Rented */}
