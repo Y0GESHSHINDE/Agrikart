@@ -9,6 +9,7 @@ import LandingPage from "./layouts/LandingPage";
 import ProfilePage from "./layouts/ProfilePage";
 import MainPage from "./layouts/MainPage";
 import ProductListing from "./layouts/ProductListing";
+import ManageInstrument from "./components/Profile/ManageInstrument";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 
 function App() {
@@ -52,6 +53,14 @@ function App() {
           element={
             <SignedIn>
               <ProductListing />
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/manage-instruments"
+          element={
+            <SignedIn>
+              <ManageInstrument />
             </SignedIn>
           }
         />
