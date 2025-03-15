@@ -85,49 +85,49 @@ const Hero = () => {
   }, [searchQuery]);
 
   return (
-    <div className="relative h-screen w-full">
+    <div className="relative min-h-[600px] lg:min-h-screen w-full">
       {/* Background Image with Overlay */}
       <div
-        className="absolute inset-0 bg-fit bg-center z-0"
+        className="absolute inset-0 bg-cover bg-center z-0"
         style={{
           backgroundImage:
             'url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80")',
         }}
       >
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 z-10"></div>
+    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 z-10"></div>
       </div>
 
       {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full px-4 py-16 md:py-24 text-white container mx-auto">
+      <div className="relative z-20 flex flex-col items-center justify-center h-full px-4 py-10 sm:py-16 md:py-24 text-white container mx-auto">
         {/* Heading with Highlight */}
-        <div className="text-center mb-8">
-          <h1 className="text-5xl md:text-7xl font-bold tracking-tight mt-2 mb-4">
+        <div className="text-center mb-6 sm:mb-8">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mt-2 mb-2 sm:mb-4">
             Empowering Fields with Perfect Tools
           </h1>
-          <p className="text-lg md:text-xl max-w-3xl mx-auto text-gray-200">
+          <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto text-gray-200">
             Discover innovative farming solutions that increase yield, save
             time, and maximize your field's potential.
           </p>
         </div>
 
         {/* Search Field */}
-        <div className="w-full max-w-xl mb-12">
+        <div className="w-full max-w-xl mb-8 sm:mb-12">
           <div className="relative">
             <input
               type="text"
               placeholder="Search for tools..."
-              className="w-full py-4 px-6 pr-12 rounded-full bg-white bg-opacity-20 backdrop-blur-md border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-75 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-all"
+              className="w-full py-3 sm:py-4 px-4 sm:px-6 pr-12 rounded-full bg-white bg-opacity-20 backdrop-blur-md border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-75 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-all"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowResults(true)}
             />
             <button
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-green-500 text-white rounded-full p-2 hover:bg-green-600 transition-all"
+              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-green-500 text-white rounded-full p-1.5 sm:p-2 hover:bg-green-600 transition-all"
               onClick={() => searchProducts(searchQuery)}
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6"
+                className="h-5 w-5 sm:h-6 sm:w-6"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -198,9 +198,9 @@ const Hero = () => {
           </div>
 
           {/* Search Tags */}
-          <div className="flex flex-wrap justify-center mt-4 gap-2">
+          <div className="flex flex-wrap justify-center mt-3 sm:mt-4 gap-2">
             <span
-              className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
+              className="bg-white bg-opacity-20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
               onClick={() => {
                 setSearchQuery("Agricultural Tools");
                 searchProducts("Agricultural Tools");
@@ -209,7 +209,7 @@ const Hero = () => {
               Agricultural Tools
             </span>
             <span
-              className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
+              className="bg-white bg-opacity-20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
               onClick={() => {
                 setSearchQuery("Field Equipment");
                 searchProducts("Field Equipment");
@@ -218,7 +218,7 @@ const Hero = () => {
               Field Equipment
             </span>
             <span
-              className="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
+              className="bg-white bg-opacity-20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
               onClick={() => {
                 setSearchQuery("Irrigation");
                 searchProducts("Irrigation");
@@ -228,13 +228,15 @@ const Hero = () => {
             </span>
           </div>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-6xl mt-4">
+
+        {/* Feature Cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-6xl mt-2 sm:mt-4">
           {/* Card 1 */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-green-500 bg-opacity-80 p-3 rounded-lg inline-block mb-4">
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
+            <div className="bg-green-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-white"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -247,17 +249,19 @@ const Hero = () => {
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Smart Farming</h3>
-            <p className="text-gray-300 mb-4">
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+              Smart Farming
+            </h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
               IoT devices and AI solutions for modern agriculture.
             </p>
             <a
               href="#"
-              className="text-green-400 group-hover:text-green-300 inline-flex items-center"
+              className="text-green-400 group-hover:text-green-300 inline-flex items-center text-sm sm:text-base"
             >
               Explore
               <svg
-                className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -272,12 +276,12 @@ const Hero = () => {
             </a>
           </div>
 
-          {/* Card 2 */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-blue-500 bg-opacity-80 p-3 rounded-lg inline-block mb-4">
+          {/* Card 2 - Add this card */}
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
+            <div className="bg-blue-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-white"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -286,21 +290,23 @@ const Hero = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
+                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Organic Solutions</h3>
-            <p className="text-gray-300 mb-4">
-              Sustainable and eco-friendly farming equipment.
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+              Precision Tools
+            </h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+              Equipment designed for accuracy and efficiency in farming.
             </p>
             <a
               href="#"
-              className="text-green-400 group-hover:text-green-300 inline-flex items-center"
+              className="text-blue-400 group-hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
             >
-              Explore
+              Discover
               <svg
-                className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -315,12 +321,12 @@ const Hero = () => {
             </a>
           </div>
 
-          {/* Card 3 */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-yellow-500 bg-opacity-80 p-3 rounded-lg inline-block mb-4">
+          {/* Card 3 - Add this card */}
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
+            <div className="bg-amber-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-8 w-8 text-white"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -329,21 +335,23 @@ const Hero = () => {
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold mb-2">Seasonal Specials</h3>
-            <p className="text-gray-300 mb-4">
-              Time-limited offers on seasonal equipment.
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+              Sustainable Farming
+            </h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+              Eco-friendly solutions for responsible agricultural practices.
             </p>
             <a
               href="#"
-              className="text-green-400 group-hover:text-green-300 inline-flex items-center"
+              className="text-amber-400 group-hover:text-amber-300 inline-flex items-center text-sm sm:text-base"
             >
-              Explore
+              Learn More
               <svg
-                className="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform"
+                className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
