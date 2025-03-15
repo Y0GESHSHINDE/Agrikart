@@ -89,6 +89,7 @@ const Navbar = () => {
               <button className="lg:hidden" onClick={toggleMobileMenu}>
                 <Menu size={24} />
               </button>
+              
             </div>
           </div>
         </div>
