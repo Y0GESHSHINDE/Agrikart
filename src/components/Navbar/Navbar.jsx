@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Search, Menu, Tractor, X } from "lucide-react";
+import { Menu, Tractor, X } from "lucide-react";
 import {
   SignInButton,
   SignUpButton,
@@ -31,36 +31,53 @@ const Navbar = () => {
 
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-6 text-[14px]">
-              <Link to="#" className="text-gray-700 hover:text-green-600">
-                Equipment
-              </Link>
-              <Link to="#" className="text-gray-700 hover:text-green-600">
-                Seasonal
-              </Link>
-              <Link to="#" className="text-gray-700 hover:text-green-600">
-                Services
-              </Link>
-              <Link to="#" className="text-gray-700 hover:text-green-600">
-                Solutions
-              </Link>
-              <Link to="#" className="text-gray-700 hover:text-green-600">
-                Training
-              </Link>
+              {/* Show when User is NOT Logged In */}
+              <SignedOut>
+                <Link to="/" className="text-gray-700 hover:text-green-600">
+                  Home
+                </Link>
+                <Link to="/farm-tools" className="text-gray-700 hover:text-green-600">
+                  Farm Tools
+                </Link>
+                <Link to="/agri-ai" className="text-gray-700 hover:text-green-600">
+                  Agri AI
+                </Link>
+                <Link to="/how-it-works" className="text-gray-700 hover:text-green-600">
+                  How It Works
+                </Link>
+                <Link to="/testimonials" className="text-gray-700 hover:text-green-600">
+                  Testimonials
+                </Link>
+                <Link to="/faq" className="text-gray-700 hover:text-green-600">
+                  FAQ
+                </Link>
+              </SignedOut>
+
+              {/* Show when User IS Logged In */}
+              <SignedIn>
+                <Link to="/dashboard" className="text-gray-700 hover:text-green-600">
+                  Home
+                </Link>
+                <Link to="/my-orders" className="text-gray-700 hover:text-green-600">
+                  My Orders
+                </Link>
+                <Link to="/krishi-ai" className="text-gray-700 hover:text-green-600">
+                  Krishi AI
+                </Link>
+                <Link to="/list-tool" className="text-gray-700 hover:text-green-600">
+                  List the Tool
+                </Link>
+                <Link to="/weather" className="text-gray-700 hover:text-green-600">
+                  Weather Forecast
+                </Link>
+                <Link to="/help-center" className="text-gray-700 hover:text-green-600">
+                  Help Center
+                </Link>
+              </SignedIn>
             </div>
 
-            {/* Search & Authentication */}
+            {/* Authentication Buttons */}
             <div className="flex items-center space-x-4">
-              {/* Search Bar (Hidden on Mobile) */}
-              <div className="hidden md:flex relative">
-                <input
-                  type="text"
-                  placeholder="Search farming equipment..."
-                  className="pl-4 pr-10 py-2 border rounded-lg md:w-40 lg:w-60 xl:w-72 focus:outline-none focus:ring-2 focus:ring-green-500"
-                />
-                <Search className="absolute right-3 top-2.5 text-gray-400" size={20} />
-              </div>
-
-              {/* Authentication Buttons */}
               <SignedOut>
                 <SignInButton>
                   <button className="hidden lg:block text-sm px-3 py-2 bg-green-600 text-white rounded hover:bg-green-700">
@@ -74,7 +91,7 @@ const Navbar = () => {
                 </SignUpButton>
               </SignedOut>
 
-              {/* User Profile (Desktop) */}
+              {/* User Profile (If Logged In) */}
               <SignedIn>
                 <Link
                   to="/profile"
@@ -85,17 +102,16 @@ const Navbar = () => {
                 <UserButton afterSignOutUrl="/" />
               </SignedIn>
 
-              {/* Mobile Menu Button (☰ Stays on Right) */}
+              {/* Mobile Menu Button */}
               <button className="lg:hidden" onClick={toggleMobileMenu}>
                 <Menu size={24} />
               </button>
-
             </div>
           </div>
         </div>
       </div>
 
-      {/* Sidebar Mobile Menu (Slide-in from Left) */}
+      {/* Mobile Sidebar Menu */}
       <div
         className={`fixed top-0 left-0 h-full w-64 bg-white shadow-lg transform ${
           isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
@@ -103,38 +119,38 @@ const Navbar = () => {
       >
         {/* Sidebar Header with Logo & Close Button */}
         <div className="p-4 flex justify-between items-center border-b border-gray-300">
-          {/* Logo inside Sidebar */}
           <div className="flex items-center space-x-2 text-xl font-bold text-green-700">
             <Tractor size={28} />
             <span>AGRICART</span>
           </div>
-
-          {/* Close Button */}
           <button onClick={toggleMobileMenu}>
             <X size={24} />
           </button>
         </div>
-      
-        {/* Mobile Links */}
-        <div className="flex flex-col space-y-4 p-6 text-lg">
-          <Link to="#" className="text-gray-700 hover:text-green-600">
-            Equipment
-          </Link>
-          <Link to="#" className="text-gray-700 hover:text-green-600">
-            Seasonal
-          </Link>
-          <Link to="#" className="text-gray-700 hover:text-green-600">
-            Services
-          </Link>
-          <Link to="#" className="text-gray-700 hover:text-green-600">
-            Solutions
-          </Link>
-          <Link to="#" className="text-gray-700 hover:text-green-600">
-            Training
-          </Link>
 
-          {/* Mobile Authentication */}
+        {/* Mobile Navigation */}
+        <div className="flex flex-col space-y-4 p-6 text-lg">
           <SignedOut>
+            <Link to="/" className="text-gray-700 hover:text-green-600">
+              Home
+            </Link>
+            <Link to="/farm-tools" className="text-gray-700 hover:text-green-600">
+              Farm Tools
+            </Link>
+            <Link to="/agri-ai" className="text-gray-700 hover:text-green-600">
+              Agri AI
+            </Link>
+            <Link to="/how-it-works" className="text-gray-700 hover:text-green-600">
+              How It Works
+            </Link>
+            <Link to="/testimonials" className="text-gray-700 hover:text-green-600">
+              Testimonials
+            </Link>
+            <Link to="/faq" className="text-gray-700 hover:text-green-600">
+              FAQ
+            </Link>
+
+            {/* Login & Sign Up Buttons (Mobile) */}
             <SignInButton>
               <button className="w-full text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700">
                 Login
@@ -148,28 +164,32 @@ const Navbar = () => {
           </SignedOut>
 
           <SignedIn>
-            <Link
-              to="/profile"
-              className="w-full text-center text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 mt-2"
-            >
+            <Link to="/dashboard" className="text-gray-700 hover:text-green-600">
+              Home
+            </Link>
+            <Link to="/my-orders" className="text-gray-700 hover:text-green-600">
+              My Orders
+            </Link>
+            <Link to="/krishi-ai" className="text-gray-700 hover:text-green-600">
+              Krishi AI
+            </Link>
+            <Link to="/list-tool" className="text-gray-700 hover:text-green-600">
+              List the Tool
+            </Link>
+            <Link to="/weather" className="text-gray-700 hover:text-green-600">
+              Weather Forecast
+            </Link>
+            <Link to="/help-center" className="text-gray-700 hover:text-green-600">
+              Help Center
+            </Link>
+            <Link to="/profile" className="w-full text-center text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 mt-2">
               My Profile
             </Link>
           </SignedIn>
         </div>
       </div>
-
-      {/* Overlay Background when Sidebar is Open */}
-      {isMobileMenuOpen && (
-        <div
-          className="fixed inset-0 bg-black/50 z-40"
-          onClick={toggleMobileMenu}
-        ></div>
-      )}
     </nav>
   );
 };
 
 export default Navbar;
- {
-   /*Testing vercel*/
- }
