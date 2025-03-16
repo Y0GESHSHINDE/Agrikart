@@ -8,6 +8,7 @@ import {
   SignedIn,
   SignedOut,
 } from "@clerk/clerk-react";
+import Footer from "../LandingPage/Footer";
 
 const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -30,19 +31,16 @@ const Navbar = () => {
             </div>
 
             {/* Desktop Menu */}
-            <div className="hidden lg:flex items-center space-x-6 text-[14px]">
+            <div className="hidden lg:flex items-center space-x-8 text-[14px]">
               {/* Show when User is NOT Logged In */}
               <SignedOut>
                 <Link to="/" className="text-gray-700 hover:text-green-600">
                   Home
                 </Link>
-                <Link to="/farm-tools" className="text-gray-700 hover:text-green-600">
-                  Farm Tools
-                </Link>
                 <Link to="/agri-ai" className="text-gray-700 hover:text-green-600">
                   Agri AI
                 </Link>
-                <Link to="/how-it-works" className="text-gray-700 hover:text-green-600">
+                <Link to="/about-agrikart" className="text-gray-700 hover:text-green-600">
                   How It Works
                 </Link>
                 <Link to="/testimonials" className="text-gray-700 hover:text-green-600">
@@ -58,14 +56,14 @@ const Navbar = () => {
                 <Link to="/dashboard" className="text-gray-700 hover:text-green-600">
                   Home
                 </Link>
+                <Link to="/Listed-instruments" className="text-gray-700 hover:text-green-600">
+                  Farm Tools
+                </Link>
                 <Link to="/my-orders" className="text-gray-700 hover:text-green-600">
                   My Orders
                 </Link>
                 <Link to="/krishi-ai" className="text-gray-700 hover:text-green-600">
                   Krishi AI
-                </Link>
-                <Link to="/list-tool" className="text-gray-700 hover:text-green-600">
-                  List the Tool
                 </Link>
                 <Link to="/weather" className="text-gray-700 hover:text-green-600">
                   Weather Forecast
@@ -134,13 +132,13 @@ const Navbar = () => {
             <Link to="/" className="text-gray-700 hover:text-green-600">
               Home
             </Link>
-            <Link to="/farm-tools" className="text-gray-700 hover:text-green-600">
+            <Link to="/Listed-instruments" className="text-gray-700 hover:text-green-600">
               Farm Tools
             </Link>
             <Link to="/agri-ai" className="text-gray-700 hover:text-green-600">
               Agri AI
             </Link>
-            <Link to="/how-it-works" className="text-gray-700 hover:text-green-600">
+            <Link to="/about-agrikart" className="text-gray-700 hover:text-green-600">
               How It Works
             </Link>
             <Link to="/testimonials" className="text-gray-700 hover:text-green-600">
