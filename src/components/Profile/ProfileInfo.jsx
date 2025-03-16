@@ -3,13 +3,26 @@ import Navbar from "../Navbar/Navbar";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUser } from "@clerk/clerk-react";
 
 const ProfileInfo = () => {
+  const { user, isLoaded, isSignedIn } = useUser();
+  console.log(user)
   const userInfo = {
-    profilePhoto: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9W15Hh_7mgF-oO3Dl_M32EWBjJUo_cA8Uw&s",
-    username: "Farmer John",
-    email: "farmer.john@example.com",
-    mobileNumber: "+91-9876543210",
+    profilePhoto:
+      isLoaded && isSignedIn
+        ? user.imageUrl
+        : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9W15Hh_7mgF-oO3Dl_M32EWBjJUo_cA8Uw&s",
+    username:
+      isLoaded && isSignedIn ? user.fullName || user.username : "Loading...",
+    email:
+      isLoaded && isSignedIn
+        ? user.primaryEmailAddress?.emailAddress
+        : "Loading...",
+    mobileNumber:
+      isLoaded && isSignedIn
+        ? user.primaryPhoneNumber?.phoneNumber || "0000"
+        : "Loading...",
     farmSize: "10 acres",
     soilType: "Loamy",
     cropsGrown: ["Wheat", "Rice", "Sugarcane"],
