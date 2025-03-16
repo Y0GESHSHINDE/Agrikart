@@ -11,11 +11,15 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.22.13",
+    "axios": "^1.8.3",
+    "framer-motion": "^12.5.0",
     "lucide-react": "^0.344.0",
     "mongodb": "^6.14.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-icons": "^5.5.0",
     "react-router-dom": "^7.1.5",
+    "react-toastify": "^11.0.5",
     "recharts": "^2.15.1"
   },
   "devDependencies": {
