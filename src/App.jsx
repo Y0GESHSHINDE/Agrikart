@@ -13,6 +13,7 @@ import ManageInstrument from "./components/Profile/ManageInstrument";
 import InstrumentRented from "./components/Profile/InstrumentRented";
 import MoneyEarned from "./components/Profile/MoneyEarned";
 import HistoryRatings from "./components/Profile/HistoryRatings";
+import AboutAgriKart from "./components/LandingPage/AboutAgriKart";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 
 function App() {
@@ -52,7 +53,7 @@ function App() {
           }
         />
         <Route
-          path="/product-listing"
+          path="/Listed-instruments"
           element={
             <SignedIn>
               <ProductListing />
@@ -71,7 +72,7 @@ function App() {
           path="/rented-instruments"
           element={
             <SignedIn>
-              < InstrumentRented/>
+              <InstrumentRented />
             </SignedIn>
           }
         />
@@ -79,7 +80,7 @@ function App() {
           path="/money-earned"
           element={
             <SignedIn>
-              < MoneyEarned/>
+              <MoneyEarned />
             </SignedIn>
           }
         />
@@ -87,10 +88,12 @@ function App() {
           path="/history-ratings"
           element={
             <SignedIn>
-              < HistoryRatings/>
+              <HistoryRatings />
             </SignedIn>
           }
         />
+
+        <Route path="/about-agrikart" element={<AboutAgriKart />} />
 
         {/* Catch-all route - redirects unauthenticated users */}
         <Route
