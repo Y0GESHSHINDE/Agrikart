@@ -1,13 +1,22 @@
-import React from "react";
+import React,{useState} from "react";
 import Navbar from "../Navbar/Navbar";
 import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useUser } from "@clerk/clerk-react";
+import { useAuth,useUser } from "@clerk/clerk-react";
 
 const ProfileInfo = () => {
   const { user, isLoaded, isSignedIn } = useUser();
-  console.log(user)
+  const { getToken } = useAuth();
+
+//this is code for testing token only remove it later
+  // Function to get and display bearer token
+  const fetchAndDisplayToken = async () => {
+      const bearerToken = await getToken();
+      console.log(bearerToken);
+  };
+fetchAndDisplayToken();
+console.log(user)
   const userInfo = {
     profilePhoto:
       isLoaded && isSignedIn
@@ -57,11 +66,7 @@ const ProfileInfo = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 text-sm font-medium w-full bg-green-50 p-4 rounded-lg mt-4">
               <p>🌱 <span className="font-semibold">Farm Size:</span> {userInfo.farmSize}</p>
               <p>🧑‍🌾 <span className="font-semibold">Soil Type:</span> {userInfo.soilType}</p>
-              <p>🌾 <span className="font-semibold">Crops Grown:</span> {userInfo.cropsGrown.join(", ")}</p>
-              <p>🐄 <span className="font-semibold">Livestock:</span> {userInfo.livestock.join(", ")}</p>
-              <p>🚜 <span className="font-semibold">Equipment Owned:</span> {userInfo.equipmentOwned.join(", ")}</p>
               <p>💧 <span className="font-semibold">Water Source:</span> {userInfo.waterSource}</p>
-              <p>📊 <span className="font-semibold">Annual Yield:</span> {userInfo.annualYield}</p>
               <p>🌍 <span className="font-semibold">Farming Method:</span> {userInfo.farmingMethod}</p>
             </div>
           </div>
