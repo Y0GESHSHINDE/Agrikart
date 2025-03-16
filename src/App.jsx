@@ -14,6 +14,7 @@ import InstrumentRented from "./components/Profile/InstrumentRented";
 import MoneyEarned from "./components/Profile/MoneyEarned";
 import HistoryRatings from "./components/Profile/HistoryRatings";
 import AboutAgriKart from "./components/LandingPage/AboutAgriKart";
+import WeatherAppPage from "./layouts/WeatherAppPage";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 
 function App() {
@@ -89,6 +90,14 @@ function App() {
           element={
             <SignedIn>
               <HistoryRatings />
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/weather"
+          element={
+            <SignedIn>
+              < WeatherAppPage/>
             </SignedIn>
           }
         />
