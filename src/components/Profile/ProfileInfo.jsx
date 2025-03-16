@@ -4,6 +4,8 @@ import { Link } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useAuth, useUser } from "@clerk/clerk-react";
+import axios from "axios";
+
 
 const ProfileInfo = () => {
   const { user, isLoaded, isSignedIn } = useUser();
@@ -28,7 +30,7 @@ const ProfileInfo = () => {
       const token = await getToken();
 
       const response = await fetch(
-        `http://localhost:5000/api/users/${user.id}`,
+        `https://main-backend-agrikart.vercel.app/api/users/${user.id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -69,7 +71,7 @@ const ProfileInfo = () => {
       const token = await getToken();
 
       const response = await fetch(
-        `http://localhost:5000/api/users/${user.id}/personal-info`,
+        `https://main-backend-agrikart.vercel.app/api/users/${user.id}/personal-info`,
         {
           method: "PUT",
           headers: {
