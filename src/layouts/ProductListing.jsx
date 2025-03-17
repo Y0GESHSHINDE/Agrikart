@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import {
   ChevronDown,
@@ -20,7 +21,7 @@ const farmingEquipment = [
     condition: "New",
     rating: 4.7,
     image:
-      "https://unsplash.com/photos/green-and-yellow-tractor-in-garage-SPzzE4TYxZ0",
+      "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Powerful tractor suitable for large farms with advanced features and high durability.",
   },
@@ -32,7 +33,7 @@ const farmingEquipment = [
     horsepower: 90,
     condition: "Used",
     rating: 4.2,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/9940114/pexels-photo-9940114.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Efficient harvester for medium-sized farms with good fuel economy.",
   },
@@ -44,7 +45,7 @@ const farmingEquipment = [
     coverage: "50 acres",
     condition: "New",
     rating: 4.8,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/750836/pexels-photo-750836.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Advanced irrigation system with smart controls and water conservation features.",
   },
@@ -56,9 +57,9 @@ const farmingEquipment = [
     width: "12 feet",
     condition: "New",
     rating: 4.5,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/4792482/pexels-photo-4792482.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
-      "Precision seed drill for accurate planting with adjustable depth control.",
+      "High-precision seed drill machine with adjustable row spacing and depth control.",
   },
   {
     id: 5,
@@ -68,7 +69,7 @@ const farmingEquipment = [
     horsepower: 75,
     condition: "Used",
     rating: 3.9,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description: "Versatile utility tractor ideal for small to medium farms.",
   },
   {
@@ -79,7 +80,7 @@ const farmingEquipment = [
     capacity: "500 gallons",
     condition: "New",
     rating: 4.6,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "High-capacity sprayer with precision nozzles and electronic controls.",
   },
@@ -91,7 +92,7 @@ const farmingEquipment = [
     width: "8 feet",
     condition: "Used",
     rating: 4.0,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/9940114/pexels-photo-9940114.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Heavy-duty rotary tiller for soil preparation with adjustable depth.",
   },
@@ -103,7 +104,7 @@ const farmingEquipment = [
     baleSize: "Standard",
     condition: "New",
     rating: 4.4,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/750836/pexels-photo-750836.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Efficient hay baler with automatic tying system and high capacity.",
   },
@@ -115,7 +116,7 @@ const farmingEquipment = [
     horsepower: 350,
     condition: "New",
     rating: 4.9,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/1595104/pexels-photo-1595104.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "High-capacity combine harvester with advanced grain separation technology.",
   },
@@ -127,7 +128,7 @@ const farmingEquipment = [
     capacity: "10 tons",
     condition: "New",
     rating: 4.3,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Efficient manure spreader with wide distribution pattern and durable construction.",
   },
@@ -139,7 +140,7 @@ const farmingEquipment = [
     horsepower: 35,
     condition: "Used",
     rating: 4.1,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/9940114/pexels-photo-9940114.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Versatile compact tractor perfect for small farms and landscaping.",
   },
@@ -151,7 +152,7 @@ const farmingEquipment = [
     width: "15 feet",
     condition: "New",
     rating: 4.2,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/750836/pexels-photo-750836.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Heavy-duty disc harrow for efficient soil preparation and residue management.",
   },
@@ -163,7 +164,7 @@ const farmingEquipment = [
     width: "20 feet",
     condition: "New",
     rating: 4.7,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/7720708/pexels-photo-7720708.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Precision grain drill with advanced seed metering and depth control.",
   },
@@ -175,7 +176,7 @@ const farmingEquipment = [
     capacity: "5 tons/hour",
     condition: "Used",
     rating: 3.8,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Specialized potato harvester with gentle handling system to minimize damage.",
   },
@@ -187,7 +188,7 @@ const farmingEquipment = [
     coverage: "20 acres",
     condition: "New",
     rating: 4.5,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/9940114/pexels-photo-9940114.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Water-efficient drip irrigation system with automated controls and filters.",
   },
@@ -199,7 +200,7 @@ const farmingEquipment = [
     capacity: "2000 lbs",
     condition: "New",
     rating: 4.3,
-    image: "/placeholder.svg?height=200&width=300",
+    image: "https://images.pexels.com/photos/750836/pexels-photo-750836.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&dpr=1",
     description:
       "Precision fertilizer spreader with variable rate application and GPS mapping.",
   },
@@ -228,39 +229,40 @@ const priceRanges = [
 
 // Star Rating component
 const StarRating = ({ rating }) => {
-    const fullStars = Math.floor(rating);
-    const hasHalfStar = rating % 1 >= 0.5;
-    const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+  const fullStars = Math.floor(rating);
+  const hasHalfStar = rating % 1 >= 0.5;
+  const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
 
-    return (
-       
-        <div className="flex items-center">
-            {[...Array(fullStars)].map((_, i) => (
-                <Star
-                    key={`full-${i}`}
-                    className="w-4 h-4 fill-yellow-400 text-yellow-400"
-                />
-            ))}
+  return (
 
-            {hasHalfStar && (
-                <div className="relative">
-                    <Star className="w-4 h-4 text-yellow-400" />
-                    <div className="absolute top-0 left-0 w-1/2 overflow-hidden">
-                        <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                    </div>
-                </div>
-            )}
+    <div className="flex items-center">
+      {[...Array(fullStars)].map((_, i) => (
+        <Star
+          key={`full-${i}`}
+          className="h-4 w-4 fill-yellow-400 text-yellow-400"
+        />
+      ))}
 
-            {[...Array(emptyStars)].map((_, i) => (
-                <Star key={`empty-${i}`} className="w-4 h-4 text-yellow-400" />
-            ))}
-
-            <span className="ml-1 text-sm text-gray-600">{rating.toFixed(1)}</span>
+      {hasHalfStar && (
+        <div className="relative">
+          <Star className="h-4 w-4 text-yellow-400" />
+          <div className="absolute left-0 top-0 w-1/2 overflow-hidden">
+            <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
+          </div>
         </div>
-    );
+      )}
+
+      {[...Array(emptyStars)].map((_, i) => (
+        <Star key={`empty-${i}`} className="h-4 w-4 text-yellow-400" />
+      ))}
+
+      <span className="ml-1 text-sm text-gray-600">{rating.toFixed(1)}</span>
+    </div>
+  );
 };
 
 export default function ProductListing() {
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedCondition, setSelectedCondition] = useState("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
@@ -329,13 +331,13 @@ export default function ProductListing() {
   );
 
   // Change page
-const paginate = (pageNumber) => setCurrentPage(pageNumber);
-const nextPage = () =>
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const nextPage = () =>
     setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
+  const prevPage = () => setCurrentPage((prev) => Math.max(prev - 1, 1));
 
-// Reset to first page when filters change
-const handleFilterChange = (filterFn, value) => {
+  // Reset to first page when filters change
+  const handleFilterChange = (filterFn, value) => {
     setCurrentPage(1);
     filterFn(value);
   };
@@ -344,18 +346,18 @@ const handleFilterChange = (filterFn, value) => {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold text-green-800 mb-6">
+        <h1 className="mb-4 text-xl font-bold text-green-800 sm:mb-6 sm:text-2xl md:text-3xl">
           Farming Equipment
         </h1>
 
         {/* Search Bar */}
-        <div className="relative mb-6">
-          <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
+        <div className="relative mb-4 sm:mb-6">
+          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
             <Search className="h-5 w-5 text-gray-400" />
           </div>
           <input
             type="text"
-            className="bg-white border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full pl-10 p-2.5"
+            className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 pl-10 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
             placeholder="Search equipment..."
             value={searchQuery}
             onChange={(e) => handleFilterChange(setSearchQuery, e.target.value)}
@@ -363,25 +365,25 @@ const handleFilterChange = (filterFn, value) => {
         </div>
 
         {/* Filter Section */}
-        <div className="bg-white p-4 rounded-lg shadow-md mb-6">
-          <div className="flex items-center mb-4">
-            <Filter className="h-5 w-5 text-green-700 mr-2" />
+        <div className="mb-6 rounded-lg bg-white p-4 shadow-md">
+          <div className="mb-4 flex items-center">
+            <Filter className="mr-2 h-5 w-5 text-green-700" />
             <h2 className="text-xl font-semibold text-green-800">Filters</h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {/* Category Filter */}
             <div className="mb-4">
               <label
                 htmlFor="category"
-                className="block mb-2 text-sm font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Category
               </label>
               <div className="relative">
                 <select
                   id="category"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 appearance-none"
+                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                   value={selectedCategory}
                   onChange={(e) =>
                     handleFilterChange(setSelectedCategory, e.target.value)
@@ -403,14 +405,14 @@ const handleFilterChange = (filterFn, value) => {
             <div className="mb-4">
               <label
                 htmlFor="condition"
-                className="block mb-2 text-sm font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Condition
               </label>
               <div className="relative">
                 <select
                   id="condition"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 appearance-none"
+                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                   value={selectedCondition}
                   onChange={(e) =>
                     handleFilterChange(setSelectedCondition, e.target.value)
@@ -432,14 +434,14 @@ const handleFilterChange = (filterFn, value) => {
             <div className="mb-4">
               <label
                 htmlFor="price"
-                className="block mb-2 text-sm font-medium text-gray-700"
+                className="mb-2 block text-sm font-medium text-gray-700"
               >
                 Price Range
               </label>
               <div className="relative">
                 <select
                   id="price"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5 appearance-none"
+                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                   value={selectedPriceRange}
                   onChange={(e) =>
                     handleFilterChange(setSelectedPriceRange, e.target.value)
@@ -470,50 +472,54 @@ const handleFilterChange = (filterFn, value) => {
 
         {/* Product Grid */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {currentProducts.map((product) => (
-              <div
+              <Link
                 key={product.id}
-                className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow duration-300"
+                to={`/instrument/${product.id}`}
+                className="block"
               >
-                <img
-                  src={product.image || "/placeholder.svg"}
-                  alt={product.name}
-                  className="w-full h-48 object-cover"
-                />
-                <div className="p-4">
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">
-                      {product.name}
-                    </h3>
-                    <span className="bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded">
-                      {product.condition}
-                    </span>
-                  </div>
+                <article className="cursor-pointer overflow-hidden rounded-lg bg-white shadow-md transition-shadow duration-300 hover:shadow-lg"
+                >
+                  <img
+                    src={product.image || "/placeholder.svg"}
+                    alt={product.name}
+                    className="h-48 w-full object-cover"
+                  />
+                  <div className="p-4">
+                    <div className="mb-2 flex items-start justify-between">
+                      <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">
+                        {product.name}
+                      </h3>
+                      <span className="rounded bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                        {product.condition}
+                      </span>
+                    </div>
 
-                  {/* Star Rating */}
-                  <div className="mb-2">
-                    <StarRating rating={product.rating} />
-                  </div>
+                    {/* Star Rating */}
+                    <div className="mb-2">
+                      <StarRating rating={product.rating} />
+                    </div>
 
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-3">
-                    {product.description}
-                  </p>
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-bold text-green-700">
-                      ${product.price.toLocaleString()}
-                    </span>
-                    <span className="text-sm text-gray-500">
-                      {product.category}
-                    </span>
+                    <p className="mb-3 line-clamp-3 text-sm text-gray-600">
+                      {product.description}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <span className="text-xl font-bold text-green-700">
+                        ${product.price.toLocaleString()}
+                      </span>
+                      <span className="text-sm text-gray-500">
+                        {product.category}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </div>
+                </article>
+              </Link>
             ))}
           </div>
         ) : (
-          <div className="bg-white p-8 rounded-lg shadow text-center">
-            <p className="text-gray-700 text-lg">
+          <div className="rounded-lg bg-white p-8 text-center shadow">
+            <p className="text-lg text-gray-700">
               No products match your filters. Try adjusting your criteria.
             </p>
           </div>
@@ -521,16 +527,15 @@ const handleFilterChange = (filterFn, value) => {
 
         {/* Pagination */}
         {filteredProducts.length > 0 && (
-          <div className="flex justify-center items-center mt-8">
+          <div className="mt-8 flex items-center justify-center">
             <nav className="flex items-center">
               <button
                 onClick={prevPage}
                 disabled={currentPage === 1}
-                className={`flex items-center justify-center px-3 py-2 mr-2 rounded-md ${
-                  currentPage === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}
+                className={`flex items-center justify-center px-3 py-2 mr-2 rounded-md ${currentPage === 1
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-green-700 hover:bg-green-50"
+                  } border border-gray-300`}
               >
                 <ChevronLeft className="h-5 w-5" />
                 <span className="sr-only">Previous</span>
@@ -550,11 +555,10 @@ const handleFilterChange = (filterFn, value) => {
                       <button
                         key={pageNumber}
                         onClick={() => paginate(pageNumber)}
-                        className={`px-4 py-2 mx-1 rounded-md ${
-                          currentPage === pageNumber
-                            ? "bg-green-600 text-white"
-                            : "bg-white text-green-700 hover:bg-green-50"
-                        } border border-gray-300`}
+                        className={`px-4 py-2 mx-1 rounded-md ${currentPage === pageNumber
+                          ? "bg-green-600 text-white"
+                          : "bg-white text-green-700 hover:bg-green-50"
+                          } border border-gray-300`}
                       >
                         {pageNumber}
                       </button>
@@ -575,7 +579,7 @@ const handleFilterChange = (filterFn, value) => {
 
               {/* Mobile pagination - just show current/total */}
               <div className="sm:hidden">
-                <span className="px-4 py-2 bg-white border border-gray-300 rounded-md">
+                <span className="rounded-md border border-gray-300 bg-white px-4 py-2">
                   {currentPage} / {totalPages}
                 </span>
               </div>
@@ -583,11 +587,10 @@ const handleFilterChange = (filterFn, value) => {
               <button
                 onClick={nextPage}
                 disabled={currentPage === totalPages}
-                className={`flex items-center justify-center px-3 py-2 ml-2 rounded-md ${
-                  currentPage === totalPages
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-                    : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}
+                className={`flex items-center justify-center px-3 py-2 ml-2 rounded-md ${currentPage === totalPages
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-green-700 hover:bg-green-50"
+                  } border border-gray-300`}
               >
                 <ChevronRight className="h-5 w-5" />
                 <span className="sr-only">Next</span>
