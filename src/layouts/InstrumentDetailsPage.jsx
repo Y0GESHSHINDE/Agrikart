@@ -56,11 +56,59 @@ const ImageGallery = ({ images }) => {
 
   // Update image dimensions on load and resize
   const updateImageDimensions = useCallback(() => {
-    if (imageRef.current && containerRef.current) {
-      const container = containerRef.current.getBoundingClientRect();
-      setImageDimensions({
-        width: container.width,
-        height: container.height
+    if (!imageRef.current || !containerRef.current) return;
+    
+    const image = imageRef.current;
+    const container = containerRef.current.getBoundingClientRect();
+    
+    // Clear dimensions and set loading state
+    setImageDimensions({ width: 0, height: 0 });
+    
+    // Cancel any previous in-flight dimension calculations
+    if (image.complete) {
+      calculateDimensions();
+    } else {
+      const handleLoad = () => {
+        calculateDimensions();
+        image.removeEventListener('load', handleLoad);
+      };
+      image.addEventListener('load', handleLoad);
+    }
+    
+    function calculateDimensions() {
+      // Get natural dimensions directly from the loaded image
+      const naturalWidth = image.naturalWidth || container.width;
+      const naturalHeight = image.naturalHeight || container.height;
+      const aspectRatio = naturalWidth / naturalHeight;
+      const containerAspectRatio = container.width / container.height;
+      
+      let width = container.width;
+      let height = container.height;
+      
+      // Calculate optimal dimensions maintaining aspect ratio
+      if (aspectRatio > containerAspectRatio) {
+        height = width / aspectRatio;
+        
+        // Center vertically if image height is less than container
+        if (height < container.height) {
+          const verticalPadding = (container.height - height) / 2;
+          height = container.height;
+          width = height * aspectRatio;
+        }
+      } else {
+        width = height * aspectRatio;
+        
+        // Center horizontally if image width is less than container
+        if (width < container.width) {
+          const horizontalPadding = (container.width - width) / 2;
+          width = container.width;
+          height = width / aspectRatio;
+        }
+      }
+      
+      // Update dimensions with a slight delay to ensure smooth transitions
+      requestAnimationFrame(() => {
+        setImageDimensions({ width, height });
       });
     }
   }, []);
@@ -78,24 +126,75 @@ const ImageGallery = ({ images }) => {
 
   const handleZoom = useCallback((deltaY, clientX, clientY) => {
     if (!imageRef.current) return;
+
     const rect = imageRef.current.getBoundingClientRect();
     const mouseX = clientX - rect.left;
     const mouseY = clientY - rect.top;
 
-    const zoomFactor = deltaY > 0 ? 0.9 : 1.1;
-    const newScale = Math.min(Math.max(transform.scale * zoomFactor, minZoom), maxZoom);
+    // Dynamic zoom speed based on current scale and change rate
+    const baseZoomFactor = deltaY > 0 ? 0.90 : 1.10;
+    const dynamicFactor = 1 + Math.min(0.2, Math.abs(deltaY) / 500);
+    const zoomFactor = Math.pow(baseZoomFactor, dynamicFactor);
 
+    // Apply scale limits with smooth transition near bounds
+    const rawNewScale = transform.scale * zoomFactor;
+    const boundaryPadding = 0.1;
+    
+    let newScale;
+    if (rawNewScale < minZoom + boundaryPadding) {
+      newScale = minZoom;
+    } else if (rawNewScale > maxZoom - boundaryPadding) {
+      newScale = maxZoom;
+    } else {
+      newScale = rawNewScale;
+    }
+
+    // Reset transform with smooth animation when at minimum zoom
     if (newScale === minZoom) {
-      setTransform({ scale: minZoom, x: 0, y: 0 });
+      const transitionDuration = 300;
+      const startTime = Date.now();
+      const startTransform = { ...transform };
+      
+      const animate = () => {
+        const elapsed = Date.now() - startTime;
+        const progress = Math.min(elapsed / transitionDuration, 1);
+        const easeProgress = 1 - Math.pow(1 - progress, 3); // Cubic ease-out
+        
+        const currentScale = startTransform.scale + (minZoom - startTransform.scale) * easeProgress;
+        const currentX = startTransform.x * (1 - easeProgress);
+        const currentY = startTransform.y * (1 - easeProgress);
+        
+        setTransform({ scale: currentScale, x: currentX, y: currentY });
+        
+        if (progress < 1) {
+          requestAnimationFrame(animate);
+        }
+      };
+      
+      requestAnimationFrame(animate);
       return;
     }
 
+    // Enhanced zoom point calculation with momentum
     const scaleChange = newScale / transform.scale;
-    const newX = mouseX - (mouseX - transform.x) * scaleChange;
-    const newY = mouseY - (mouseY - transform.y) * scaleChange;
+    const zoomMomentum = Math.min(1, Math.abs(scaleChange - 1) * 2);
+    
+    const dx = (mouseX - transform.x);
+    const dy = (mouseY - transform.y);
+    const newX = mouseX - dx * scaleChange * (1 + zoomMomentum * 0.1);
+    const newY = mouseY - dy * scaleChange * (1 + zoomMomentum * 0.1);
 
+    // Apply constraints with smooth boundary behavior
     const { x: constrainedX, y: constrainedY } = constrainPan(newX, newY, newScale);
-    setTransform({ scale: newScale, x: constrainedX, y: constrainedY });
+
+    // Schedule update with animation frame for smooth rendering
+    requestAnimationFrame(() => {
+      setTransform({
+        scale: newScale,
+        x: constrainedX,
+        y: constrainedY
+      });
+    });
   }, [transform, constrainPan, minZoom, maxZoom]);
 
   const handleWheel = useCallback((e) => {
@@ -113,17 +212,96 @@ const ImageGallery = ({ images }) => {
     });
   }, [isZoomed, transform]);
 
+  const velocityRef = useRef({ x: 0, y: 0 });
+  const lastMousePosRef = useRef({ x: 0, y: 0 });
+  const lastTimeRef = useRef(0);
+  const momentumFrameRef = useRef(null);
+
   const handleDragMove = useCallback((e) => {
     if (!isDragging) return;
+
+    const now = Date.now();
+    const dt = Math.max(1, now - lastTimeRef.current);
+    
+    // Calculate velocity
+    const dx = e.clientX - lastMousePosRef.current.x;
+    const dy = e.clientY - lastMousePosRef.current.y;
+    velocityRef.current = {
+      x: dx / dt,
+      y: dy / dt
+    };
+    
+    // Update position tracking
+    lastMousePosRef.current = { x: e.clientX, y: e.clientY };
+    lastTimeRef.current = now;
+
     const newX = e.clientX - dragStart.x;
     const newY = e.clientY - dragStart.y;
-    const { x: constrainedX, y: constrainedY } = constrainPan(newX, newY, transform.scale);
-    setTransform(prev => ({ ...prev, x: constrainedX, y: constrainedY }));
+    
+    // Apply velocity-based movement
+    const velocityFactor = Math.min(1, dt / 16);
+    const vx = velocityRef.current.x * velocityFactor;
+    const vy = velocityRef.current.y * velocityFactor;
+
+    const { x: constrainedX, y: constrainedY } = constrainPan(
+      newX + vx,
+      newY + vy,
+      transform.scale
+    );
+
+    requestAnimationFrame(() => {
+      setTransform(prev => ({ ...prev, x: constrainedX, y: constrainedY }));
+    });
   }, [isDragging, dragStart, constrainPan, transform.scale]);
 
   const handleDragEnd = useCallback(() => {
+    if (!isDragging) return;
+    
+    const velocity = velocityRef.current;
+    const speed = Math.hypot(velocity.x, velocity.y);
+    
+    // Apply momentum if speed is significant
+    if (speed > 0.1) {
+      let currentVelocity = { ...velocity };
+      let lastTimestamp = Date.now();
+      
+      const applyMomentum = () => {
+        const now = Date.now();
+        const deltaTime = now - lastTimestamp;
+        lastTimestamp = now;
+        
+        // Apply friction
+        const friction = 0.95;
+        currentVelocity.x *= friction;
+        currentVelocity.y *= friction;
+        
+        const newX = transform.x + currentVelocity.x * deltaTime;
+        const newY = transform.y + currentVelocity.y * deltaTime;
+        
+        const { x: constrainedX, y: constrainedY } = constrainPan(
+          newX,
+          newY,
+          transform.scale
+        );
+        
+        setTransform(prev => ({
+          ...prev,
+          x: constrainedX,
+          y: constrainedY
+        }));
+        
+        // Continue momentum until velocity is negligible
+        if (Math.hypot(currentVelocity.x, currentVelocity.y) > 0.01) {
+          momentumFrameRef.current = requestAnimationFrame(applyMomentum);
+        }
+      };
+      
+      momentumFrameRef.current = requestAnimationFrame(applyMomentum);
+    }
+    
     setIsDragging(false);
-  }, []);
+    velocityRef.current = { x: 0, y: 0 };
+  }, [isDragging, transform.scale, transform.x, transform.y, constrainPan]);
 
   const handleDoubleClick = useCallback((e) => {
     if (isZoomed) {
@@ -198,8 +376,48 @@ const ImageGallery = ({ images }) => {
   }, [currentIndex, updateImageDimensions]);
 
   // Touch event handlers with proper memoization and constraints
+  // Touch gesture state management
+  const [lastTouchTime, setLastTouchTime] = useState(0);
+  const touchTimeoutRef = useRef(null);
+  const lastTouchDistance = useRef(0);
+  const touchVelocityRef = useRef({ x: 0, y: 0 });
+  const lastTouchPosRef = useRef({ x: 0, y: 0 });
+  const touchStartTimeRef = useRef(0);
+  
   const handleTouchStart = useCallback((e) => {
+    const now = Date.now();
+    touchStartTimeRef.current = now;
+    const timeDiff = now - lastTouchTime;
+    
+    // Enhanced double tap detection with position check
+    if (timeDiff < 300 && e.touches.length === 1) {
+      const touch = e.touches[0];
+      const lastPos = lastTouchPosRef.current;
+      const distanceSquared = Math.pow(touch.clientX - lastPos.x, 2) +
+                             Math.pow(touch.clientY - lastPos.y, 2);
+      
+      if (distanceSquared < 100) { // Within 10px radius
+        if (touchTimeoutRef.current) {
+          clearTimeout(touchTimeoutRef.current);
+          touchTimeoutRef.current = null;
+        }
+        e.preventDefault();
+        handleDoubleClick(e.touches[0]);
+        return;
+      }
+    }
+    
+    // Update last touch position
+    if (e.touches.length === 1) {
+      const touch = e.touches[0];
+      lastTouchPosRef.current = { x: touch.clientX, y: touch.clientY };
+    }
+    
+    setLastTouchTime(now);
+    touchVelocityRef.current = { x: 0, y: 0 };
+    
     if (e.touches.length === 2) {
+      e.preventDefault();
       const touch1 = e.touches[0];
       const touch2 = e.touches[1];
       const distance = Math.hypot(
@@ -208,11 +426,14 @@ const ImageGallery = ({ images }) => {
       );
       const centerX = (touch1.clientX + touch2.clientX) / 2;
       const centerY = (touch1.clientY + touch2.clientY) / 2;
+      
+      lastTouchDistance.current = distance;
       setDragStart({
         x: distance,
         y: transform.scale,
         centerX,
-        centerY
+        centerY,
+        timestamp: now
       });
     } else if (e.touches.length === 1 && isZoomed) {
       const touch = e.touches[0];
@@ -220,11 +441,20 @@ const ImageGallery = ({ images }) => {
       setDragStart({
         x: touch.clientX - transform.x,
         y: touch.clientY - transform.y,
+        timestamp: now
       });
     }
-  }, [isZoomed, transform]);
+  }, [isZoomed, transform, lastTouchTime, handleDoubleClick]);
 
   const handleTouchMove = useCallback((e) => {
+    if (!dragStart.timestamp) return;
+    
+    const now = Date.now();
+    const timeDiff = now - dragStart.timestamp;
+    
+    // Ignore quick unintentional movements
+    if (timeDiff < 16) return;
+    
     e.preventDefault();
     if (e.touches.length === 2) {
       const touch1 = e.touches[0];
@@ -233,8 +463,14 @@ const ImageGallery = ({ images }) => {
         touch2.clientX - touch1.clientX,
         touch2.clientY - touch1.clientY
       );
+      
+      // Smooth out abrupt zoom changes
+      const distance = lastTouchDistance.current;
+      const smoothedDistance = distance + (newDistance - distance) * 0.1;
+      lastTouchDistance.current = smoothedDistance;
+      
       const scale = Math.min(
-        Math.max((newDistance / dragStart.x) * dragStart.y, minZoom),
+        Math.max((smoothedDistance / dragStart.x) * dragStart.y, minZoom),
         maxZoom
       );
       
@@ -250,18 +486,23 @@ const ImageGallery = ({ images }) => {
         scale
       );
       
-      setTransform(prev => ({
-        ...prev,
-        scale,
-        x: constrainedX,
-        y: constrainedY
-      }));
+      requestAnimationFrame(() => {
+        setTransform(prev => ({
+          ...prev,
+          scale,
+          x: constrainedX,
+          y: constrainedY
+        }));
+      });
     } else if (e.touches.length === 1 && isDragging) {
       const touch = e.touches[0];
       const newX = touch.clientX - dragStart.x;
       const newY = touch.clientY - dragStart.y;
       const { x: constrainedX, y: constrainedY } = constrainPan(newX, newY, transform.scale);
-      setTransform(prev => ({ ...prev, x: constrainedX, y: constrainedY }));
+      
+      requestAnimationFrame(() => {
+        setTransform(prev => ({ ...prev, x: constrainedX, y: constrainedY }));
+      });
     }
   }, [isDragging, dragStart, transform.scale, transform.x, transform.y, constrainPan, minZoom, maxZoom]);
 
