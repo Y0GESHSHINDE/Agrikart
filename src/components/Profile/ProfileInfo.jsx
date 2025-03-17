@@ -6,7 +6,6 @@ import "react-toastify/dist/ReactToastify.css";
 import { useAuth, useUser } from "@clerk/clerk-react";
 import axios from "axios";
 
-
 const ProfileInfo = () => {
   const { user, isLoaded, isSignedIn } = useUser();
   const { getToken } = useAuth();
@@ -18,15 +17,53 @@ const ProfileInfo = () => {
     soilType: "",
     waterSource: "",
     farmingMethods: "",
+    village: "",
+    city: "",
+    state: "",
+    pincode: "",
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
   // Function to fetch user data from API
-  const fetchUserData = async () => {
+  const fetchUserData = async (forceFetch = false) => {
     try {
-      setIsLoading(true);
       if (!isSignedIn || !user) return;
 
+      // Check for cached data
+      const cachedData = localStorage.getItem(`user_profile_${user.id}`);
+      const cachedTimestamp = localStorage.getItem(
+        `user_profile_timestamp_${user.id}`
+      );
+      const currentTime = new Date().getTime();
+
+      // Use cache if it's less than 30 minutes old and not forcing a refresh
+      if (
+        !forceFetch &&
+        cachedData &&
+        cachedTimestamp &&
+        currentTime - parseInt(cachedTimestamp) < 30 * 60 * 1000
+      ) {
+        console.log("Using cached profile data");
+        const parsedData = JSON.parse(cachedData);
+        setUserData(parsedData);
+
+        // Initialize form data with cached values
+        setFormData({
+          farmSize: parsedData?.personalInfo?.farmSize || "",
+          soilType: parsedData?.personalInfo?.soilType || "",
+          waterSource: parsedData?.personalInfo?.waterSource || "",
+          farmingMethods: parsedData?.personalInfo?.farmingMethods || "",
+          village: parsedData?.address?.village || "",
+          city: parsedData?.address?.city || "",
+          state: parsedData?.address?.state || "",
+          pincode: parsedData?.address?.pincode || "",
+        });
+
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
       const token = await getToken();
 
       const response = await fetch(
@@ -44,6 +81,17 @@ const ProfileInfo = () => {
 
       const result = await response.json();
       console.log("API Response:", result);
+
+      // Save data to localStorage with timestamp
+      localStorage.setItem(
+        `user_profile_${user.id}`,
+        JSON.stringify(result.data)
+      );
+      localStorage.setItem(
+        `user_profile_timestamp_${user.id}`,
+        currentTime.toString()
+      );
+
       setUserData(result.data);
 
       // Initialize form data with current values
@@ -52,6 +100,10 @@ const ProfileInfo = () => {
         soilType: result.data?.personalInfo?.soilType || "",
         waterSource: result.data?.personalInfo?.waterSource || "",
         farmingMethods: result.data?.personalInfo?.farmingMethods || "",
+        village: result.data?.address?.village || "",
+        city: result.data?.address?.city || "",
+        state: result.data?.address?.state || "",
+        pincode: result.data?.address?.pincode || "",
       });
     } catch (error) {
       console.error("Error fetching user data:", error);
@@ -70,15 +122,31 @@ const ProfileInfo = () => {
 
       const token = await getToken();
 
+      // Prepare data for the API - separate farm info and address
+      const updatedData = {
+        personalInfo: {
+          farmSize: formData.farmSize,
+          soilType: formData.soilType,
+          waterSource: formData.waterSource,
+          farmingMethods: formData.farmingMethods,
+        },
+        address: {
+          village: formData.village,
+          city: formData.city,
+          state: formData.state,
+          pincode: formData.pincode,
+        },
+      };
+
       const response = await fetch(
-        `https://main-backend-agrikart.vercel.app/api/users/${user.id}/personal-info`,
+        `${process.env.USER_API_KEY}/api/users/${user.id}/update-profile`,
         {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify(formData),
+          body: JSON.stringify(updatedData),
         }
       );
 
@@ -86,8 +154,8 @@ const ProfileInfo = () => {
         throw new Error("Failed to update profile data");
       }
 
-      // Refresh user data
-      await fetchUserData();
+      // Refresh user data with force refresh to bypass cache
+      await fetchUserData(true);
 
       toast.success("Profile updated successfully");
       setShowEditPopup(false);
@@ -142,11 +210,11 @@ const ProfileInfo = () => {
     soilType: userData?.personalInfo?.soilType || "Not specified",
     waterSource: userData?.personalInfo?.waterSource || "Not specified",
     farmingMethod: userData?.personalInfo?.farmingMethods || "Not specified",
-    // Keep these static for now as they don't appear in your API response
-    cropsGrown: ["Wheat", "Rice", "Sugarcane"],
-    livestock: ["Cows", "Goats"],
-    equipmentOwned: ["Tractor", "Seeder", "Harvester"],
-    annualYield: "20 tons",
+    // Address information
+    village: userData?.address?.village || "Not specified",
+    city: userData?.address?.city || "Not specified",
+    state: userData?.address?.state || "Not specified",
+    pincode: userData?.address?.pincode || "Not specified",
   };
 
   return (
@@ -163,11 +231,13 @@ const ProfileInfo = () => {
             </div>
           ) : (
             <>
-              <img
-                src={userInfo.profilePhoto}
-                alt="Profile"
-                className="w-32 h-32 rounded-full border-4 border-green-500 shadow-lg mb-4 md:mb-0 md:mr-8"
-              />
+              <div>
+                <img
+                  src={userInfo.profilePhoto}
+                  alt="Profile"
+                  className="w-32 h-32 rounded-full border-4 border-green-500 shadow-lg mb-4 md:mb-0 md:mr-8"
+                />
+              </div>
               <div className="space-y-2 w-full">
                 <h2 className="text-3xl font-bold text-green-700">
                   {userInfo.username}
@@ -179,30 +249,78 @@ const ProfileInfo = () => {
                   📞 {userInfo.mobileNumber}
                 </p>
 
+                {/* Farm Information */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 text-sm font-medium w-full bg-green-50 p-4 rounded-lg mt-4">
+                  <h3 className="text-green-800 font-semibold text-lg col-span-full">
+                    Farm Information
+                  </h3>
                   <p>
-                    🌱 <span className="font-semibold">Farm Size:</span>{" "}
+                    🌱 <span className="font-semibold">Farm Size:</span>
                     {userInfo.farmSize}
                   </p>
                   <p>
-                    🧑‍🌾 <span className="font-semibold">Soil Type:</span>{" "}
+                    🧑‍🌾 <span className="font-semibold">Soil Type:</span>
                     {userInfo.soilType}
                   </p>
                   <p>
-                    💧 <span className="font-semibold">Water Source:</span>{" "}
+                    💧 <span className="font-semibold">Water Source:</span>
                     {userInfo.waterSource}
                   </p>
                   <p>
-                    🌍 <span className="font-semibold">Farming Method:</span>{" "}
+                    🌍 <span className="font-semibold">Farming Method:</span>
                     {userInfo.farmingMethod}
                   </p>
                 </div>
-                <button
-                  className="text-green-600 px-5 py-2 rounded-lg"
-                  onClick={() => setShowEditPopup(true)}
-                >
-                  Edit Profile...
-                </button>
+
+                {/* Address Information */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700 text-sm font-medium w-full bg-green-50 p-4 rounded-lg mt-4">
+                  <h3 className="text-green-800 font-semibold text-lg col-span-full">
+                    Address Information
+                  </h3>
+                  <p>
+                    🏡 <span className="font-semibold">Village:</span>
+                    {userInfo.village}
+                  </p>
+                  <p>
+                    🏙️ <span className="font-semibold">City:</span>
+                    {userInfo.city}
+                  </p>
+                  <p>
+                    🗺️ <span className="font-semibold">State:</span>
+                    {userInfo.state}
+                  </p>
+                  <p>
+                    📮 <span className="font-semibold">Pincode:</span>
+                    {userInfo.pincode}
+                  </p>
+                </div>
+
+                <div className="flex space-x-2">
+                  <button
+                    className="text-green-500 px-5 py-2 rounded-lg hover:text-green-800"
+                    onClick={() => setShowEditPopup(true)}
+                  >
+                    Edit Profile
+                  </button>
+                  <button
+                    className="text-blue-500 hover:text-blue-800"
+                    onClick={() => fetchUserData(true)}
+                    title="Refresh profile data"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-5 w-5"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  </button>
+                </div>
               </div>
             </>
           )}
@@ -211,11 +329,14 @@ const ProfileInfo = () => {
         {/* Edit Profile Popup */}
         {showEditPopup && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-md">
+            <div className="bg-white p-6 rounded-xl shadow-lg w-full max-w-lg max-h-90vh overflow-y-auto">
               <h2 className="text-2xl font-semibold text-green-700 mb-4">
                 Edit Profile
               </h2>
               <form onSubmit={updateUserData}>
+                <h3 className="text-lg font-medium text-green-600 mb-2 mt-4">
+                  Farm Information
+                </h3>
                 <div className="mb-4">
                   <label className="block text-gray-700">Farm Size</label>
                   <input
@@ -256,6 +377,51 @@ const ProfileInfo = () => {
                     className="w-full p-2 border border-gray-300 rounded-lg"
                   />
                 </div>
+
+                <h3 className="text-lg font-medium text-green-600 mb-2 mt-4">
+                  Address Information
+                </h3>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Village</label>
+                  <input
+                    type="text"
+                    name="village"
+                    value={formData.village}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">City</label>
+                  <input
+                    type="text"
+                    name="city"
+                    value={formData.city}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">State</label>
+                  <input
+                    type="text"
+                    name="state"
+                    value={formData.state}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+                <div className="mb-4">
+                  <label className="block text-gray-700">Pincode</label>
+                  <input
+                    type="text"
+                    name="pincode"
+                    value={formData.pincode}
+                    onChange={handleInputChange}
+                    className="w-full p-2 border border-gray-300 rounded-lg"
+                  />
+                </div>
+
                 <div className="flex justify-end space-x-4">
                   <button
                     type="button"
