@@ -9,6 +9,7 @@ import LandingPage from "./layouts/LandingPage";
 import ProfilePage from "./layouts/ProfilePage";
 import MainPage from "./layouts/MainPage";
 import ProductListing from "./layouts/ProductListing";
+import InstrumentDetail from "./layouts/InstrumentDetailsPage";
 import ManageInstrument from "./components/Profile/ManageInstrument";
 import InstrumentRented from "./components/Profile/InstrumentRented";
 import MoneyEarned from "./components/Profile/MoneyEarned";
@@ -59,6 +60,14 @@ function App() {
           element={
             <SignedIn>
               <ProductListing />
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/instrument/:id"
+          element={
+            <SignedIn>
+              <InstrumentDetail />
             </SignedIn>
           }
         />
