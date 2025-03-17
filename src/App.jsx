@@ -17,6 +17,7 @@ import HistoryRatings from "./components/Profile/HistoryRatings";
 import AboutAgriKart from "./components/LandingPage/AboutAgriKart";
 import WeatherAppPage from "./layouts/WeatherAppPage";
 import AboutKrishAi from "./components/LandingPage/AboutKrishAi";
+import Krishi from "./layouts/Krishi";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 
 function App() {
@@ -108,6 +109,14 @@ function App() {
           element={
             <SignedIn>
               < WeatherAppPage/>
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/krishi"
+          element={
+            <SignedIn>
+              <Krishi />
             </SignedIn>
           }
         />

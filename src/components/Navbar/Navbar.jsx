@@ -70,7 +70,7 @@ const Navbar = () => {
                   Farm Tools
                 </Link>
                 <Link
-                  to="/krishi-ai"
+                  to="/krishi"
                   className="text-gray-700 hover:text-green-600">
                   Krishi AI
                 </Link>
@@ -194,7 +194,7 @@ const Navbar = () => {
               Farm Tools
             </Link>
             <Link
-              to="/krishi-ai"
+              to="/krishi"
               className="text-gray-700 hover:text-green-600">
               Krishi AI
             </Link>

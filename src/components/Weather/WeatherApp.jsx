@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useUser } from "@clerk/clerk-react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   WiDaySunny,
@@ -12,19 +13,47 @@ import { FaWind, FaTint, FaArrowDown, FaArrowUp } from "react-icons/fa";
 import Navbar from "../Navbar/Navbar";
 
 const API_KEY = import.meta.env.VITE_WEATHER_API_KEY;
+const USER_API_URL = "https://main-backend-agrikart.vercel.app/api/users";
 
 const WeatherApp = () => {
+  const { user } = useUser(); // Get logged-in user from Clerk
+  const userId = user?.id; // Extract user ID
+  // console.log(userId);
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
   const [loading, setLoading] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
 
-  const fetchWeather = async () => {
-    if (!city) return;
+  // Fetch user's default village when we get the userId
+  useEffect(() => {
+    if (!userId) return;
+  
+    const fetchUserVillage = async () => {
+      try {
+        const response = await axios.get(`${USER_API_URL}/${userId}`);
+        console.log("User API Response:", response.data); // Debugging
+        const userVillage = response.data?.data?.address?.village ;
+        console.log("User Village:", userVillage);
+        if (userVillage) {
+          setCity(userVillage);
+          fetchWeather(userVillage);
+        }
+      } catch (error) {
+        console.error("Error fetching user village:", error);
+      }
+    };
+  
+    fetchUserVillage();
+  }, [userId]);
+  
+
+  // Fetch Weather Data
+  const fetchWeather = async (location) => {
+    if (!location) return;
     setLoading(true);
     try {
       const response = await axios.get(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${API_KEY}&units=metric`
       );
       setWeather(response.data);
     } catch (error) {
@@ -34,6 +63,7 @@ const WeatherApp = () => {
     setLoading(false);
   };
 
+  // Get Weather Icon
   const getWeatherIcon = (weatherType) => {
     switch (weatherType) {
       case "Clear":
@@ -54,37 +84,40 @@ const WeatherApp = () => {
   return (
     <>
       <Navbar />
-      {/* Background Image */}
       <div
-        className="flex flex-col items-center  min-h-screen bg-cover bg-center relative text-white p-6"
+        className="flex flex-col items-center min-h-screen bg-cover bg-center relative text-white p-6"
         style={{
           backgroundImage:
             "url('https://images.unsplash.com/photo-1614790905937-721c77a3e189?q=80&w=2013&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')",
-        }}>
-        {/* Overlay for better readability */}
+        }}
+      >
         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
 
         <motion.h1
           className="text-4xl text-green-300 mt-10 font-bold md:text-5xl mb-6 text-center relative z-10"
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}>
+          transition={{ duration: 0.5 }}
+        >
           AgriKart
-          <div className="text-2xl text-white mt-1 font-normal">Weather Forecast</div>
+          <div className="text-2xl text-white mt-1 font-normal">
+            Weather Forecast
+          </div>
         </motion.h1>
 
         {/* Input & Button */}
-        <div className="flex flex-col sm:flex-row items-center  gap-4 relative z-10">
+        <div className="flex flex-col sm:flex-row items-center gap-4 relative z-10">
           <input
             type="text"
-            placeholder="Enter city name..."
+            placeholder="Enter city or village..."
             className="p-3 rounded-lg text-black border border-gray-300 outline-none w-64 sm:w-80"
             value={city}
             onChange={(e) => setCity(e.target.value)}
           />
           <button
             className="bg-blue-600 text-white px-5 py-2 rounded-lg font-semibold hover:bg-blue-700 transition"
-            onClick={fetchWeather}>
+            onClick={() => fetchWeather(city)}
+          >
             Get Weather
           </button>
         </div>
@@ -99,10 +132,11 @@ const WeatherApp = () => {
         {/* Weather Info */}
         {weather && (
           <motion.div
-          className="mt-6 bg-white text-black p-6 rounded-2xl shadow-lg w-full max-w-xs sm:max-w-md text-center flex flex-col items-center border border-gray-300 relative z-10 mx-4"        
+            className="mt-6 bg-white text-black p-6 rounded-2xl shadow-lg w-full max-w-xs sm:max-w-md text-center flex flex-col items-center border border-gray-300 relative z-10 mx-4"
             initial={{ scale: 0.8, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
-            transition={{ duration: 0.4 }}>
+            transition={{ duration: 0.4 }}
+          >
             {getWeatherIcon(weather.weather[0].main)}
 
             <h2 className="text-2xl font-bold mt-3">
@@ -128,35 +162,11 @@ const WeatherApp = () => {
             {/* More Info Toggle Button */}
             <button
               className="mt-4 flex items-center gap-2 bg-blue-500 text-white px-4 py-2 rounded-lg font-semibold hover:bg-blue-600 transition"
-              onClick={() => setShowDetails(!showDetails)}>
+              onClick={() => setShowDetails(!showDetails)}
+            >
               {showDetails ? "Hide Details" : "More Info"}
               {showDetails ? <FaArrowUp /> : <FaArrowDown />}
             </button>
-
-            {/* Expanded Details Section */}
-            <AnimatePresence>
-              {showDetails && (
-                <motion.div
-                  className="mt-4 w-full text-center"
-                  initial={{ opacity: 0, height: 0 }}
-                  animate={{ opacity: 1, height: "auto" }}
-                  exit={{ opacity: 0, height: 0 }}
-                  transition={{ duration: 0.3 }}>
-                  <p className="mt-2">Pressure: {weather.main.pressure} hPa</p>
-                  <p className="mt-1">
-                    Visibility: {weather.visibility / 1000} km
-                  </p>
-                  <p className="mt-1">
-                    Sunrise:{" "}
-                    {new Date(weather.sys.sunrise * 1000).toLocaleTimeString()}
-                  </p>
-                  <p className="mt-1">
-                    Sunset:{" "}
-                    {new Date(weather.sys.sunset * 1000).toLocaleTimeString()}
-                  </p>
-                </motion.div>
-              )}
-            </AnimatePresence>
           </motion.div>
         )}
       </div>
