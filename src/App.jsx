@@ -1,11 +1,28 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   Navigate,
+  useLocation,
 } from "react-router-dom";
 import LandingPage from "./layouts/LandingPage";
+
+// Scroll restoration component
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  
+  useEffect(() => {
+    // Set manual scroll restoration
+    if ('scrollRestoration' in window.history) {
+      window.history.scrollRestoration = 'manual';
+    }
+    // Scroll to top
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 import ProfilePage from "./layouts/ProfilePage";
 import MainPage from "./layouts/MainPage";
 import ProductListing from "./layouts/ProductListing";
@@ -23,6 +40,7 @@ import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         {/* Conditional route for "/" - shows different pages based on auth state */}
         <Route
