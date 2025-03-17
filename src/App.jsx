@@ -16,6 +16,7 @@ import MoneyEarned from "./components/Profile/MoneyEarned";
 import HistoryRatings from "./components/Profile/HistoryRatings";
 import AboutAgriKart from "./components/LandingPage/AboutAgriKart";
 import WeatherAppPage from "./layouts/WeatherAppPage";
+import AboutKrishAi from "./components/LandingPage/AboutKrishAi";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 
 function App() {
@@ -112,6 +113,7 @@ function App() {
         />
 
         <Route path="/about-agrikart" element={<AboutAgriKart />} />
+        <Route path="/about-krishi-ai" element={< AboutKrishAi/>} />
 
         {/* Catch-all route - redirects unauthenticated users */}
         <Route

@@ -38,9 +38,9 @@ const Navbar = () => {
                   Home
                 </Link>
                 <Link
-                  to="/agri-ai"
+                  to="/about-krishi-ai"
                   className="text-gray-700 hover:text-green-600">
-                  Agri AI
+                  Krishi AI
                 </Link>
                 <Link
                   to="/about-agrikart"
@@ -70,15 +70,16 @@ const Navbar = () => {
                   Farm Tools
                 </Link>
                 <Link
-                  to="/money-earned"
-                  className="text-gray-700 hover:text-green-600">
-                  My Orders
-                </Link>
-                <Link
                   to="/krishi-ai"
                   className="text-gray-700 hover:text-green-600">
                   Krishi AI
                 </Link>
+                <Link
+                  to="/money-earned"
+                  className="text-gray-700 hover:text-green-600">
+                  My Orders
+                </Link>
+
                 <Link
                   to="/weather"
                   className="text-gray-700 hover:text-green-600">
@@ -142,14 +143,16 @@ const Navbar = () => {
           </button>
         </div>
 
-        {/* Mobile Navigation */}
+        {/* Mobile Navigation  when user not login */}
         <div className="flex flex-col space-y-4 p-6 text-lg">
           <SignedOut>
             <Link to="/" className="text-gray-700 hover:text-green-600">
               Home
             </Link>
-            <Link to="/agri-ai" className="text-gray-700 hover:text-green-600">
-              Agri AI
+            <Link
+              to="/about-krishi-ai"
+              className="text-gray-700 hover:text-green-600">
+              Krishi AI
             </Link>
             <Link
               to="/about-agrikart"
@@ -178,6 +181,7 @@ const Navbar = () => {
             </SignUpButton>
           </SignedOut>
 
+          {/* Mobile Navigation when user login */}
           <SignedIn>
             <Link
               to="/dashboard"
@@ -189,16 +193,15 @@ const Navbar = () => {
               className="text-gray-700 hover:text-green-600">
               Farm Tools
             </Link>
-
-            <Link
-              to="/money-earned"
-              className="text-gray-700 hover:text-green-600">
-              My Orders
-            </Link>
             <Link
               to="/krishi-ai"
               className="text-gray-700 hover:text-green-600">
               Krishi AI
+            </Link>
+            <Link
+              to="/money-earned"
+              className="text-gray-700 hover:text-green-600">
+              My Orders
             </Link>
             <Link to="/weather" className="text-gray-700 hover:text-green-600">
               Weather Forecast
