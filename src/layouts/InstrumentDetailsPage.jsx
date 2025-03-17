@@ -11,11 +11,11 @@ import {
 
 // Component imports
 import Navbar from "../components/Navbar/Navbar";
-import SwiperImageGallery from "../components/SwiperImageGallery";
-import StarRating from "../components/StarRating";
+import SwiperImageGallery from "../components/InstrumentDetails/SwiperImageGallery";
+import StarRating from "../components/InstrumentDetails/StarRating";
 
 // Lazy loaded components
-const SimilarInstruments = lazy(() => import('../components/SimilarInstruments'));
+const SimilarInstruments = lazy(() => import('../components/InstrumentDetails/SimilarInstruments'));
 
 // Skip link for accessibility
 const SkipLink = () => (
