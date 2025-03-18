@@ -27,54 +27,37 @@ const SkipLink = () => (
   </a>
 );
 
-// Sample data (preserved but moved to a separate file in production)
-const sampleInstrument = {
-  id: 1,
-  name: "Heavy Duty Tractor",
-  category: "Tractors",
-  price: 45000,
-  hourlyRate: 450,
-  dailyRate: 4500,
-  weeklyRate: 25000,
-  condition: "New",
-  rating: 4.7,
-  images: [
-    "https://images.pexels.com/photos/2933243/pexels-photo-2933243.jpeg?auto=compress&cs=tinysrgb&w=700&h=600&dpr=1",
-    "https://images.pexels.com/photos/2253359/pexels-photo-2253359.jpeg?auto=compress&cs=tinysrgb&w=700&h=600&dpr=1",
-    "https://images.pexels.com/photos/2889440/pexels-photo-2889440.jpeg?auto=compress&cs=tinysrgb&w=700&h=600&dpr=1",
-    "https://images.pexels.com/photos/2889442/pexels-photo-2889442.jpeg?auto=compress&cs=tinysrgb&w=700&h=600&dpr=1"
-  ],
-  description: "Powerful tractor suitable for large farms with advanced features and high durability. Perfect for heavy-duty agricultural work and efficient field operations.",
-  specifications: {
-    engineType: "4-Cylinder Diesel",
-    transmission: "Synchromesh",
-    liftingCapacity: "2000 kg",
-    fuelTankCapacity: "60 L",
-    horsePower: "75 HP",
-    engineDisplacement: "4000 cc"
-  },
-  features: [
-    "Power steering",
-    "4-wheel drive",
-    "Digital instrument cluster",
-    "Climate controlled cabin",
-    "GPS navigation",
-    "Auto-tilling system"
-  ],
-  owner: {
-    name: "Raj Kumar",
-    rating: 4.8,
-    responseTime: "Within 2 hours",
-    memberSince: "2023",
-    location: "Sangamner, India"
-  }
-};
-
 export default function InstrumentDetailPage() {
-  const { id } = useParams();
+  const { id } = useParams(); // Get the `id` from the URL
   const navigate = useNavigate();
   const [isHeaderSticky, setIsHeaderSticky] = useState(false);
-  const instrument = sampleInstrument;
+  const [instrument, setInstrument] = useState(null); // State to store fetched equipment data
+  const [loading, setLoading] = useState(true); // Loading state
+  const [error, setError] = useState(null); // Error state
+
+  // Fetch equipment data based on `id`
+  useEffect(() => {
+    const fetchInstrument = async () => {
+      try {
+        const response = await fetch(`https://main-backend-agrikart.vercel.app/api/equipment/${id}`);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        if (data.success) {
+          setInstrument(data.data); // Set the fetched data
+        } else {
+          throw new Error("Failed to fetch equipment data");
+        }
+      } catch (error) {
+        setError(error.message); // Set error message
+      } finally {
+        setLoading(false); // Stop loading
+      }
+    };
+
+    fetchInstrument();
+  }, [id]);
 
   // Debounced scroll handler for better performance
   useEffect(() => {
@@ -88,6 +71,33 @@ export default function InstrumentDetailPage() {
       window.removeEventListener('scroll', handleScroll);
     };
   }, []);
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50/80 flex items-center justify-center">
+        <p className="text-lg text-gray-700">Loading equipment details...</p>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gray-50/80 flex items-center justify-center">
+        <p className="text-lg text-red-600">Error: {error}</p>
+      </div>
+    );
+  }
+
+  // If no instrument data is found
+  if (!instrument) {
+    return (
+      <div className="min-h-screen bg-gray-50/80 flex items-center justify-center">
+        <p className="text-lg text-gray-700">No equipment found.</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -121,7 +131,7 @@ export default function InstrumentDetailPage() {
               aria-label="Product gallery" 
               className="rounded-2xl bg-white p-3 shadow-lg transition-shadow hover:shadow-xl sm:p-6"
             >
-              <SwiperImageGallery images={instrument.images} />
+              <SwiperImageGallery images={[instrument.images.primaryImage.url, instrument.images.secondaryImage.url]} />
             </section>
 
             <section 
@@ -140,7 +150,7 @@ export default function InstrumentDetailPage() {
                         id="instrument-title"
                         className="w-3/4 text-xl font-bold text-gray-900 sm:text-2xl md:text-[1.7rem] lg:text-3xl"
                       >
-                        {instrument.name}
+                        {instrument.equipmentName}
                       </h1>
                       <span 
                         className="inline-flex h-fit w-fit rounded-lg bg-green-100 px-2 py-1 text-sm font-medium text-green-800 shadow-sm ring-1 ring-inset ring-green-200 sm:px-4 sm:py-1.5"
@@ -153,10 +163,10 @@ export default function InstrumentDetailPage() {
                     <div className="mt-2 flex items-center gap-4">
                       <span className="flex items-center text-xs text-gray-600 sm:text-sm">
                         <MapPin className="mr-1 h-4 w-4" aria-hidden="true" />
-                        {instrument.owner.location}
+                        {instrument.pickupLocation}
                       </span>
                       <span className="text-base text-gray-500" aria-hidden="true">|</span>
-                      <StarRating rating={instrument.rating} />
+                      <StarRating rating={4.5} /> {/* Replace with actual rating if available */}
                     </div>
                   </div>
 
@@ -167,9 +177,9 @@ export default function InstrumentDetailPage() {
                   <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between xl:flex-row">
                     <p
                       className="text-xl font-bold text-green-700 sm:text-[1.6rem]"
-                      aria-label={`Price: ₹${instrument.price.toLocaleString()}`}
+                      aria-label={`Price: ₹${instrument.rentalPerDay.toLocaleString()}`}
                     >
-                      ₹{instrument.price.toLocaleString()}
+                      ₹{instrument.rentalPerDay.toLocaleString()} Per Hour
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 md:flex-nowrap xl:w-fit">
                       <button
@@ -203,9 +213,9 @@ export default function InstrumentDetailPage() {
                     aria-label="List of rental rates"
                   >
                     {[
-                      { icon: Clock, label: 'Hourly', rate: instrument.hourlyRate, unit: 'hr' },
-                      { icon: Calendar, label: 'Daily', rate: instrument.dailyRate, unit: 'day' },
-                      { icon: Calendar, label: 'Weekly', rate: instrument.weeklyRate, unit: 'week' }
+                      { icon: Clock, label: 'Hourly', rate: instrument.rentalPerHour, unit: 'hr' },
+                      { icon: Calendar, label: 'Daily', rate: instrument.rentalPerDay, unit: 'day' },
+                      { icon: Calendar, label: 'Weekly', rate: instrument.rentalPerDay * 7, unit: 'week' } // Assuming weekly rate is 7x daily rate
                     ].map(({ icon: Icon, label, rate, unit }) => (
                       <div
                         key={label}
@@ -239,15 +249,18 @@ export default function InstrumentDetailPage() {
                     Specifications
                   </h2>
                   <div className="space-y-3 sm:space-y-4" role="list" aria-label="Specifications list">
-                    {Object.entries(instrument.specifications).map(([key, value]) => (
+                    {[
+                      { label: "Brand", value: instrument.brand },
+                      { label: "Model", value: instrument.model },
+                      { label: "Chassis Number", value: instrument.chassisNumber },
+                      { label: "Number Plate", value: instrument.numberPlateNumber }
+                    ].map(({ label, value }) => (
                       <div
-                        key={key}
+                        key={label}
                         className="flex justify-between border-b border-gray-200 pb-2 transition-colors hover:border-green-200"
                         role="listitem"
                       >
-                        <span className="text-sm text-gray-600 sm:text-base">
-                          {key.replace(/([A-Z])/g, ' $1').trim()}
-                        </span>
+                        <span className="text-sm text-gray-600 sm:text-base">{label}</span>
                         <span className="font-medium text-gray-900">{value}</span>
                       </div>
                     ))}
@@ -263,7 +276,12 @@ export default function InstrumentDetailPage() {
                     Features
                   </h2>
                   <div className="grid grid-cols-1 gap-3" role="list" aria-label="Features list">
-                    {instrument.features.map((feature, index) => (
+                    {[
+                      "Powerful engine",
+                      "High durability",
+                      "Advanced features",
+                      "Efficient fuel consumption"
+                    ].map((feature, index) => (
                       <div
                         key={index}
                         className="flex items-center rounded-lg border border-gray-100 bg-gray-50/50 p-2.5 transition-all hover:border-green-200 hover:bg-green-50/30 sm:p-3"
