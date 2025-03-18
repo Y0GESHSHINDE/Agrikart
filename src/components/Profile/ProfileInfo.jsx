@@ -24,44 +24,10 @@ const ProfileInfo = () => {
   });
   const [isUpdating, setIsUpdating] = useState(false);
 
-  // Function to fetch user data from API
-  const fetchUserData = async (forceFetch = false) => {
+  // Function to fetch user data from API (cache functionality removed)
+  const fetchUserData = async () => {
     try {
       if (!isSignedIn || !user) return;
-
-      // Check for cached data
-      const cachedData = localStorage.getItem(`user_profile_${user.id}`);
-      const cachedTimestamp = localStorage.getItem(
-        `user_profile_timestamp_${user.id}`
-      );
-      const currentTime = new Date().getTime();
-
-      // Use cache if it's less than 30 minutes old and not forcing a refresh
-      if (
-        !forceFetch &&
-        cachedData &&
-        cachedTimestamp &&
-        currentTime - parseInt(cachedTimestamp) < 30 * 60 * 1000
-      ) {
-        console.log("Using cached profile data");
-        const parsedData = JSON.parse(cachedData);
-        setUserData(parsedData);
-
-        // Initialize form data with cached values
-        setFormData({
-          farmSize: parsedData?.personalInfo?.farmSize || "",
-          soilType: parsedData?.personalInfo?.soilType || "",
-          waterSource: parsedData?.personalInfo?.waterSource || "",
-          farmingMethods: parsedData?.personalInfo?.farmingMethods || "",
-          village: parsedData?.address?.village || "",
-          city: parsedData?.address?.city || "",
-          state: parsedData?.address?.state || "",
-          pincode: parsedData?.address?.pincode || "",
-        });
-
-        setIsLoading(false);
-        return;
-      }
 
       setIsLoading(true);
       const token = await getToken();
@@ -81,16 +47,6 @@ const ProfileInfo = () => {
 
       const result = await response.json();
       console.log("API Response:", result);
-
-      // Save data to localStorage with timestamp
-      localStorage.setItem(
-        `user_profile_${user.id}`,
-        JSON.stringify(result.data)
-      );
-      localStorage.setItem(
-        `user_profile_timestamp_${user.id}`,
-        currentTime.toString()
-      );
 
       setUserData(result.data);
 
@@ -124,22 +80,18 @@ const ProfileInfo = () => {
 
       // Prepare data for the API - separate farm info and address
       const updatedData = {
-        personalInfo: {
           farmSize: formData.farmSize,
           soilType: formData.soilType,
           waterSource: formData.waterSource,
           farmingMethods: formData.farmingMethods,
-        },
-        address: {
           village: formData.village,
           city: formData.city,
           state: formData.state,
           pincode: formData.pincode,
-        },
       };
 
       const response = await fetch(
-        `${process.env.USER_API_KEY}/api/users/${user.id}/update-profile`,
+        `https://main-backend-agrikart.vercel.app/api/users/${user.id}/personal-info`,
         {
           method: "PUT",
           headers: {
@@ -149,19 +101,21 @@ const ProfileInfo = () => {
           body: JSON.stringify(updatedData),
         }
       );
+       console.log(updatedData);
 
       if (!response.ok) {
-        throw new Error("Failed to update profile data");
+        const errorData = await response.json();
+        throw new Error(`Failed to update profile data: ${errorData.message}`);
       }
 
-      // Refresh user data with force refresh to bypass cache
-      await fetchUserData(true);
+      // Refresh user data
+      await fetchUserData();
 
       toast.success("Profile updated successfully");
       setShowEditPopup(false);
     } catch (error) {
       console.error("Error updating user data:", error);
-      toast.error("Failed to update profile data");
+      toast.error(`Failed to update profile data: ${error.message}`);
     } finally {
       setIsUpdating(false);
     }
@@ -304,7 +258,7 @@ const ProfileInfo = () => {
                   </button>
                   <button
                     className="text-blue-500 hover:text-blue-800"
-                    onClick={() => fetchUserData(true)}
+                    onClick={() => fetchUserData()}
                     title="Refresh profile data"
                   >
                     <svg
