@@ -78,27 +78,52 @@ const ManageInstrument = () => {
   };
 
   // Handle add or update instrument
-  const handleAddOrUpdateInstrument = (data, isEditing) => {
+  const handleAddOrUpdateInstrument = async (data, isEditing) => {
     if (isEditing) {
-      setInstruments(
-        instruments.map((item) =>
-          item._id === editingEquipment._id
-            ? { ...data, _id: editingEquipment._id }
-            : item
-        )
-      );
-      setEditingEquipment(null);
-      toast.success("Equipment updated successfully!", {
-        position: "top-right",
-        autoClose: 2000,
-      });
+      try {
+        // Make a PATCH request to update the equipment
+        const response = await fetch(
+          `https://main-backend-agrikart.vercel.app/api/equipment/${editingEquipment._id}`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(data), // Send updated fields
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to update equipment");
+        }
+
+        const updatedEquipment = await response.json();
+
+        // Update the state with the updated equipment
+        setInstruments(
+          instruments.map((item) =>
+            item._id === editingEquipment._id ? updatedEquipment : item
+          )
+        );
+
+        toast.success("Equipment updated successfully!", {
+          position: "top-right",
+          autoClose: 2000,
+        });
+      } catch (error) {
+        console.error("Error updating equipment:", error);
+        toast.error("Failed to update equipment");
+      }
     } else {
+      // Add new equipment locally (or make a POST request if needed)
       setInstruments([...instruments, { _id: Date.now(), ...data }]);
       toast.success("Equipment added successfully!", {
         position: "top-right",
         autoClose: 2000,
       });
     }
+
+    setEditingEquipment(null);
     setIsAddingEquipment(false);
   };
 
@@ -206,6 +231,9 @@ const ManageInstrument = () => {
               instrument={instrument}
               viewMode={viewMode}
               onEdit={handleEdit}
+              onUpdate={(updatedInstrument) => {
+                console.log("Updated instrument:", updatedInstrument);
+              }}
               onDelete={handleDelete}
             />
           ))}
