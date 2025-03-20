@@ -77,32 +77,54 @@ export default function Notifications() {
   // Function to handle Accept/Reject actions
   const handleDecision = async (id, decision) => {
     try {
-      // Simulate an API call to update the notification status
-      // Replace this with your actual API call
+      // Find the notification to get the relatedId (requestId)
+      const notification = notifications.find((notif) => notif._id === id);
+      if (!notification) {
+        throw new Error("Notification not found");
+      }
+  
+      const requestId = notification.relatedId;
+  
+      // Log the requestId and request body for debugging
+      console.log("Request ID:", requestId);
+      console.log("Decision:", decision);
+  
+      // Call the API to respond to the rental request (PUT request)
       const response = await fetch(
-        `https://main-backend-agrikart.vercel.app/api/notifications/${id}/decision`,
+        `https://main-backend-agrikart.vercel.app/api/rental-requests/${requestId}/respond`,
         {
-          method: "POST",
+          method: "PUT", // Use PUT method
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify({ decision }),
+          body: JSON.stringify({
+            status: decision === "accepted" ? "approved" : "rejected", // Map frontend decision to backend status
+            message: "Your request has been processed", // Optional message
+          }),
         }
       );
-
+  
+      // Log the API response for debugging
+      const result = await response.json();
+      console.log("API Response:", result);
+  
       if (!response.ok) {
-        throw new Error("Failed to update notification status");
+        throw new Error(result.message || "Failed to update rental request status");
       }
-
+  
       // Update the local state to reflect the new status
       setNotifications((prev) =>
         prev.map((notif) =>
           notif._id === id ? { ...notif, status: decision } : notif
         )
       );
+  
+      // Show success message
+      setError(null);
+      alert(`Rental request ${decision} successfully!`);
     } catch (error) {
-      console.error("Error updating notification status:", error);
-      setError("Failed to update notification status. Please try again later.");
+      console.error("Error updating rental request status:", error);
+      setError(error.message || "Failed to update rental request status. Please try again later.");
     }
   };
 
@@ -195,17 +217,15 @@ export default function Notifications() {
                   <div className="flex space-x-4">
                     <button
                       className="flex-1 bg-green-600 text-white py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition"
-                      onClick={() =>
-                        handleDecision(notification._id, "accepted")
-                      }
+                      onClick={() => handleDecision(notification._id, "accepted")}
+                      disabled={notification.status === "accepted" || notification.status === "rejected"}
                     >
                       <FaCheckCircle className="mr-2" /> Accept
                     </button>
                     <button
                       className="flex-1 bg-red-500 text-white py-2 rounded-lg flex items-center justify-center hover:bg-red-600 transition"
-                      onClick={() =>
-                        handleDecision(notification._id, "rejected")
-                      }
+                      onClick={() => handleDecision(notification._id, "rejected")}
+                      disabled={notification.status === "accepted" || notification.status === "rejected"}
                     >
                       <FaTimesCircle className="mr-2" /> Reject
                     </button>
