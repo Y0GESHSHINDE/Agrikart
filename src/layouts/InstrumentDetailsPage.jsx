@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 
 // Component imports
+import RentNowModal from './RentNowModal';
 import Navbar from "../components/Navbar/Navbar";
 import SwiperImageGallery from "../components/InstrumentDetails/SwiperImageGallery";
 import StarRating from "../components/InstrumentDetails/StarRating";
@@ -34,6 +35,7 @@ export default function InstrumentDetailPage() {
   const [instrument, setInstrument] = useState(null); // State to store fetched equipment data
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
+  const [isModalOpen, setIsModalOpen] = useState(false); 
 
   // Fetch equipment data based on `id`
   useEffect(() => {
@@ -75,7 +77,7 @@ export default function InstrumentDetailPage() {
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50/80 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50/80">
         <p className="text-lg text-gray-700">Loading equipment details...</p>
       </div>
     );
@@ -84,7 +86,7 @@ export default function InstrumentDetailPage() {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50/80 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50/80">
         <p className="text-lg text-red-600">Error: {error}</p>
       </div>
     );
@@ -93,7 +95,7 @@ export default function InstrumentDetailPage() {
   // If no instrument data is found
   if (!instrument) {
     return (
-      <div className="min-h-screen bg-gray-50/80 flex items-center justify-center">
+      <div className="flex min-h-screen items-center justify-center bg-gray-50/80">
         <p className="text-lg text-gray-700">No equipment found.</p>
       </div>
     );
@@ -183,6 +185,7 @@ export default function InstrumentDetailPage() {
                     </p>
                     <div className="flex flex-col gap-3 sm:flex-row sm:gap-4 md:flex-nowrap xl:w-fit">
                       <button
+                        onClick={() => setIsModalOpen(true)}
                         className="flex-1 rounded-lg bg-green-600 px-3 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:bg-green-700 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:flex-none sm:px-5 sm:py-2 sm:text-base"
                         aria-label="Rent this instrument now"
                       >
@@ -317,6 +320,13 @@ export default function InstrumentDetailPage() {
           </div>
         </main>
       </div>
+
+      {/* Rent Now Modal */}
+      <RentNowModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        instrumentName={instrument?.equipmentName}
+      />
     </>
   );
 }
