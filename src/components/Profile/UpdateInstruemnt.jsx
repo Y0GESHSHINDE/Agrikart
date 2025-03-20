@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const UpdateInstrumentModal = ({ instrument, onClose, onUpdate }) => {
   const [formData, setFormData] = useState({ ...instrument });
@@ -24,85 +26,98 @@ const UpdateInstrumentModal = ({ instrument, onClose, onUpdate }) => {
 
       const updatedData = await response.json();
       onUpdate(updatedData);
+      toast.success("Equipment updated successfully! ✅"); // Success toast
       onClose();
     } catch (error) {
       console.error("Update error:", error);
+      toast.error("Failed to update equipment. ❌"); // Error toast
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
-        <h2 className="text-xl font-bold mb-4">Edit Equipment</h2>
-        
-        <form onSubmit={handleSubmit} className="space-y-3">
-          <input
-            type="text"
-            name="equipmentName"
-            value={formData.equipmentName}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Equipment Name"
-            required
-          />
-          <input
-            type="text"
-            name="brand"
-            value={formData.brand}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Brand"
-            required
-          />
-          <input
-            type="text"
-            name="model"
-            value={formData.model}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Model"
-          />
-          <textarea
-            name="description"
-            value={formData.description}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Description"
-            rows="3"
-          />
-          <input
-            type="number"
-            name="rentalPerHour"
-            value={formData.rentalPerHour}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Hourly Rate"
-            required
-          />
-          <input
-            type="number"
-            name="rentalPerDay"
-            value={formData.rentalPerDay}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Daily Rate"
-            required
-          />
-          <input
-            type="text"
-            name="pickupLocation"
-            value={formData.pickupLocation}
-            onChange={handleChange}
-            className="w-full p-2 border rounded"
-            placeholder="Pickup Location"
-            required
-          />
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md transform transition-all duration-300">
+        {/* Header */}
+        <h2 className="text-xl font-semibold text-gray-900 mb-4">Edit Equipment</h2>
 
+        {/* Form */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 gap-3">
+            <input
+              type="text"
+              name="equipmentName"
+              value={formData.equipmentName}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Equipment Name"
+              required
+            />
+            <input
+              type="text"
+              name="brand"
+              value={formData.brand}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Brand"
+              required
+            />
+            <input
+              type="text"
+              name="model"
+              value={formData.model}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Model"
+            />
+            <textarea
+              name="description"
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Description"
+              rows="3"
+            />
+            <input
+              type="number"
+              name="rentalPerHour"
+              value={formData.rentalPerHour}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Hourly Rate"
+              required
+            />
+            <input
+              type="number"
+              name="rentalPerDay"
+              value={formData.rentalPerDay}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Daily Rate"
+              required
+            />
+            <input
+              type="text"
+              name="pickupLocation"
+              value={formData.pickupLocation}
+              onChange={handleChange}
+              className="w-full p-2 border rounded focus:ring-2 focus:ring-blue-400"
+              placeholder="Pickup Location"
+              required
+            />
+          </div>
+
+          {/* Action Buttons */}
           <div className="flex gap-3 mt-4">
-            <button type="submit" className="w-full bg-blue-500 text-white p-2 rounded">
+            <button
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white p-2 rounded transition"
+            >
               Save Changes
             </button>
-            <button onClick={onClose} className="w-full bg-gray-300 p-2 rounded">
+            <button
+              onClick={onClose}
+              className="w-full bg-gray-300 hover:bg-gray-400 p-2 rounded transition"
+            >
               Cancel
             </button>
           </div>
@@ -113,4 +128,3 @@ const UpdateInstrumentModal = ({ instrument, onClose, onUpdate }) => {
 };
 
 export default UpdateInstrumentModal;
-  
