@@ -4,7 +4,7 @@ import { X } from 'lucide-react';
 export default function RentNowModal({ isOpen, onClose, instrumentName }) {
     if (!isOpen) return null;
 
-    const handleRentRequest = (e) => {
+    const handleSubmit = (e) => {
         e.preventDefault();
         const formData = new FormData(e.target);
         const formDataInArray = [formData.get('startDateTime'), formData.get('endDateTime'), formData.get('message')];
@@ -29,7 +29,7 @@ export default function RentNowModal({ isOpen, onClose, instrumentName }) {
                 </h2>
 
                 {/* Rental form */}
-                <form onSubmit={handleRentRequest} className="space-y-5">
+                <form onSubmit={handleSubmit} className="space-y-5">
                     <div>
                         <label htmlFor="startDateTime" className="block text-sm font-medium text-gray-700">
                             Start Date and Time
