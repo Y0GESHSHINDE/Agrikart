@@ -6,6 +6,26 @@ import UpdateInstrumentModal from "./UpdateInstruemnt";
 const EquipmentCard = ({ instrument, viewMode, onUpdate, onDelete }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleDelete = async () => {
+    try {
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/equipment/${instrument._id}`,
+        {
+          method: "DELETE",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to delete equipment");
+      }
+
+      onDelete(instrument._id); // Call the parent component's onDelete function
+    } catch (error) {
+      console.error("Error deleting equipment:", error);
+      alert("Failed to delete equipment. Please try again.");
+    }
+  };
+
   return (
     <>
       <div
@@ -78,7 +98,7 @@ const EquipmentCard = ({ instrument, viewMode, onUpdate, onDelete }) => {
               <span className="text-sm font-medium">Edit</span>
             </button>
             <button
-              onClick={() => onDelete(instrument._id)}
+              onClick={handleDelete}
               className="flex-1 flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg transition hover:bg-red-600">
               <HiTrash className="h-5 w-5" />
               <span className="text-sm font-medium">Delete</span>

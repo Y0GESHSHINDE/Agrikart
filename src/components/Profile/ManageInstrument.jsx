@@ -63,14 +63,49 @@ const ManageInstrument = () => {
   }, [instruments]);
 
   // Handle delete
-  const handleDelete = (id) => {
-    setInstruments(instruments.filter((instrument) => instrument._id !== id));
-    toast.error("Equipment removed!", {
-      position: "top-right",
-      autoClose: 2000,
-    });
+  const handleDelete = async (id) => {
+    try {
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/equipment/${id}`,
+        {
+          method: "DELETE",
+        }
+      );
+  
+      // Check if the response is successful
+      if (!response.ok) {
+        const errorMessage = await response.text(); // Get the error message from the response
+        console.error("API Error Message:", errorMessage);
+  
+        // If the equipment is already deleted or not found, still remove it from the UI
+        if (response.status === 404) {
+          setInstruments((prevInstruments) =>
+            prevInstruments.filter((instrument) => instrument._id !== id)
+          );
+          toast.info("Equipment removed from the list.", {
+            position: "top-right",
+            autoClose: 2000,
+          });
+          return;
+        }
+  
+        throw new Error(errorMessage || "Failed to delete equipment");
+      }
+  
+      // Update the state to remove the deleted equipment
+      setInstruments((prevInstruments) =>
+        prevInstruments.filter((instrument) => instrument._id !== id)
+      );
+  
+      toast.success("Equipment removed successfully!", {
+        position: "top-right",
+        autoClose: 2000,
+      });
+    } catch (error) {
+      console.error("Error deleting equipment:", error);
+      toast.error(error.message || "Failed to delete equipment");
+    }
   };
-
   // Handle edit
   const handleEdit = (instrument) => {
     setEditingEquipment(instrument);
