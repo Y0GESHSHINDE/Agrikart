@@ -60,7 +60,7 @@ const ManageInstrument = () => {
   // Fetch instruments on component mount
   useEffect(() => {
     fetchInstruments();
-  }, []);
+  }, [instruments]);
 
   // Handle delete
   const handleDelete = (id) => {

@@ -22,7 +22,7 @@ const EquipmentCard = ({ instrument, viewMode, onUpdate, onDelete }) => {
           <img
             src={instrument.images.primaryImage.url}
             alt={instrument.equipmentName}
-            className="h-full w-full object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none transition-transform duration-300 group-hover:scale-105"
+            className=" h-full md:h-48  w-full object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none transition-transform duration-300 group-hover:scale-105"
             onError={(e) => {
               e.target.src =
                 "https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg";
