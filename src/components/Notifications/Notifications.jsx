@@ -27,7 +27,18 @@ export default function Notifications() {
 
         // Ensure the response contains a valid data array
         if (result.success && Array.isArray(result.data)) {
-          setNotifications(result.data);
+          // Fetch additional details for each notification
+          const notificationsWithDetails = await Promise.all(
+            result.data.map(async (notification) => {
+              if (notification.relatedTo === "rental_request") {
+                const rentalDetails = await fetchRentalDetails(notification.relatedId);
+                return { ...notification, rentalDetails };
+              }
+              return notification;
+            })
+          );
+
+          setNotifications(notificationsWithDetails);
         } else {
           console.error("API response is not an array:", result);
           setNotifications([]); // Fallback to an empty array
@@ -43,6 +54,25 @@ export default function Notifications() {
 
     fetchNotifications();
   }, [userId]);
+
+  // Fetch rental details using relatedId
+  const fetchRentalDetails = async (relatedId) => {
+    try {
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/rental-requests/${relatedId}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch rental details");
+      }
+
+      const result = await response.json();
+      return result.data;
+    } catch (error) {
+      console.error("Error fetching rental details:", error);
+      return null;
+    }
+  };
 
   // Function to handle Accept/Reject actions
   const handleDecision = async (id, decision) => {
@@ -135,6 +165,30 @@ export default function Notifications() {
                   {notification.title}
                 </h3>
                 <p className="text-gray-600 mb-3">{notification.message}</p>
+
+                {/* Display rental details if available */}
+                {notification.relatedTo === "rental_request" && notification.rentalDetails && (
+                  <div className="mb-4">
+                    <p className="text-gray-600">
+                      <strong>Message:</strong> {notification.rentalDetails.message}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Start Date:</strong> {new Date(notification.rentalDetails.requestStartDate).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>End Date:</strong> {new Date(notification.rentalDetails.requestEndDate).toLocaleDateString()}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Total Days:</strong> {notification.rentalDetails.totalDays}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Rental Type:</strong> {notification.rentalDetails.rentalType}
+                    </p>
+                    <p className="text-gray-600">
+                      <strong>Total Cost:</strong> ₹{notification.rentalDetails.totalCost}
+                    </p>
+                  </div>
+                )}
 
                 {/* If relatedTo is rental_request, show Accept/Reject buttons */}
                 {notification.relatedTo === "rental_request" && (
