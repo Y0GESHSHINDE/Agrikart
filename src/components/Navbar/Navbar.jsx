@@ -32,6 +32,7 @@ const Navbar = () => {
 
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-8 text-[14px]">
+              
               {/* Show when User is NOT Logged In */}
               <SignedOut>
                 <Link to="/" className="text-gray-700 hover:text-green-600">
