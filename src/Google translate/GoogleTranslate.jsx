@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import { FaRedo } from "react-icons/fa"; // Import icons
+import { FaRedo } from "react-icons/fa";
 import { MdGTranslate } from "react-icons/md";
-
 
 const GoogleTranslate = () => {
   const [selectedLang, setSelectedLang] = useState(localStorage.getItem("selectedLanguage") || "en");
@@ -33,7 +32,7 @@ const GoogleTranslate = () => {
 
     window.googleTranslateElementInit = googleTranslateElementInit;
 
-    // Hide the floating widget using CSS
+    // Hide unwanted Google Translate UI elements
     const style = document.createElement("style");
     style.innerHTML = `
       .goog-te-banner-frame, .goog-te-balloon-frame, .goog-te-gadget-icon { display: none !important; }
@@ -56,8 +55,18 @@ const GoogleTranslate = () => {
     localStorage.setItem("selectedLanguage", "en");
     setSelectedLang("en");
 
-    document.cookie = "googtrans=; path=/; domain=" + window.location.hostname + "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+    // Remove the "googtrans" cookie properly for all paths
+    document.cookie =
+      "googtrans=; path=/; domain=" +
+      window.location.hostname +
+      "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      
+    document.cookie =
+      "googtrans=; path=/; domain=." +
+      window.location.hostname +
+      "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
 
+    // Force refresh to clear translation
     setTimeout(() => window.location.reload(), 500);
   };
 
