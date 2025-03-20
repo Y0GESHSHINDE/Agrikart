@@ -10,7 +10,6 @@ import {
   Star,
 } from "lucide-react";
 
-
 // Star Rating component
 const StarRating = ({ rating }) => {
   const fullStars = Math.floor(rating);
@@ -47,7 +46,6 @@ const StarRating = ({ rating }) => {
 export default function ProductListing() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
-  const [selectedCondition, setSelectedCondition] = useState("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
   const [equipmentData, setEquipmentData] = useState([]);
@@ -84,63 +82,70 @@ export default function ProductListing() {
     fetchData();
   }, []);
 
-  // Available filter options
+  // Available filter options for equipment type
   const categories = [
     "All",
-    "Tractors",
-    "Harvesters",
-    "Irrigation",
-    "Planting",
+    "Plows",
+    "Harrows",
+    "Rotavators",
+    "Cultivators",
+    "Seed Drills",
+    "Broadcast Seeders",
+    "Precision Planters",
+    "Transplanters",
+    "Dibblers",
+    "Irrigation Systems",
+    "Fertilizer Spreaders",
     "Sprayers",
-    "Tillage",
-    "Hay Equipment",
-    "Fertilizing",
+    "Weeders",
+    "Mulchers",
+    "Combine Harvesters",
+    "Reapers",
+    "Threshers",
+    "Tractors",
+    "Other",
   ];
-  const conditions = ["All", "New", "Used"];
+
+  // Price range options
   const priceRanges = [
     "All",
-    "Under ₹10,000",
-    "₹10,000-₹25,000",
-    "₹25,000-₹50,000",
-    "Over ₹50,000",
+    "₹100-₹200",
+    "₹200-₹300",
+    "₹300-₹400",
+    "₹400-₹500",
+    "₹500-₹600",
+    "₹600-₹700",
+    "₹700-₹800",
+    "₹800-₹900",
+    "₹900-₹1000",
+    "₹1000-₹5000",
+    "₹5000-₹10000",
+    "Above ₹10000",
   ];
 
   // Filter products based on selected filters
   const filteredProducts = equipmentData.filter((product) => {
     // Category filter
-    if (selectedCategory !== "All" && product.category !== selectedCategory) {
-      return false;
-    }
-
-    // Condition filter
     if (
-      selectedCondition !== "All" &&
-      product.condition !== selectedCondition
+      selectedCategory !== "All" &&
+      product.equipmentType !== selectedCategory
     ) {
       return false;
     }
 
     // Price range filter
     if (selectedPriceRange !== "All") {
-      if (
-        selectedPriceRange === "Under ₹10,000" &&
-        product.rentalPerDay >= 10000
-      ) {
+      const [min, max] = selectedPriceRange
+        .replace("₹", "")
+        .replace("Above ", "")
+        .split("-")
+        .map((val) => (val === "Above" ? Infinity : parseFloat(val)));
+
+      if (min === Infinity && product.rentalPerDay <= 10000) {
         return false;
-      } else if (
-        selectedPriceRange === "₹10,000-₹25,000" &&
-        (product.rentalPerDay < 10000 || product.rentalPerDay > 25000)
-      ) {
+      } else if (max === Infinity && product.rentalPerDay <= 10000) {
         return false;
-      } else if (
-        selectedPriceRange === "₹25,000-₹50,000" &&
-        (product.rentalPerDay < 25000 || product.rentalPerDay > 50000)
-      ) {
-        return false;
-      } else if (
-        selectedPriceRange === "Over ₹50,000" &&
-        product.rentalPerDay <= 50000
-      ) {
+      } else if (product.rentalPerDay < min || product.rentalPerDay > max) {
         return false;
       }
     }
@@ -202,39 +207,37 @@ export default function ProductListing() {
           Farming Equipment
         </h1>
 
-        {/* Search Bar */}
-        <div className="relative mb-4 sm:mb-6">
-          <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-            <Search className="h-5 w-5 text-gray-400" />
-          </div>
-          <input
-            type="text"
-            className="block w-full rounded-lg border border-gray-300 bg-white p-2.5 pl-10 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
-            placeholder="Search equipment..."
-            value={searchQuery}
-            onChange={(e) => handleFilterChange(setSearchQuery, e.target.value)}
-          />
-        </div>
-
-        {/* Filter Section */}
-        <div className="mb-6 rounded-lg bg-white p-4 shadow-md">
-          <div className="mb-4 flex items-center">
-            <Filter className="mr-2 h-5 w-5 text-green-700" />
-            <h2 className="text-xl font-semibold text-green-800">Filters</h2>
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {/* Search Bar */}
+          <div className="relative flex items-center h-12">
+            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+              <Search className="h-5 w-5 text-gray-400" />
+            </div>
+            <input
+              type="text"
+              className="block w-full h-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+              placeholder="Search equipment..."
+              value={searchQuery}
+              onChange={(e) =>
+                handleFilterChange(setSearchQuery, e.target.value)
+              }
+            />
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {/* Category Filter */}
-            <div className="mb-4">
-              <label
-                htmlFor="category"
-                className="mb-2 block text-sm font-medium text-gray-700">
+          {/* Filter Section (Same Height as Search Bar) */}
+          <div className="rounded-lg bg-white p-4 shadow-md flex items-center h-12">
+            <div className="flex items-center space-x-2">
+              <Filter className="h-5 w-5 text-green-700" />
+              <h2 className="text-sm font-semibold text-green-800">Filters</h2>
+            </div>
+            <div className="ml-auto">
+              <label htmlFor="category" className="sr-only">
                 Category
               </label>
               <div className="relative">
                 <select
                   id="category"
-                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+                  className="block w-full h-10 appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                   value={selectedCategory}
                   onChange={(e) =>
                     handleFilterChange(setSelectedCategory, e.target.value)
@@ -245,61 +248,7 @@ export default function ProductListing() {
                     </option>
                   ))}
                 </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </div>
-            </div>
-
-            {/* Condition Filter */}
-            <div className="mb-4">
-              <label
-                htmlFor="condition"
-                className="mb-2 block text-sm font-medium text-gray-700">
-                Condition
-              </label>
-              <div className="relative">
-                <select
-                  id="condition"
-                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
-                  value={selectedCondition}
-                  onChange={(e) =>
-                    handleFilterChange(setSelectedCondition, e.target.value)
-                  }>
-                  {conditions.map((condition) => (
-                    <option key={condition} value={condition}>
-                      {condition}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
-                  <ChevronDown className="h-4 w-4" />
-                </div>
-              </div>
-            </div>
-
-            {/* Price Range Filter */}
-            <div className="mb-4">
-              <label
-                htmlFor="price"
-                className="mb-2 block text-sm font-medium text-gray-700">
-                Price Range
-              </label>
-              <div className="relative">
-                <select
-                  id="price"
-                  className="block w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
-                  value={selectedPriceRange}
-                  onChange={(e) =>
-                    handleFilterChange(setSelectedPriceRange, e.target.value)
-                  }>
-                  {priceRanges.map((range) => (
-                    <option key={range} value={range}>
-                      {range}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-700">
                   <ChevronDown className="h-4 w-4" />
                 </div>
               </div>
@@ -335,9 +284,6 @@ export default function ProductListing() {
                       <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">
                         {product.equipmentName}
                       </h3>
-                      <span className="rounded bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                        {product.condition}
-                      </span>
                     </div>
 
                     {/* Star Rating */}
@@ -350,10 +296,10 @@ export default function ProductListing() {
                     </p>
                     <div className="flex items-center justify-between">
                       <span className="text-xl font-bold text-green-700">
-                      ₹{product.rentalPerDay.toLocaleString()}
+                        ₹{product.rentalPerHour.toLocaleString()} Per Hour
                       </span>
                       <span className="text-sm text-gray-500">
-                        {product.category}
+                        {product.equipmentType}
                       </span>
                     </div>
                   </div>

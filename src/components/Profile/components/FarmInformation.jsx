@@ -60,7 +60,7 @@ const FarmInformation = ({ farmInfo }) => {
       </div>
 
       {/* Farm Stats Preview */}
-      <div className="mt-6 border-t border-gray-200 pt-6">
+      {/* <div className="mt-6 border-t border-gray-200 pt-6">
         <h4 className="mb-3 text-lg font-medium text-green-700">
           Farm Statistics
         </h4>
@@ -85,7 +85,7 @@ const FarmInformation = ({ farmInfo }) => {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 };

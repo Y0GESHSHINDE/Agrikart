@@ -20,6 +20,7 @@ export const useProfile = () => {
 
       const response = await fetch(
         `https://main-backend-agrikart.vercel.app/api/users/${user.id}`,
+        // console.log(user.id),
         {
           headers: {
             Authorization: `Bearer ${token}`,

@@ -1,18 +1,15 @@
-import React from 'react';
-import { toast } from 'react-toastify';
-import { FaTractor } from 'react-icons/fa';
-import { FaMapMarkerAlt, FaTimes } from 'react-icons/fa';
+import React, { useState } from "react";
+import { toast } from "react-toastify";
+import { FaTractor } from "react-icons/fa";
+import { FaMapMarkerAlt, FaTimes } from "react-icons/fa";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
-
-const EditProfileModal = ({
-  formData,
-  errors,
-  handleInputChange,
-  onSubmit,
-  onClose,
-  isSubmitting
-}) => {
-  const inputClasses = "w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200";
+const EditProfileModal = ({ formData, errors, handleInputChange, onClose }) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { user, isLoaded, isSignedIn } = useUser();
+  // console.log("user id", user?.id);
+  const inputClasses =
+    "w-full p-3 border rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-200";
   const errorClasses = "text-red-500 text-sm mt-1";
   const labelClasses = "block text-gray-700 font-medium mb-1";
 
@@ -21,41 +18,111 @@ const EditProfileModal = ({
       title: "Farm Information",
       icon: <FaTractor className="text-2xl text-green-600" />,
       fields: [
-        { name: "farmSize", label: "Farm Size", type: "text", placeholder: "Enter farm size" },
-        { name: "soilType", label: "Soil Type", type: "text", placeholder: "Enter soil type" },
-        { name: "waterSource", label: "Water Source", type: "text", placeholder: "Enter water source" },
-        { name: "farmingMethods", label: "Farming Methods", type: "text", placeholder: "Enter farming methods" }
-      ]
+        {
+          name: "farmSize",
+          label: "Farm Size",
+          type: "text",
+          placeholder: "Enter farm size",
+        },
+        {
+          name: "soilType",
+          label: "Soil Type",
+          type: "text",
+          placeholder: "Enter soil type",
+        },
+        {
+          name: "waterSource",
+          label: "Water Source",
+          type: "text",
+          placeholder: "Enter water source",
+        },
+        {
+          name: "farmingMethods",
+          label: "Farming Methods",
+          type: "text",
+          placeholder: "Enter farming methods",
+        },
+      ],
     },
     {
       title: "Address Information",
       icon: <FaMapMarkerAlt className="text-2xl text-green-600" />,
       fields: [
-        { name: "village", label: "Village", type: "text", placeholder: "Enter village name" },
-        { name: "city", label: "City", type: "text", placeholder: "Enter city name" },
-        { name: "state", label: "State", type: "text", placeholder: "Enter state name" },
-        { name: "pincode", label: "Pincode", type: "text", placeholder: "Enter 6-digit pincode" }
-      ]
-    }
+        {
+          name: "village",
+          label: "Village",
+          type: "text",
+          placeholder: "Enter village name",
+        },
+        {
+          name: "city",
+          label: "City",
+          type: "text",
+          placeholder: "Enter city name",
+        },
+        {
+          name: "state",
+          label: "State",
+          type: "text",
+          placeholder: "Enter state name",
+        },
+        {
+          name: "pincode",
+          label: "Pincode",
+          type: "text",
+          placeholder: "Enter 6-digit pincode",
+        },
+      ],
+    },
   ];
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/users/${user?.id}/personal-info`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(formData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to update profile");
+      }
+
+      toast.success("Profile updated successfully!");
+      onClose();
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4">
       <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-xl bg-white shadow-lg">
         <div className="sticky top-0 rounded-t-xl border-b border-gray-200 bg-white px-6 py-4">
           <div className="flex items-center justify-between">
-            <h2 className="text-2xl font-semibold text-green-700">Edit Profile</h2>
+            <h2 className="text-2xl font-semibold text-green-700">
+              Edit Profile
+            </h2>
             <button
               onClick={onClose}
               className="rounded-full bg-gray-100 p-2 text-gray-500 transition-all duration-300 hover:bg-gray-200 hover:text-gray-700"
-              aria-label="Close modal"
-            >
+              aria-label="Close modal">
               <FaTimes className="text-xl" />
             </button>
           </div>
         </div>
 
-        <form onSubmit={onSubmit} className="space-y-6 p-6">
+        <form onSubmit={handleSubmit} className="space-y-6 p-6">
           {formSections.map((section, sectionIndex) => (
             <div key={sectionIndex} className="space-y-4">
               <h3 className="flex items-center gap-2 text-lg font-medium text-green-700">
@@ -78,7 +145,9 @@ const EditProfileModal = ({
                       onChange={handleInputChange}
                       placeholder={field.placeholder}
                       className={`${inputClasses} ${
-                        errors[field.name] ? 'border-red-500' : 'border-gray-300'
+                        errors[field.name]
+                          ? "border-red-500"
+                          : "border-gray-300"
                       }`}
                       aria-invalid={errors[field.name] ? "true" : "false"}
                     />
@@ -98,15 +167,13 @@ const EditProfileModal = ({
               type="button"
               onClick={onClose}
               className="rounded-lg border border-gray-300 px-6 py-2.5 text-gray-700 transition-all duration-300 hover:border-green-300 hover:bg-green-50 hover:shadow-md"
-              disabled={isSubmitting}
-            >
+              disabled={isSubmitting}>
               Cancel
             </button>
             <button
               type="submit"
               className="rounded-lg bg-green-600 px-6 py-2.5 text-white transition-all duration-300 hover:bg-green-700 hover:shadow-md disabled:opacity-50"
-              disabled={isSubmitting}
-            >
+              disabled={isSubmitting}>
               {isSubmitting ? (
                 <span className="flex items-center gap-2">
                   <svg className="h-5 w-5 animate-spin" viewBox="0 0 24 24">
@@ -127,7 +194,7 @@ const EditProfileModal = ({
                   Saving...
                 </span>
               ) : (
-                'Save Changes'
+                "Save Changes"
               )}
             </button>
           </div>

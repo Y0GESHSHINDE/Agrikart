@@ -21,6 +21,8 @@ const ProfileInfo = () => {
   const { userData, isLoading, fetchUserData, updateUserData } = useProfile();
   const { formData, errors, isSubmitting, setIsSubmitting, handleInputChange, validateForm, setFormData } = useProfileForm();
   
+  const { user, isLoaded, isSignedIn } = useUser();
+
   // Set initial form data when showing the modal
   const handleShowEditPopup = () => {
     setFormData({
@@ -36,7 +38,7 @@ const ProfileInfo = () => {
     setShowEditPopup(true);
   };
 
-  const { user, isLoaded, isSignedIn } = useUser();
+  // console.log("user id", user?.id);
 
   // Handle form submission
   const handleUpdateProfile = async (e) => {
@@ -61,6 +63,8 @@ const ProfileInfo = () => {
     onEdit: () => setShowEditPopup(true),
     onRefresh: fetchUserData
   };
+
+ 
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -117,6 +121,7 @@ const ProfileInfo = () => {
             onSubmit={handleUpdateProfile}
             onClose={() => setShowEditPopup(false)}
             isSubmitting={isSubmitting}
+            // userId={user?.id} // Pass the userId from Clerk
           />
         )}
       </div>
