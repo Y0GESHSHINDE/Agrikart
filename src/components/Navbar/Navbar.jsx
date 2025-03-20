@@ -32,7 +32,6 @@ const Navbar = () => {
 
             {/* Desktop Menu */}
             <div className="hidden lg:flex items-center space-x-8 text-[14px]">
-              
               {/* Show when User is NOT Logged In */}
               <SignedOut>
                 <Link to="/" className="text-gray-700 hover:text-green-600">
@@ -76,11 +75,10 @@ const Navbar = () => {
                   Krishi AI
                 </Link>
                 <Link
-                  to="/money-earned"
+                  to="/notifications"
                   className="text-gray-700 hover:text-green-600">
-                  My Orders
+                  Notifications
                 </Link>
-
                 <Link
                   to="/weather"
                   className="text-gray-700 hover:text-green-600">
@@ -194,15 +192,13 @@ const Navbar = () => {
               className="text-gray-700 hover:text-green-600">
               Farm Tools
             </Link>
-            <Link
-              to="/krishi"
-              className="text-gray-700 hover:text-green-600">
+            <Link to="/krishi" className="text-gray-700 hover:text-green-600">
               Krishi AI
             </Link>
             <Link
-              to="/money-earned"
+              to="/notifications"
               className="text-gray-700 hover:text-green-600">
-              My Orders
+              Notifications
             </Link>
             <Link to="/weather" className="text-gray-700 hover:text-green-600">
               Weather Forecast

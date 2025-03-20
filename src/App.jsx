@@ -38,6 +38,7 @@ import Faq from "./components/LandingPage/Faq";
 import Krishi from "./layouts/Krishi";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import GoogleTranslate from "./Google translate/GoogleTranslate";
+import NotificationsPage from './layouts/NotificationsPage';
 
 function App() {
   return (
@@ -139,6 +140,14 @@ function App() {
           element={
             <SignedIn>
               <Krishi />
+            </SignedIn>
+          }
+        />
+        <Route
+          path="/notifications"
+          element={
+            <SignedIn>
+              <NotificationsPage />
             </SignedIn>
           }
         />
