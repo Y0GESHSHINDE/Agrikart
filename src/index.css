@@ -85,3 +85,34 @@ body {
 .goog-te-gadget-icon {
   display: none !important;
 }
+
+
+/* Hide the floating Google Translate icon */
+.goog-te-gadget-simple {
+  display: none !important;
+}
+.goog-te-gadget-icon {
+  display: none !important;
+}
+
+/* Hide the Google Translate top bar */
+iframe.skiptranslate {
+  display: none !important;
+}
+
+/* Hide the Google Translate branding banner */
+.goog-te-banner-frame {
+  display: none !important;
+}
+
+/* Prevent content shifting after translation */
+body {
+  top: 0px !important;
+}
+
+/* Hide "Original text" tooltip */
+.goog-text-highlight {
+  display: none !important;
+  background: none !important;
+  color: inherit !important;
+}

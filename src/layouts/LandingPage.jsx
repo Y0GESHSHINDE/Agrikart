@@ -9,7 +9,7 @@ import Footer from '../components/LandingPage/Footer';
 function LandingPage() {
   return (
     <div>
-      <Navbar/>
+      <Navbar/> 
       <Hero/>
       <Categories/>
       <SeasonalDeals/>

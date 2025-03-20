@@ -11,11 +11,11 @@ import LandingPage from "./layouts/LandingPage";
 // Scroll restoration component
 function ScrollToTop() {
   const { pathname } = useLocation();
-  
+
   useEffect(() => {
     // Set manual scroll restoration
-    if ('scrollRestoration' in window.history) {
-      window.history.scrollRestoration = 'manual';
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
     }
     // Scroll to top
     window.scrollTo(0, 0);
@@ -37,11 +37,14 @@ import AboutKrishAi from "./components/LandingPage/AboutKrishAi";
 import Faq from "./components/LandingPage/Faq";
 import Krishi from "./layouts/Krishi";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
+import GoogleTranslate from "./Google translate/GoogleTranslate";
 
 function App() {
   return (
+    
     <Router>
       <ScrollToTop />
+       <GoogleTranslate />
       <Routes>
         {/* Conditional route for "/" - shows different pages based on auth state */}
         <Route
@@ -127,7 +130,7 @@ function App() {
           path="/weather"
           element={
             <SignedIn>
-              < WeatherAppPage/>
+              <WeatherAppPage />
             </SignedIn>
           }
         />
@@ -141,8 +144,8 @@ function App() {
         />
 
         <Route path="/about-agrikart" element={<AboutAgriKart />} />
-        <Route path="/about-krishi-ai" element={< AboutKrishAi/>} />
-        <Route path="/faq" element={< Faq/>} />
+        <Route path="/about-krishi-ai" element={<AboutKrishAi />} />
+        <Route path="/faq" element={<Faq />} />
 
         {/* Catch-all route - redirects unauthenticated users */}
         <Route
