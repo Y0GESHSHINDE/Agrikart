@@ -60,7 +60,7 @@ const AddressInformation = ({ addressInfo }) => {
       </div>
 
       {/* Location Map Preview */}
-      <div className="mt-6 border-t border-gray-200 pt-6">
+      {/* <div className="mt-6 border-t border-gray-200 pt-6">
         <h4 className="mb-3 flex items-center gap-2 text-lg font-medium text-green-700">
           <span className="rounded-full bg-green-50 p-1.5 text-green-600">
             <FaMapMarkerAlt className="text-xl" />
@@ -76,10 +76,10 @@ const AddressInformation = ({ addressInfo }) => {
             )}
           </p>
         </div>
-      </div>
+      </div> */}
 
       {/* Quick Actions */}
-      <div className="mt-4 flex justify-end">
+      {/* <div className="mt-4 flex justify-end">
         <button
           className="flex items-center gap-2 rounded-lg bg-green-50 px-4 py-2 text-sm font-medium text-green-600 transition-all duration-300 hover:bg-green-100 hover:shadow-md"
           onClick={addressInfo.onEdit}
@@ -87,7 +87,7 @@ const AddressInformation = ({ addressInfo }) => {
           <FaPen className="text-lg" />
           Update Address
         </button>
-      </div>
+      </div> */}
     </div>
   );
 };
