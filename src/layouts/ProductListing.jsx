@@ -80,7 +80,7 @@ export default function ProductListing() {
     };
 
     fetchData();
-  }, []);
+  }, [equipmentData]);
 
   // Available filter options for equipment type
   const categories = [
