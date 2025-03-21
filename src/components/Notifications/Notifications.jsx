@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../Navbar/Navbar";
 import { FaCheckCircle, FaTimesCircle, FaMoneyBillWave } from "react-icons/fa";
+import { useAuth, useUser } from "@clerk/clerk-react";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  const userId = "user_2uajmjiaxjtTSB0LE4eX8lA0FDa"; // Replace with dynamic user ID if needed
+  const { user} = useUser();
+  const userId = user.id;
 
   // Fetch notifications from the API
   useEffect(() => {
@@ -31,7 +32,9 @@ export default function Notifications() {
           const notificationsWithDetails = await Promise.all(
             result.data.map(async (notification) => {
               if (notification.relatedTo === "rental_request") {
-                const rentalDetails = await fetchRentalDetails(notification.relatedId);
+                const rentalDetails = await fetchRentalDetails(
+                  notification.relatedId
+                );
                 return { ...notification, rentalDetails };
               }
               return notification;
@@ -82,13 +85,13 @@ export default function Notifications() {
       if (!notification) {
         throw new Error("Notification not found");
       }
-  
+
       const requestId = notification.relatedId;
-  
+
       // Log the requestId and request body for debugging
       console.log("Request ID:", requestId);
       console.log("Decision:", decision);
-  
+
       // Call the API to respond to the rental request (PUT request)
       const response = await fetch(
         `https://main-backend-agrikart.vercel.app/api/rental-requests/${requestId}/respond`,
@@ -103,28 +106,33 @@ export default function Notifications() {
           }),
         }
       );
-  
+
       // Log the API response for debugging
       const result = await response.json();
       console.log("API Response:", result);
-  
+
       if (!response.ok) {
-        throw new Error(result.message || "Failed to update rental request status");
+        throw new Error(
+          result.message || "Failed to update rental request status"
+        );
       }
-  
+
       // Update the local state to reflect the new status
       setNotifications((prev) =>
         prev.map((notif) =>
           notif._id === id ? { ...notif, status: decision } : notif
         )
       );
-  
+
       // Show success message
       setError(null);
       alert(`Rental request ${decision} successfully!`);
     } catch (error) {
       console.error("Error updating rental request status:", error);
-      setError(error.message || "Failed to update rental request status. Please try again later.");
+      setError(
+        error.message ||
+          "Failed to update rental request status. Please try again later."
+      );
     }
   };
 
@@ -181,52 +189,70 @@ export default function Notifications() {
                     : "border-gray-200"
                 }`}
                 whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-              >
+                transition={{ duration: 0.3 }}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {notification.title}
                 </h3>
                 <p className="text-gray-600 mb-3">{notification.message}</p>
 
                 {/* Display rental details if available */}
-                {notification.relatedTo === "rental_request" && notification.rentalDetails && (
-                  <div className="mb-4">
-                    <p className="text-gray-600">
-                      <strong>Message:</strong> {notification.rentalDetails.message}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Start Date:</strong> {new Date(notification.rentalDetails.requestStartDate).toLocaleDateString()}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>End Date:</strong> {new Date(notification.rentalDetails.requestEndDate).toLocaleDateString()}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Total Days:</strong> {notification.rentalDetails.totalDays}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Rental Type:</strong> {notification.rentalDetails.rentalType}
-                    </p>
-                    <p className="text-gray-600">
-                      <strong>Total Cost:</strong> ₹{notification.rentalDetails.totalCost}
-                    </p>
-                  </div>
-                )}
+                {notification.relatedTo === "rental_request" &&
+                  notification.rentalDetails && (
+                    <div className="mb-4">
+                      <p className="text-gray-600">
+                        <strong>Message:</strong>{" "}
+                        {notification.rentalDetails.message}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Start Date:</strong>{" "}
+                        {new Date(
+                          notification.rentalDetails.requestStartDate
+                        ).toLocaleDateString()}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>End Date:</strong>{" "}
+                        {new Date(
+                          notification.rentalDetails.requestEndDate
+                        ).toLocaleDateString()}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Total Days:</strong>{" "}
+                        {notification.rentalDetails.totalDays}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Rental Type:</strong>{" "}
+                        {notification.rentalDetails.rentalType}
+                      </p>
+                      <p className="text-gray-600">
+                        <strong>Total Cost:</strong> ₹
+                        {notification.rentalDetails.totalCost}
+                      </p>
+                    </div>
+                  )}
 
                 {/* If relatedTo is rental_request, show Accept/Reject buttons */}
                 {notification.relatedTo === "rental_request" && (
                   <div className="flex space-x-4">
                     <button
                       className="flex-1 bg-green-600 text-white py-2 rounded-lg flex items-center justify-center hover:bg-green-700 transition"
-                      onClick={() => handleDecision(notification._id, "accepted")}
-                      disabled={notification.status === "accepted" || notification.status === "rejected"}
-                    >
+                      onClick={() =>
+                        handleDecision(notification._id, "accepted")
+                      }
+                      disabled={
+                        notification.status === "accepted" ||
+                        notification.status === "rejected"
+                      }>
                       <FaCheckCircle className="mr-2" /> Accept
                     </button>
                     <button
                       className="flex-1 bg-red-500 text-white py-2 rounded-lg flex items-center justify-center hover:bg-red-600 transition"
-                      onClick={() => handleDecision(notification._id, "rejected")}
-                      disabled={notification.status === "accepted" || notification.status === "rejected"}
-                    >
+                      onClick={() =>
+                        handleDecision(notification._id, "rejected")
+                      }
+                      disabled={
+                        notification.status === "accepted" ||
+                        notification.status === "rejected"
+                      }>
                       <FaTimesCircle className="mr-2" /> Reject
                     </button>
                   </div>
