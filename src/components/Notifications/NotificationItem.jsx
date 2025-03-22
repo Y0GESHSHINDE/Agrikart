@@ -1,4 +1,5 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useAuth } from "@clerk/clerk-react";
 import {
   FaCheckCircle,
   FaTimesCircle,
@@ -12,6 +13,7 @@ import {
   FaChevronUp
 } from 'react-icons/fa';
 import { motion } from 'framer-motion';
+import { toast } from "react-toastify";
 import ProfilePopup from './ProfilePopup';
 
 const NotificationItem = ({ 
@@ -22,22 +24,48 @@ const NotificationItem = ({
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [requesterProfile, setRequesterProfile] = useState(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+  const { getToken } = useAuth();
 
-  // Sample profile data (replace with actual API call in production)
-  const requesterProfile = {
-    name: "John Doe",
-    phone: "+91 98765 43210",
-    email: "john.doe@example.com",
-    address: {
-      village: "Green Valley Farm",
-      city: "Pune",
-      state: "Maharashtra",
-      pincode: "411001"
-    },
-    totalRentals: 5,
-    memberSince: "January 2024",
-    rating: 4.5
-  };
+  // Fetch user profile when profile popup is opened
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      if (!showProfile || !notification.userId) return;
+      
+      try {
+        setLoadingProfile(true);
+        const token = await getToken();
+        const response = await fetch(
+          `https://main-backend-agrikart.vercel.app/api/users/${notification.userId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch user profile");
+        }
+
+        const result = await response.json();
+        if (!result.success) {
+          throw new Error(result.message || "Failed to fetch user profile");
+        }
+
+        setRequesterProfile(result.data);
+      } catch (error) {
+        console.error("Error fetching user profile:", error);
+        toast.error("Failed to load user profile");
+        setRequesterProfile(null);
+      } finally {
+        setLoadingProfile(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, [showProfile, notification.userId, getToken]);
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -193,10 +221,11 @@ const NotificationItem = ({
         <div className={`px-4 py-2 ${colors.detailsBg} border-t ${colors.divider}`}>
           <button
             onClick={() => setShowProfile(true)}
-            className={`w-full text-left flex items-center space-x-2 ${colors.text} ${colors.buttonHover} rounded p-1 transition-colors`}
+            disabled={loadingProfile}
+            className={`w-full text-left flex items-center space-x-2 ${colors.text} ${colors.buttonHover} rounded p-1 transition-colors ${loadingProfile ? 'opacity-50 cursor-not-allowed' : ''}`}
           >
-            <FaUserCircle className={colors.iconColor} />
-            <span>View Requester Profile</span>
+            <FaUserCircle className={`${loadingProfile ? 'animate-spin' : ''} ${colors.iconColor}`} />
+            <span>{loadingProfile ? 'Loading Profile...' : 'View Requester Profile'}</span>
           </button>
         </div>
 
@@ -248,6 +277,7 @@ const NotificationItem = ({
         isOpen={showProfile}
         onClose={() => setShowProfile(false)}
         profile={requesterProfile}
+        isLoading={loadingProfile}
       />
     </>
   );

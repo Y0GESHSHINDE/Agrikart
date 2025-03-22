@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { 
+import {
   FaBell,
   FaSearch,
   FaTractor,
@@ -14,9 +14,9 @@ import {
 } from "react-icons/fa";
 import { motion, AnimatePresence } from 'framer-motion';
 import Navbar from "../Navbar/Navbar";
-import { useUser } from "@clerk/clerk-react";
+import { useUser, useAuth } from "@clerk/clerk-react";
 import NotificationItem from "./NotificationItem";
-import { tempNotifications } from './tempData';
+import { toast } from "react-toastify";
 
 export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
@@ -26,6 +26,7 @@ export default function Notifications() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const { user } = useUser();
+  const { getToken } = useAuth();
 
   // Filter option configurations
   const filterOptions = {
@@ -68,6 +69,7 @@ export default function Notifications() {
     }
   };
   
+  // Load Razorpay script
   useEffect(() => {
     const script = document.createElement("script");
     script.src = "https://checkout.razorpay.com/v1/checkout.js";
@@ -80,41 +82,217 @@ export default function Notifications() {
     };
   }, []);
 
-  const fetchNotifications = async () => {
+  // Fetch notifications from the API
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (!user) {
+        setNotifications([]);
+        return;
+      }
+
+      try {
+        const token = await getToken();
+        const response = await fetch(
+          `https://main-backend-agrikart.vercel.app/api/notifications/user/${user.id}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch notifications");
+        }
+
+        const result = await response.json();
+        if (result.success && Array.isArray(result.data)) {
+          const notificationsWithDetails = await Promise.all(
+            result.data.map(async (notification) => {
+              if (notification.relatedTo === "rental_request") {
+                const rentalDetails = await fetchRentalDetails(
+                  notification.relatedId,
+                  token
+                );
+                return { ...notification, rentalDetails };
+              }
+              return notification;
+            })
+          );
+          setNotifications(notificationsWithDetails);
+        } else {
+          console.error("API response is not an array:", result);
+          setNotifications([]);
+        }
+      } catch (error) {
+        console.error("Error fetching notifications:", error);
+        toast.error("Failed to fetch notifications. Please try again later.");
+        setNotifications([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchNotifications();
+  }, [user, getToken]); // Only re-run when user or getToken changes
+
+  // Fetch rental details using relatedId
+  const fetchRentalDetails = async (relatedId, token) => {
     try {
-      setNotifications(tempNotifications);
-      setLoading(false);
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/rental-requests/${relatedId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch rental details");
+      }
+
+      const result = await response.json();
+      return result.data;
     } catch (error) {
-      console.error("Error fetching notifications:", error);
-      setError("Failed to fetch notifications. Please try again later.");
-    } finally {
-      setLoading(false);
+      console.error("Error fetching rental details:", error);
+      return null;
     }
   };
 
+  // Handle Accept/Reject actions
   const handleDecision = async (id, decision) => {
     try {
+      const notification = notifications.find((notif) => notif._id === id);
+      if (!notification) {
+        throw new Error("Notification not found");
+      }
+
+      const requestId = notification.relatedId;
+      const token = await getToken();
+
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/rental-requests/${requestId}/respond`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            status: decision === "accepted" ? "approved" : "rejected",
+            message: "Your request has been processed",
+          }),
+        }
+      );
+
+      const result = await response.json();
+      if (!response.ok) {
+        throw new Error(result.message || "Failed to update rental request status");
+      }
+
       setNotifications((prev) =>
         prev.map((notif) =>
           notif._id === id ? { ...notif, status: decision } : notif
         )
       );
-      alert(`Rental request ${decision} successfully!`);
+
+      toast.success(`Rental request ${decision} successfully!`);
     } catch (error) {
-      console.error("Error updating rental request:", error);
-      setError(error.message || "Failed to update request. Please try again.");
+      console.error("Error updating rental request status:", error);
+      toast.error(error.message || "Failed to update request. Please try again.");
     }
   };
 
+  // Initiate payment
   const initiatePayment = async (notification) => {
     try {
-      alert("Payment simulation: In test mode, no actual payment will be processed");
+      const token = await getToken();
+      const rentalRequestId = notification.relatedId;
+
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/payments/create-order`,
+        {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({ rentalRequestId }),
+        }
+      );
+
+      const orderData = await response.json();
+      if (!orderData.success) throw new Error(orderData.message);
+
+      const options = {
+        key: "rzp_test_3y3gCTGT3JZaFY",
+        amount: orderData.data.amount,
+        currency: orderData.data.currency || "INR",
+        name: "Agrikart",
+        description: `Rental payment for ${orderData.data.equipmentName || "equipment"}`,
+        order_id: orderData.data.orderId,
+        handler: function (response) {
+          verifyPayment(response, orderData.data.paymentId, token);
+        },
+        prefill: {
+          name: user?.fullName || "",
+          email: user?.primaryEmailAddress?.emailAddress || "",
+          contact: "",
+        },
+        theme: {
+          color: "#16a34a",
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (error) {
       console.error("Payment initiation failed:", error);
-      setError("Could not initiate payment. Please try again.");
+      toast.error("Could not initiate payment. Please try again.");
     }
   };
 
+  // Verify payment
+  const verifyPayment = async (razorpayResponse, paymentId, token) => {
+    try {
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/payments/verify`,
+        {
+          method: "POST",
+          headers: { 
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            razorpayOrderId: razorpayResponse.razorpay_order_id,
+            razorpayPaymentId: razorpayResponse.razorpay_payment_id,
+            razorpaySignature: razorpayResponse.razorpay_signature,
+            paymentId: paymentId,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.relatedId === paymentId
+              ? { ...notif, paymentStatus: "completed" }
+              : notif
+          )
+        );
+        toast.success("Payment successful!");
+      } else {
+        toast.error("Payment verification failed. Please contact support.");
+      }
+    } catch (error) {
+      console.error("Payment verification failed:", error);
+      toast.error("Payment verification failed. Please contact support.");
+    }
+  };
+
+  // Filter notifications
   const filteredNotifications = notifications
     .filter(notification => {
       const matchesSearch = 
@@ -139,10 +317,6 @@ export default function Notifications() {
           return false;
       }
     });
-
-  useEffect(() => {
-    fetchNotifications();
-  }, [user]);
 
   // Filter button component with hover effect
   const FilterButton = ({ icon: Icon, label, value }) => (
@@ -311,7 +485,7 @@ export default function Notifications() {
         {renderFilters()}
 
         {/* Notifications List */}
-        <div className="mx-auto max-w-2xl space-y-4">
+        <div className="mx-auto flex max-w-2xl flex-col gap-4">
           {filteredNotifications.length > 0 ? (
             filteredNotifications.map((notification) => (
               <NotificationItem
