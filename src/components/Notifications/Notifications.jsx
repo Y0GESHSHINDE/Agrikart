@@ -21,7 +21,7 @@ export default function Notifications() {
     return () => {
       document.body.removeChild(script);
     };
-  }, []);
+  }, [notifications]);
 
   // Fetch notifications from the API
   useEffect(() => {
@@ -68,7 +68,8 @@ export default function Notifications() {
     };
 
     fetchNotifications();
-  }, [userId]);
+  }, [userId ,notifications ]);
+  
 
   // Fetch rental details using relatedId
   const fetchRentalDetails = async (relatedId) => {
@@ -291,8 +292,7 @@ export default function Notifications() {
                     : "border-gray-200"
                 }`}
                 whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}
-              >
+                transition={{ duration: 0.3 }}>
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {notification.title}
                 </h3>
@@ -344,8 +344,7 @@ export default function Notifications() {
                       disabled={
                         notification.status === "accepted" ||
                         notification.status === "rejected"
-                      }
-                    >
+                      }>
                       <FaCheckCircle className="mr-2" /> Accept
                     </button>
                     <button
@@ -356,8 +355,7 @@ export default function Notifications() {
                       disabled={
                         notification.status === "accepted" ||
                         notification.status === "rejected"
-                      }
-                    >
+                      }>
                       <FaTimesCircle className="mr-2" /> Reject
                     </button>
                   </div>
@@ -367,8 +365,7 @@ export default function Notifications() {
                 {notification.relatedTo === "rental_response" && (
                   <button
                     className="w-full bg-blue-600 text-white py-2 mt-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition"
-                    onClick={() => initiatePayment(notification)}
-                  >
+                    onClick={() => initiatePayment(notification)}>
                     <FaMoneyBillWave className="mr-2" /> Make Payment
                   </button>
                 )}
