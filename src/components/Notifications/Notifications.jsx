@@ -106,7 +106,7 @@ export default function Notifications() {
 
       // Call the API to respond to the rental request (PUT request)
       const response = await fetch(
-        `http://localhost:5000/api/rental-requests/${requestId}/respond`,
+        `https://main-backend-agrikart.vercel.app/api/rental-requests/${requestId}/respond`,
         {
           method: "PUT", // Use PUT method
           headers: {
@@ -169,7 +169,7 @@ export default function Notifications() {
 
       // Initialize Razorpay checkout
       const options = {
-        key:"rzp_test_3y3gCTGT3JZaFY", // Replace with actual key
+        key: "rzp_test_3y3gCTGT3JZaFY", // Replace with actual key
         amount: orderData.data.amount,
         currency: orderData.data.currency || "INR",
         name: "Agrikart",
