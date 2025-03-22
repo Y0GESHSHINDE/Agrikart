@@ -8,8 +8,20 @@ export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const { user} = useUser();
+  const { user } = useUser();
   const userId = user.id;
+
+  // Load Razorpay script when component mounts
+  useEffect(() => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    return () => {
+      document.body.removeChild(script);
+    };
+  }, []);
 
   // Fetch notifications from the API
   useEffect(() => {
@@ -94,7 +106,7 @@ export default function Notifications() {
 
       // Call the API to respond to the rental request (PUT request)
       const response = await fetch(
-        `https://main-backend-agrikart.vercel.app/api/rental-requests/${requestId}/respond`,
+        `http://localhost:5000/api/rental-requests/${requestId}/respond`,
         {
           method: "PUT", // Use PUT method
           headers: {
@@ -132,6 +144,96 @@ export default function Notifications() {
       setError(
         error.message ||
           "Failed to update rental request status. Please try again later."
+      );
+    }
+  };
+
+  // Function to initiate payment
+  const initiatePayment = async (notification) => {
+    try {
+      // Get rental request details from the notification
+      const rentalRequestId = notification.relatedId;
+
+      // Call your backend to create a payment order
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/payments/create-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ rentalRequestId }),
+        }
+      );
+
+      const orderData = await response.json();
+      if (!orderData.success) throw new Error(orderData.message);
+
+      // Initialize Razorpay checkout
+      const options = {
+        key:"rzp_test_3y3gCTGT3JZaFY", // Replace with actual key
+        amount: orderData.data.amount,
+        currency: orderData.data.currency || "INR",
+        name: "Agrikart",
+        description: `Rental payment for ${
+          orderData.data.equipmentName || "equipment"
+        }`,
+        order_id: orderData.data.orderId,
+        handler: function (response) {
+          verifyPayment(response, orderData.data.paymentId);
+        },
+        prefill: {
+          name: user?.fullName || "",
+          email: user?.primaryEmailAddress?.emailAddress || "",
+          contact: "",
+        },
+        theme: {
+          color: "#16a34a", // Green color matching your theme
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment initiation failed:", error);
+      setError("Could not initiate payment. Please try again.");
+    }
+  };
+
+  // Function to verify payment
+  const verifyPayment = async (razorpayResponse, paymentId) => {
+    try {
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/payments/verify`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            razorpayOrderId: razorpayResponse.razorpay_order_id,
+            razorpayPaymentId: razorpayResponse.razorpay_payment_id,
+            razorpaySignature: razorpayResponse.razorpay_signature,
+            paymentId: paymentId,
+          }),
+        }
+      );
+
+      const result = await response.json();
+      if (result.success) {
+        // Update the local state to reflect payment completed
+        setNotifications((prev) =>
+          prev.map((notif) =>
+            notif.relatedId === paymentId
+              ? { ...notif, paymentStatus: "completed" }
+              : notif
+          )
+        );
+
+        alert("Payment successful!");
+      } else {
+        setError("Payment verification failed. Please contact support.");
+      }
+    } catch (error) {
+      console.error("Payment verification failed:", error);
+      setError(
+        "Payment verification failed. Please try again or contact support."
       );
     }
   };
@@ -189,7 +291,8 @@ export default function Notifications() {
                     : "border-gray-200"
                 }`}
                 whileHover={{ scale: 1.02 }}
-                transition={{ duration: 0.3 }}>
+                transition={{ duration: 0.3 }}
+              >
                 <h3 className="text-lg font-semibold text-gray-800 mb-2">
                   {notification.title}
                 </h3>
@@ -241,7 +344,8 @@ export default function Notifications() {
                       disabled={
                         notification.status === "accepted" ||
                         notification.status === "rejected"
-                      }>
+                      }
+                    >
                       <FaCheckCircle className="mr-2" /> Accept
                     </button>
                     <button
@@ -252,7 +356,8 @@ export default function Notifications() {
                       disabled={
                         notification.status === "accepted" ||
                         notification.status === "rejected"
-                      }>
+                      }
+                    >
                       <FaTimesCircle className="mr-2" /> Reject
                     </button>
                   </div>
@@ -260,7 +365,10 @@ export default function Notifications() {
 
                 {/* If relatedTo is rental_response, show Make Payment button */}
                 {notification.relatedTo === "rental_response" && (
-                  <button className="w-full bg-blue-600 text-white py-2 mt-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition">
+                  <button
+                    className="w-full bg-blue-600 text-white py-2 mt-3 rounded-lg flex items-center justify-center hover:bg-blue-700 transition"
+                    onClick={() => initiatePayment(notification)}
+                  >
                     <FaMoneyBillWave className="mr-2" /> Make Payment
                   </button>
                 )}
