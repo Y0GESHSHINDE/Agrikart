@@ -38,140 +38,144 @@ import Faq from "./components/LandingPage/Faq";
 import Krishi from "./layouts/Krishi";
 import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import GoogleTranslate from "./Google translate/GoogleTranslate";
-import NotificationsPage from './layouts/NotificationsPage';
+import NotificationsPage from "./layouts/NotificationsPage";
+import VoiceNavigation from "./components/VoiceNavigation/VoiceNavigation";
 
 function App() {
   return (
-    
-    <Router>
-      <ScrollToTop />
-       <GoogleTranslate />
-      <Routes>
-        {/* Conditional route for "/" - shows different pages based on auth state */}
-        <Route
-          path="/"
-          element={
-            <>
+    <>
+      <Router>
+        <ScrollToTop />
+        <GoogleTranslate />
+        <Routes>
+          {/* Conditional route for "/" - shows different pages based on auth state */}
+          <Route
+            path="/"
+            element={
+              <>
+                <SignedIn>
+                  <MainPage />
+                </SignedIn>
+                <SignedOut>
+                  <LandingPage />
+                </SignedOut>
+              </>
+            }
+          />
+
+          {/* Protected routes - only accessible when signed in */}
+          <Route
+            path="/mainpage"
+            element={
               <SignedIn>
                 <MainPage />
               </SignedIn>
-              <SignedOut>
-                <LandingPage />
-              </SignedOut>
-            </>
-          }
-        />
-
-        {/* Protected routes - only accessible when signed in */}
-        <Route
-          path="/mainpage"
-          element={
-            <SignedIn>
-              <MainPage />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/profile"
-          element={
-            <SignedIn>
-              <ProfilePage />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/Listed-instruments"
-          element={
-            <SignedIn>
-              <ProductListing />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/instrument/:id"
-          element={
-            <SignedIn>
-              <InstrumentDetail />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/manage-instruments"
-          element={
-            <SignedIn>
-              <ManageInstrument />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/rented-instruments"
-          element={
-            <SignedIn>
-              <InstrumentRented />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/money-earned"
-          element={
-            <SignedIn>
-              <MoneyEarned />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/history-ratings"
-          element={
-            <SignedIn>
-              <HistoryRatings />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/weather"
-          element={
-            <SignedIn>
-              <WeatherAppPage />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/krishi"
-          element={
-            <SignedIn>
-              <Krishi />
-            </SignedIn>
-          }
-        />
-        <Route
-          path="/notifications"
-          element={
-            <SignedIn>
-              <NotificationsPage />
-            </SignedIn>
-          }
-        />
-
-        <Route path="/about-agrikart" element={<AboutAgriKart />} />
-        <Route path="/about-krishi-ai" element={<AboutKrishAi />} />
-        <Route path="/faq" element={<Faq />} />
-
-        {/* Catch-all route - redirects unauthenticated users */}
-        <Route
-          path="*"
-          element={
-            <>
+            }
+          />
+          <Route
+            path="/profile"
+            element={
               <SignedIn>
-                <Navigate to="/" />
+                <ProfilePage />
               </SignedIn>
-              <SignedOut>
-                <Navigate to="/" />
-              </SignedOut>
-            </>
-          }
-        />
-      </Routes>
-    </Router>
+            }
+          />
+          <Route
+            path="/Listed-instruments"
+            element={
+              <SignedIn>
+                <ProductListing />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/instrument/:id"
+            element={
+              <SignedIn>
+                <InstrumentDetail />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/manage-instruments"
+            element={
+              <SignedIn>
+                <ManageInstrument />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/rented-instruments"
+            element={
+              <SignedIn>
+                <InstrumentRented />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/money-earned"
+            element={
+              <SignedIn>
+                <MoneyEarned />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/history-ratings"
+            element={
+              <SignedIn>
+                <HistoryRatings />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/weather"
+            element={
+              <SignedIn>
+                <WeatherAppPage />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/krishi"
+            element={
+              <SignedIn>
+                <Krishi />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/notifications"
+            element={
+              <SignedIn>
+                <NotificationsPage />
+              </SignedIn>
+            }
+          />
+
+          <Route path="/about-agrikart" element={<AboutAgriKart />} />
+          <Route path="/about-krishi-ai" element={<AboutKrishAi />} />
+          <Route path="/faq" element={<Faq />} />
+
+          {/* Catch-all route - redirects unauthenticated users */}
+          <Route
+            path="*"
+            element={
+              <>
+                <SignedIn>
+                  <Navigate to="/" />
+                </SignedIn>
+                <SignedOut>
+                  <Navigate to="/" />
+                </SignedOut>
+              </>
+            }
+          />
+        </Routes>
+        {/* Voice Navigation floating button (only shows when signed in) */}
+        <VoiceNavigation />
+      </Router>
+    </>
   );
 }
 
