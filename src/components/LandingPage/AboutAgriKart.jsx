@@ -61,7 +61,8 @@ const HowAgriKartWorks = () => {
   return (
     <>
       <Navbar />
-      <div className="py-16 container mx-auto px-4 sm:px-6">
+      <div className="py-16 container mx-auto px-4 sm:px-6"
+      >
         <h2 className="text-3xl font-bold text-center mb-12">
           How AgriKart Works
         </h2>

@@ -4,18 +4,19 @@ import { MdGTranslate } from "react-icons/md";
 
 const GoogleTranslate = () => {
   const [selectedLang, setSelectedLang] = useState(localStorage.getItem("selectedLanguage") || "en");
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     // Initialize Google Translate
     const googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
-        { pageLanguage: "en", includedLanguages: "mr", autoDisplay: false },
+        { pageLanguage: "en", includedLanguages: "mr,hi,ta,te,kn,ml,gu,pa,bn", autoDisplay: false },
         "google_translate_element"
       );
 
       // Apply saved language preference
-      if (localStorage.getItem("selectedLanguage") === "mr") {
-        setTimeout(() => translateToMarathi(), 500);
+      if (localStorage.getItem("selectedLanguage")) {
+        setTimeout(() => translateToLanguage(localStorage.getItem("selectedLanguage")), 500);
       }
     };
 
@@ -41,13 +42,13 @@ const GoogleTranslate = () => {
     document.head.appendChild(style);
   }, []);
 
-  const translateToMarathi = () => {
+  const translateToLanguage = (langCode) => {
     const select = document.querySelector(".goog-te-combo");
     if (select) {
-      select.value = "mr";
+      select.value = langCode;
       select.dispatchEvent(new Event("change"));
-      localStorage.setItem("selectedLanguage", "mr");
-      setSelectedLang("mr");
+      localStorage.setItem("selectedLanguage", langCode);
+      setSelectedLang(langCode);
     }
   };
 
@@ -70,6 +71,24 @@ const GoogleTranslate = () => {
     setTimeout(() => window.location.reload(), 500);
   };
 
+  const handleLanguageSelect = (langCode) => {
+    translateToLanguage(langCode);
+    setShowPopup(false);
+  };
+
+  const indianLanguages = [
+    { code: "en", name: "English" },
+    { code: "mr", name: "Marathi" },
+    { code: "hi", name: "Hindi" },
+    { code: "ta", name: "Tamil" },
+    { code: "te", name: "Telugu" },
+    { code: "kn", name: "Kannada" },
+    { code: "ml", name: "Malayalam" },
+    { code: "gu", name: "Gujarati" },
+    { code: "pa", name: "Punjabi" },
+    { code: "bn", name: "Bengali" },
+  ];
+
   return (
     <>
       <div id="google_translate_element" style={{ display: "none" }}></div>
@@ -86,30 +105,28 @@ const GoogleTranslate = () => {
           zIndex: 1000,
         }}
       >
-        {selectedLang !== "mr" && (
-          <button
-            onClick={translateToMarathi}
-            style={{
-              width: "50px",
-              height: "50px",
-              background: "green",
-              color: "white",
-              border: "none",
-              cursor: "pointer",
-              fontSize: "20px",
-              borderRadius: "50%",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            }}
-            title="Translate to Marathi"
-          >
-            <MdGTranslate />
-          </button>
-        )}
+        <button
+          onClick={() => setShowPopup(!showPopup)}
+          style={{
+            width: "50px",
+            height: "50px",
+            background: "green",
+            color: "white",
+            border: "none",
+            cursor: "pointer",
+            fontSize: "20px",
+            borderRadius: "50%",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
+          title="Translate to Regional Language"
+        >
+          <MdGTranslate />
+        </button>
 
-        {selectedLang === "mr" && (
+        {selectedLang !== "en" && (
           <button
             onClick={resetToEnglish}
             style={{
@@ -132,6 +149,42 @@ const GoogleTranslate = () => {
           </button>
         )}
       </div>
+
+      {/* Language Selection Popup */}
+      {showPopup && (
+        <div
+          style={{
+            position: "fixed",
+            bottom: "80px",
+            right: "20px",
+            background: "white",
+            borderRadius: "10px",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+            padding: "10px",
+            zIndex: 1001,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            {indianLanguages.map((lang) => (
+              <button
+                key={lang.code}
+                onClick={() => handleLanguageSelect(lang.code)}
+                style={{
+                  padding: "10px",
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  textAlign: "left",
+                  fontSize: "16px",
+                  color: "black",
+                }}
+              >
+                {lang.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };

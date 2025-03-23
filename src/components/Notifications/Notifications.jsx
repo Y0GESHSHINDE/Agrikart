@@ -134,7 +134,7 @@ export default function Notifications() {
     };
 
     fetchNotifications();
-  }, [user, getToken]); // Only re-run when user or getToken changes
+  }, [user, getToken,notifications]); // Only re-run when user or getToken changes
 
   // Fetch rental details using relatedId
   const fetchRentalDetails = async (relatedId, token) => {

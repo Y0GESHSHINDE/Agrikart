@@ -26,7 +26,7 @@ const AboutKrishAi = () => {
       <div
         className="relative w-full min-h-screen flex flex-col justify-center items-center text-center  text-white px-4 sm:px-6"
         style={{
-          backgroundImage: `url('https://images.unsplash.com/uploads/141247613151541c06062/c15fb37d?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
+          backgroundImage: `url('https://cdn.pixabay.com/photo/2018/07/09/18/40/nature-3526840_1280.jpg')`,
           backgroundSize: "cover",
           backgroundPosition: "center",
         }}>
@@ -38,27 +38,27 @@ const AboutKrishAi = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1 }}>
               <img src= {krishiLogo} alt="Krishi Logo" className="w-52 lg:-mt-8" />
-              <h1 className="text-5xl sm:text-6xl text-green-700 -mt-14 font-bold">
+              <h1 className="text-5xl sm:text-6xl text-white -mt-14 font-bold">
                 Krishi
               </h1>
-              <div className="text-lg sm:text-3xl text-black mt-2 font-normal">
+              <div className="text-lg sm:text-3xl text-white mt-2 font-normal">
                 Smart Farming for a Smarter Future
               </div>
             </motion.div>
 
-            <motion.p
-              className="text-base sm:text-lg text-black font-bold p-2 rounded-lg  max-w-2xl mb-6 px-4 sm:px-0"
+            {/* <motion.p
+              className="text-base sm:text-lg text-white font-bold p-2 rounded-lg  max-w-2xl mb-6 px-4 sm:px-0"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.5, duration: 1 }}>
               Experience the power of AI in modern farming. Enhance
               productivity, optimize resources, and grow smarter with Krishi AI.
-            </motion.p>
+            </motion.p> */}
 
             {/* CTA Button */}
             <motion.a
               href="#"
-              className="bg-amber-500 hover:bg-green-700 text-white font-bold px-5 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-lg shadow-lg inline-block"
+              className="bg-amber-500 hover:bg-green-700 mt-4 text-white font-bold px-5 sm:px-6 py-2 sm:py-3 rounded-full text-sm sm:text-lg shadow-lg inline-block"
               whileHover={{ scale: 1.1 }}
               transition={{ duration: 0.3 }}>
               Get Started with Krishi AI 🚜

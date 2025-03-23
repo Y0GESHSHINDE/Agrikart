@@ -28,45 +28,55 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <div className="py-16 bg-gray-50">
+    <div className="py-20 bg-gradient-to-b from-gray-50 to-white">
       <div className="container mx-auto px-6 text-center">
-        <h2 className="text-4xl font-extrabold text-gray-900 mb-4">
-          What Our Customers Say
-        </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto mb-12">
+        <motion.h2
+          className="text-4xl font-extrabold text-gray-900 mb-4"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+        >
+          What Our farmers Say
+        </motion.h2>
+        <motion.p
+          className="text-lg text-gray-600 max-w-2xl mx-auto mb-12"
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+        >
           Hear from our satisfied farmers who have transformed their agricultural experience with our services.
-        </p>
+        </motion.p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {testimonials.map((testimonial, index) => (
             <motion.div
               key={index}
-              className="bg-white p-6 rounded-2xl shadow-md border border-gray-200 hover:shadow-lg transition duration-300"
+              className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 border border-gray-100"
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
             >
-              <div className="flex items-center space-x-4 mb-4">
+              <div className="flex flex-col items-center text-center">
                 <img
                   src={testimonial.image}
                   alt={testimonial.name}
-                  className="w-14 h-14 rounded-full border-2 border-green-500"
+                  className="w-16 h-16 rounded-full border-4 border-green-500 mb-4"
                 />
-                <div>
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {testimonial.name}
-                  </h3>
-                  <p className="text-sm text-gray-500">{testimonial.role}</p>
+                <h3 className="text-xl font-semibold text-gray-800">
+                  {testimonial.name}
+                </h3>
+                <p className="text-sm text-gray-500 mb-4">{testimonial.role}</p>
+                <p className="text-gray-700 italic mb-6">
+                  "{testimonial.quote}"
+                </p>
+                <div className="flex space-x-1 text-yellow-400">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5" />
+                  ))}
                 </div>
-              </div>
-
-              <p className="text-gray-700 italic mb-4">"{testimonial.quote}"</p>
-
-              <div className="flex justify-center text-yellow-400">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-5 h-5" />
-                ))}
               </div>
             </motion.div>
           ))}

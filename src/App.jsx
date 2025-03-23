@@ -40,6 +40,7 @@ import { SignedIn, SignedOut, useAuth } from "@clerk/clerk-react";
 import GoogleTranslate from "./Google translate/GoogleTranslate";
 import NotificationsPage from "./layouts/NotificationsPage";
 import VoiceNavigation from "./components/VoiceNavigation/VoiceNavigation";
+import ContactForm from './components/LandingPage/ContactForm';
 
 function App() {
   return (
@@ -156,6 +157,7 @@ function App() {
           <Route path="/about-agrikart" element={<AboutAgriKart />} />
           <Route path="/about-krishi-ai" element={<AboutKrishAi />} />
           <Route path="/faq" element={<Faq />} />
+          <Route path="/contact-us" element={<ContactForm/>} />
 
           {/* Catch-all route - redirects unauthenticated users */}
           <Route

@@ -32,34 +32,41 @@ const seasons = [
 
 const SeasonalDeals = () => {
   const navigate = useNavigate();
-  const { isSignedIn } = useAuth(); // Check if user is signed in
+  const { isSignedIn } = useAuth();
+
+  const handleCardClick = (seasonName) => {
+    if (isSignedIn) {
+      navigate(`/seasonal-deals/${seasonName.toLowerCase()}`);
+    } else {
+      // Trigger Clerk sign-in modal
+      document.querySelector(".clerk-sign-in").click();
+    }
+  };
 
   return (
-    <div className="py-16 bg-white">
+    <div className="py-16 bg-gray-50">
       <div className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-12">
-          <div>
-            <h2 className="text-3xl font-bold mb-4">Seasonal Equipment Deals</h2>
+        {/* Header Section */}
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
+          <div className="text-center md:text-left mb-6 md:mb-0">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Seasonal Equipment Deals
+            </h2>
             <p className="text-gray-600 max-w-2xl">
-              Get the right equipment for every season. Our rental programs align with your agricultural calendar.
+              Get the right equipment for every season. Our rental programs align
+              with your agricultural calendar.
             </p>
           </div>
-          <Calendar className="w-12 h-12 text-green-600" />
+          <Calendar className="w-12 h-12 text-green-600 hidden md:block" />
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {/* Grid Layout */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           {seasons.map((season, index) => (
             <div
               key={index}
-              className="group relative overflow-hidden rounded-lg shadow-md cursor-pointer"
-              onClick={() => {
-                if (isSignedIn) {
-                  navigate("/seasonal-deals");
-                } else {
-                  // Trigger Clerk sign-in modal
-                  document.querySelector(".clerk-sign-in").click();
-                }
-              }}
+              className="group relative overflow-hidden rounded-xl shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+              onClick={() => handleCardClick(season.name)}
             >
               {/* Card Image */}
               <div
@@ -71,10 +78,14 @@ const SeasonalDeals = () => {
 
               {/* Card Content */}
               <div className="p-6 bg-white">
-                <h3 className="text-xl font-semibold mb-3">{season.name} Equipment</h3>
+                <h3 className="text-xl font-semibold text-gray-900 mb-3">
+                  {season.name} Equipment
+                </h3>
                 <ul className="space-y-2 mb-4">
                   {season.equipment.map((item, idx) => (
-                    <li key={idx} className="text-gray-600 text-sm">• {item}</li>
+                    <li key={idx} className="text-gray-600 text-sm">
+                      • {item}
+                    </li>
                   ))}
                 </ul>
 
@@ -83,7 +94,7 @@ const SeasonalDeals = () => {
                   <button
                     onClick={(e) => {
                       e.stopPropagation(); // Prevent card click when button is clicked
-                      navigate("/seasonal-deals");
+                      navigate(`/seasonal-deals/${season.name.toLowerCase()}`);
                     }}
                     className="flex items-center text-green-600 hover:text-green-700 font-semibold group"
                   >

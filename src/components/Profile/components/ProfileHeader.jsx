@@ -50,7 +50,7 @@ const ProfileHeader = ({ userInfo }) => {
             </div>
 
             {/* Bio section */}
-            <p className="text-sm italic text-gray-600 md:pr-4">{bio}</p>
+            {/* <p className="text-sm italic text-gray-600 md:pr-4">{bio}</p> */}
 
             <div className="grid grid-cols-1 gap-2 text-sm text-gray-600 sm:text-base md:grid-cols-2">
               <div className="flex items-center gap-2 overflow-hidden">
@@ -76,7 +76,7 @@ const ProfileHeader = ({ userInfo }) => {
             </div>
 
             {/* Badges section */}
-            <div className="flex flex-wrap gap-2 pt-1">
+            <div className="md:flex flex-wrap  gap-2 pt-1">
               {badges.map((badge, index) => (
                 <span
                   key={index}
