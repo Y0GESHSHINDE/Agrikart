@@ -73,13 +73,13 @@ const ProfileInfo = () => {
       <div className="container mx-auto mt-10 p-6">
         {isLoading ? (
           <div className="w-full py-8 text-center">
-            <div className="mx-auto h-12 w-12 animate-spin rounded-full border-b-2 border-green-500"></div>
+            <div className="mx-auto h-12 w-12 animate-spin rounded-full "></div>
             <p className="mt-4 text-gray-600">Loading profile data...</p>
           </div>
         ) : (
           <div className="space-y-6">
             {/* Profile Header */}
-            <div className="rounded-xl border border-gray-200 bg-gradient-to-r from-emerald-200 via-teal-200 to-green-200 p-8 shadow-lg">
+            <div className="rounded-xl border ">
               <ProfileHeader userInfo={userInfo} />
             </div>
 

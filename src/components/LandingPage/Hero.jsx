@@ -7,6 +7,7 @@ import {
   SignedOut,
   SignInButton,
 } from "@clerk/clerk-react";
+import '../../../public/fonts/fonts.css'
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -25,19 +26,19 @@ const Hero = () => {
       </div>
 
       {/* Content */}
-      <div className="relative container mx-auto px-6 text-center text-white">
+      <div className="relative container mx-auto px-6  text-center text-white">
         <motion.h1
-          className="text-4xl md:text-6xl font-extrabold leading-tight mb-4"
+          className="text-3xl md:text-7xl font-extrabold   leading-tight mb-4 "
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
           Revolutionizing Farming{" "}
-          <div className="text-amber-500">Rent Smart, Farm Smarter!</div>
+          <div className="text-amber-500 text-2xl md:text-5xl md:mt-3  ">Rent Smart, Farm Smarter!</div>
         </motion.h1>
 
         <motion.p
-          className="text-lg md:text-xl text-gray-200 max-w-3xl mx-auto mb-6"
+          className="text-lg md:text-xl text-gray-200  max-w-3xl mx-auto mb-6"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.3, duration: 0.8 }}
@@ -72,7 +73,7 @@ const Hero = () => {
           <SignedIn>
             <button
               onClick={() => navigate("/product-listing")}
-              className="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg text-lg font-semibold transition transform hover:scale-105 shadow-lg"
+              className="bg-orange-400  px-6 py-3 rounded-lg text-lg font-semibold transition transform hover:scale-105 shadow-lg"
             >
               🚜 Browse Equipment
             </button>
@@ -87,7 +88,7 @@ const Hero = () => {
           {/* If user is NOT signed in → Redirect to Sign-In Page */}
           <SignedOut>
             <SignInButton>
-              <button className="bg-green-500 hover:bg-green-600 px-6 py-3 rounded-lg text-lg font-semibold transition transform hover:scale-105 shadow-lg">
+              <button className="bg-orange-400 hover:bg-green-600 px-6 py-3 rounded-lg text-lg font-semibold transition transform hover:scale-105 shadow-lg">
                 🚜 Browse Equipment
               </button>
             </SignInButton>

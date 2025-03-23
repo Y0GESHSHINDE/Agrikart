@@ -92,9 +92,8 @@ const Hero = () => {
         style={{
           backgroundImage:
             'url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80")',
-        }}
-      >
-    <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 z-10"></div>
+        }}>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 z-10"></div>
       </div>
 
       {/* Content Container */}
@@ -123,15 +122,13 @@ const Hero = () => {
             />
             <button
               className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-green-500 text-white rounded-full p-1.5 sm:p-2 hover:bg-green-600 transition-all"
-              onClick={() => searchProducts(searchQuery)}
-            >
+              onClick={() => searchProducts(searchQuery)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-5 w-5 sm:h-6 sm:w-6"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -155,16 +152,14 @@ const Hero = () => {
                       {searchResults.map((product) => (
                         <div
                           key={product.id}
-                          className="border-b border-gray-200 last:border-none"
-                        >
+                          className="border-b border-gray-200 last:border-none">
                           <Link
                             to={`/product/${product.id}`}
                             className="flex items-start p-3 hover:bg-gray-50"
                             onClick={() => {
                               setShowResults(false);
                               setSearchQuery("");
-                            }}
-                          >
+                            }}>
                             <div className="w-16 h-16 flex-shrink-0">
                               <img
                                 src={product.imageUrl}
@@ -204,8 +199,7 @@ const Hero = () => {
               onClick={() => {
                 setSearchQuery("Agricultural Tools");
                 searchProducts("Agricultural Tools");
-              }}
-            >
+              }}>
               Agricultural Tools
             </span>
             <span
@@ -213,8 +207,7 @@ const Hero = () => {
               onClick={() => {
                 setSearchQuery("Field Equipment");
                 searchProducts("Field Equipment");
-              }}
-            >
+              }}>
               Field Equipment
             </span>
             <span
@@ -222,8 +215,7 @@ const Hero = () => {
               onClick={() => {
                 setSearchQuery("Irrigation");
                 searchProducts("Irrigation");
-              }}
-            >
+              }}>
               Irrigation Systems
             </span>
           </div>
@@ -231,7 +223,7 @@ const Hero = () => {
 
         {/* Feature Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-6xl mt-2 sm:mt-4">
-          {/* Card 1 */}
+          {/* Farm Tools Card */}
           <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
             <div className="bg-green-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
@@ -239,44 +231,30 @@ const Hero = () => {
                 className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"
+                  d="M3 10h11M9 21V3m6 18V3m6 7H10"
                 />
               </svg>
             </div>
             <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
-              Smart Farming
+              Farm Tools
             </h3>
             <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
-              IoT devices and AI solutions for modern agriculture.
+              Explore advanced tools to improve efficiency and productivity in
+              farming.
             </p>
-            <a
-              href="#"
-              className="text-green-400 group-hover:text-green-300 inline-flex items-center text-sm sm:text-base"
-            >
+            <Link
+              to="/listed-instruments"
+              className="text-green-400 group-hover:text-green-300 inline-flex items-center text-sm sm:text-base">
               Explore
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            </a>
+            </Link>
           </div>
 
-          {/* Card 2 - Add this card */}
+          {/* Krishi AI Card */}
           <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
             <div className="bg-blue-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
@@ -284,86 +262,147 @@ const Hero = () => {
                 className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"
+                  d="M13 16V6a1 1 0 00-2 0v10a1 1 0 102 0zm-7-2a1 1 0 011-1h8a1 1 0 110 2H7a1 1 0 01-1-1zM5 12h14m-7-9v4"
                 />
               </svg>
             </div>
             <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
-              Precision Tools
+              Krishi AI
             </h3>
             <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
-              Equipment designed for accuracy and efficiency in farming.
+              AI-powered solutions to analyze crops and enhance farming
+              techniques.
             </p>
-            <a
-              href="#"
-              className="text-blue-400 group-hover:text-blue-300 inline-flex items-center text-sm sm:text-base"
-            >
+            <Link
+              to="/krishi"
+              className="text-blue-400 group-hover:text-blue-300 inline-flex items-center text-sm sm:text-base">
               Discover
-              <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
-                />
-              </svg>
-            </a>
+            </Link>
           </div>
 
-          {/* Card 3 - Add this card */}
+          {/* Check Weather Card */}
           <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-amber-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
+            <div className="bg-cyan-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
                   strokeWidth={2}
-                  d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
+                  d="M4 12h16M12 4v16"
                 />
               </svg>
             </div>
             <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
-              Sustainable Farming
+              Check Weather
             </h3>
             <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
-              Eco-friendly solutions for responsible agricultural practices.
+              Get the latest weather updates for your farming needs.
             </p>
-            <a
-              href="#"
-              className="text-amber-400 group-hover:text-amber-300 inline-flex items-center text-sm sm:text-base"
-            >
-              Learn More
+            <Link
+              to="/weather"
+              className="text-cyan-400 group-hover:text-cyan-300 inline-flex items-center text-sm sm:text-base">
+              Check Now
+            </Link>
+          </div>
+
+          {/* Manage Instruments Card */}
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
+            <div className="bg-purple-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
               <svg
-                className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2 transform group-hover:translate-x-1 transition-transform"
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
                 fill="none"
                 viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
+                stroke="currentColor">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M14 5l7 7m0 0l-7 7m7-7H3"
+                  strokeWidth={2}
+                  d="M5 13l4 4L19 7"
                 />
               </svg>
-            </a>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+              Manage Instruments
+            </h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+              Keep track of all your rented and listed farming instruments.
+            </p>
+            <Link
+              to="/manage-instruments"
+              className="text-purple-400 group-hover:text-purple-300 inline-flex items-center text-sm sm:text-base">
+              Manage Now
+            </Link>
+          </div>
+
+          {/* Manage Profile Card */}
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
+            <div className="bg-yellow-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M5 12h14M12 5v14"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+              Manage Profile
+            </h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+              Update your profile and preferences.
+            </p>
+            <Link
+              to="/profile"
+              className="text-yellow-400 group-hover:text-yellow-300 inline-flex items-center text-sm sm:text-base">
+              Edit Profile
+            </Link>
+          </div>
+
+          {/* Help Center Card */}
+          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
+            <div className="bg-red-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 12h6m-3 3v-6m-7 6h14m-7-7V5m0 14v-4"
+                />
+              </svg>
+            </div>
+            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+              Help Center
+            </h3>
+            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+              Get answers to your questions and support.
+            </p>
+            <Link
+              to="/contact-us"
+              className="text-red-400 group-hover:text-red-300 inline-flex items-center text-sm sm:text-base">
+              Get Help
+            </Link>
           </div>
         </div>
       </div>
