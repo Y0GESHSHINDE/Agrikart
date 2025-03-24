@@ -97,8 +97,8 @@ const GoogleTranslate = () => {
       <div
         style={{
           position: "fixed",
-          bottom: "20px",
-          right: "20px",
+          bottom: "25px",
+          right: "25px",
           display: "flex",
           flexDirection: "column",
           gap: "10px",
@@ -108,8 +108,8 @@ const GoogleTranslate = () => {
         <button
           onClick={() => setShowPopup(!showPopup)}
           style={{
-            width: "50px",
-            height: "50px",
+            width: "40px",
+            height: "40px",
             background: "green",
             color: "white",
             border: "none",
