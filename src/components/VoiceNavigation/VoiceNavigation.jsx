@@ -234,7 +234,7 @@ const VoiceNavigation = () => {
 
   return (
     <SignedIn>
-      <div className="fixed bottom-8 left-8 z-50 flex flex-col items-start">
+      <div className="fixed bottom-24 right-8 z-50 flex flex-col items-start">
         {/* Command transcript popup */}
         {isListening && transcript && (
           <div className="mb-3 bg-white p-3 rounded-lg shadow-lg text-sm max-w-xs">
@@ -254,7 +254,7 @@ const VoiceNavigation = () => {
         {isListening && (
           <div className="mb-3 bg-green-100 p-2 rounded-lg text-xs text-green-700 flex items-center">
             <div className="mr-2 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-            Listening for commands...
+            Listening ...
           </div>
         )}
 
