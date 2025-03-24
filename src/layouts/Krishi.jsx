@@ -4,12 +4,18 @@ import { AiOutlineSend } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
 import Agri from "../../public/images/Krishi.png";
 import Navbar from "../components/Navbar/Navbar";
+import ReactMarkdown from "react-markdown";
 
 const Krishi = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
   const chatContainerRef = useRef(null);
+
+  useEffect(() => {
+    // Clear conversation_id when component mounts (page loads/reloads)
+    localStorage.removeItem("conversation_id");
+  }, []);
 
   useEffect(() => {
     if (chatContainerRef.current) {
@@ -43,6 +49,7 @@ const Krishi = () => {
       );
 
       const data = await response.json();
+      console.log(data);
       if (!conversationId)
         localStorage.setItem("conversation_id", data.conversation_id);
 
@@ -59,12 +66,13 @@ const Krishi = () => {
   return (
     <>
       <Navbar />
-      <div className="w-full  block place-items-center   bg-white">
+      <div className="w-full block place-items-center bg-white">
         <div className="w-3/5 flex justify-center flex-col h-[85vh] overflow-hidden">
           <div
             ref={chatContainerRef}
-            className="flex-1 p-4 overflow-y-auto space-y-3">
-            <div className="p-4  text-white text-center flex items-center justify-center">
+            className="flex-1 p-4 overflow-y-auto space-y-3"
+          >
+            <div className="p-4 text-white text-center flex items-center justify-center">
               <img src={Agri} alt="Krishi AI" className="h-40 w-40 mr-2" />
               <h1 className="text-xl font-semibold">Krishi AI</h1>
             </div>
@@ -76,7 +84,8 @@ const Krishi = () => {
                 transition={{ duration: 0.3 }}
                 className={`flex ${
                   msg.sender === "user" ? "justify-end" : "justify-start"
-                }`}>
+                }`}
+              >
                 {msg.sender === "ai" && (
                   <img
                     src={Agri}
@@ -90,8 +99,13 @@ const Krishi = () => {
                     msg.sender === "user"
                       ? "bg-green-500 text-white"
                       : "bg-gray-200 text-black"
-                  }`}>
-                  {msg.text}
+                  }`}
+                >
+                  {msg.sender === "ai" ? (
+                    <ReactMarkdown>{msg.text}</ReactMarkdown>
+                  ) : (
+                    msg.text
+                  )}
                 </div>
                 {msg.sender === "user" && (
                   <FaUserCircle size={32} className="text-green-600 ml-2" />
@@ -103,10 +117,10 @@ const Krishi = () => {
             )}
           </div>
         </div>
-        <div className=" w-3/5 justify-center p-4 border-t flex  items-center">
+        <div className="w-3/5 justify-center p-3 border-t flex items-center">
           <input
             type="text"
-            className="flex-1  rounded-full w px-4 py-2  bg-gray-100 text-black  focus:ring-2 focus:ring-green-500"
+            className="flex-1 rounded-full w px-4 py-2 bg-gray-100 text-black focus:ring-2 focus:ring-green-500"
             placeholder="Ask Krishi AI..."
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -114,7 +128,8 @@ const Krishi = () => {
           />
           <button
             onClick={sendMessage}
-            className="ml-3 bg-green-600 text-white p-2 rounded-full">
+            className="ml-3 bg-green-600 text-white p-2 rounded-full"
+          >
             <AiOutlineSend size={24} />
           </button>
         </div>
