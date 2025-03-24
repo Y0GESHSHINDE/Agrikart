@@ -97,7 +97,7 @@ const GoogleTranslate = () => {
       <div
         style={{
           position: "fixed",
-          bottom: "20px",
+          bottom: "25px",
           right: "25px",
           display: "flex",
           flexDirection: "column",
