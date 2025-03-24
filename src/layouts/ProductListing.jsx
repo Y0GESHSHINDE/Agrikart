@@ -47,10 +47,14 @@ export default function ProductListing() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState("All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
+  const [selectedRating, setSelectedRating] = useState("All");
+  const [selectedAvailability, setSelectedAvailability] = useState("All");
+  const [sortBy, setSortBy] = useState("Featured");
   const [searchQuery, setSearchQuery] = useState("");
   const [equipmentData, setEquipmentData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -124,45 +128,76 @@ export default function ProductListing() {
   ];
 
   // Filter products based on selected filters
-  const filteredProducts = equipmentData.filter((product) => {
-    // Category filter
-    if (
-      selectedCategory !== "All" &&
-      product.equipmentType !== selectedCategory
-    ) {
-      return false;
-    }
-
-    // Price range filter
-    if (selectedPriceRange !== "All") {
-      const [min, max] = selectedPriceRange
-        .replace("₹", "")
-        .replace("Above ", "")
-        .split("-")
-        .map((val) => (val === "Above" ? Infinity : parseFloat(val)));
-
-      if (min === Infinity && product.rentalPerDay <= 10000) {
-        return false;
-      } else if (max === Infinity && product.rentalPerDay <= 10000) {
-        return false;
-      } else if (product.rentalPerDay < min || product.rentalPerDay > max) {
+  const filteredProducts = equipmentData
+    .filter((product) => {
+      // Category filter
+      console.log(product)
+      if (
+        selectedCategory !== "All" &&
+        product.equipmentType !== selectedCategory
+      ) {
         return false;
       }
-    }
 
-    // Search query filter
-    if (
-      searchQuery &&
-      !product.equipmentName
-        .toLowerCase()
-        .includes(searchQuery.toLowerCase()) &&
-      !product.description.toLowerCase().includes(searchQuery.toLowerCase())
-    ) {
-      return false;
-    }
+      // Price range filter
+      if (selectedPriceRange !== "All") {
+        const [min, max] = selectedPriceRange
+          .replace("₹", "")
+          .replace("Above ", "")
+          .split("-")
+          .map((val) => (val === "Above" ? Infinity : parseFloat(val)));
 
-    return true;
-  });
+        if (min === Infinity && product.rentalPerDay <= 10000) {
+          return false;
+        } else if (max === Infinity && product.rentalPerDay <= 10000) {
+          return false;
+        } else if (product.rentalPerDay < min || product.rentalPerDay > max) {
+          return false;
+        }
+      }
+
+      // Rating filter (new)
+      if (selectedRating !== "All") {
+        const minRating = parseFloat(selectedRating);
+        if ((product.rating || 0) < minRating) {
+          return false;
+        }
+      }
+
+      // Availability filter (new)
+      if (selectedAvailability === "InStock" && !product.inStock) {
+        return false;
+      }
+
+      // Search query filter
+      if (
+        searchQuery &&
+        !product.equipmentName
+          .toLowerCase()
+          .includes(searchQuery.toLowerCase()) &&
+        !product.description.toLowerCase().includes(searchQuery.toLowerCase())
+      ) {
+        return false;
+      }
+
+      return true;
+    })
+    .sort((a, b) => {
+      // Sort logic (new)
+      switch (sortBy) {
+        case "PriceLowToHigh":
+          return a.rentalPerHour - b.rentalPerHour;
+        case "PriceHighToLow":
+          return b.rentalPerHour - a.rentalPerHour;
+        case "Rating":
+          return (b.rating || 0) - (a.rating || 0);
+        case "Newest":
+          // Assuming each product has a createdAt date
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        default:
+          return 0; // Featured or default sorting
+      }
+    });
 
   // Pagination logic
   const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
@@ -207,15 +242,25 @@ export default function ProductListing() {
           Farming Equipment
         </h1>
 
+        <div className="md:hidden mb-4">
+          <button
+            onClick={() => setShowMobileFilters(!showMobileFilters)}
+            className="flex items-center justify-center w-full py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
+          >
+            <Filter className="w-4 h-4 mr-2" />
+            {showMobileFilters ? "Hide Filters" : "Show Filters"}
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Search Bar */}
-          <div className="relative flex items-center h-12">
+          <div className="relative flex items-center h-12 mb-3">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
-              className="block w-full h-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+              className="block w-full h-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500 outline-none"
               placeholder="Search equipment..."
               value={searchQuery}
               onChange={(e) =>
@@ -223,33 +268,91 @@ export default function ProductListing() {
               }
             />
           </div>
+        </div>
 
-          {/* Filter Section (Same Height as Search Bar) */}
-          <div className="rounded-lg bg-white p-4 shadow-md flex items-center h-12">
-            <div className="flex items-center space-x-2">
-              <Filter className="h-5 w-5 text-green-700" />
-              <h2 className="text-sm font-semibold text-green-800">Filters</h2>
+        {/* Filter Section with improved design */}
+        <div className={`${showMobileFilters ? "block" : "hidden"} md:block`}>
+          <div className="mb-6 rounded-lg bg-white p-5 shadow-md">
+            <div className="flex flex-wrap items-center justify-between mb-4">
+              <div className="flex items-center space-x-2">
+                <Filter className="h-5 w-5 text-green-700" />
+                <h2 className="text-lg font-semibold text-green-800">
+                  Filters
+                </h2>
+              </div>
+              {/* Clear all filters button */}
+              <button
+                onClick={() => {
+                  setSelectedCategory("All");
+                  setSelectedPriceRange("All");
+                  setSelectedRating("All");
+                  setSelectedAvailability("All");
+                  setSortBy("Featured");
+                  setSearchQuery("");
+                  setCurrentPage(1);
+                }}
+                className="text-sm text-green-700 hover:underline"
+              >
+                Clear All Filters
+              </button>
             </div>
-            <div className="ml-auto">
-              <label htmlFor="category" className="sr-only">
-                Category
-              </label>
-              <div className="relative">
-                <select
-                  id="category"
-                  className="block w-full h-10 appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
-                  value={selectedCategory}
-                  onChange={(e) =>
-                    handleFilterChange(setSelectedCategory, e.target.value)
-                  }>
-                  {categories.map((category) => (
-                    <option key={category} value={category}>
-                      {category}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-700">
-                  <ChevronDown className="h-4 w-4" />
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+              {/* Category filter */}
+              <div>
+                <label
+                  htmlFor="category"
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  Equipment Type
+                </label>
+                <div className="relative">
+                  <select
+                    id="category"
+                    className="block w-full h-10 appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+                    value={selectedCategory}
+                    onChange={(e) =>
+                      handleFilterChange(setSelectedCategory, e.target.value)
+                    }
+                  >
+                    {categories.map((category) => (
+                      <option key={category} value={category}>
+                        {category}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-700">
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
+                </div>
+              </div>
+
+              {/* Price range filter */}
+              <div>
+                <label
+                  htmlFor="priceRange"
+                  className="block mb-1 text-sm font-medium text-gray-700"
+                >
+                  Price Range
+                </label>
+                <div className="relative">
+                  <select
+                    id="priceRange"
+                    className="block w-full h-10 appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+                    value={selectedPriceRange}
+                    onChange={(e) =>
+                      handleFilterChange(setSelectedPriceRange, e.target.value)
+                    }
+                  >
+                    {priceRanges.map((range) => (
+                      <option key={range} value={range}>
+                        {range}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-gray-700">
+                    <ChevronDown className="h-4 w-4" />
+                  </div>
                 </div>
               </div>
             </div>
@@ -267,12 +370,13 @@ export default function ProductListing() {
 
         {/* Product Grid */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 m-1">
             {currentProducts.map((product) => (
               <Link
                 key={product._id}
                 to={`/instrument/${product._id}`}
-                className="block">
+                className="block"
+              >
                 <article className="cursor-pointer overflow-hidden rounded-lg bg-white shadow-md transition-shadow duration-300 hover:shadow-lg">
                   <img
                     src={product.images.primaryImage.url || "/placeholder.svg"}
@@ -326,7 +430,8 @@ export default function ProductListing() {
                   currentPage === 1
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}>
+                } border border-gray-300`}
+              >
                 <ChevronLeft className="h-5 w-5" />
                 <span className="sr-only">Previous</span>
               </button>
@@ -349,7 +454,8 @@ export default function ProductListing() {
                           currentPage === pageNumber
                             ? "bg-green-600 text-white"
                             : "bg-white text-green-700 hover:bg-green-50"
-                        } border border-gray-300`}>
+                        } border border-gray-300`}
+                      >
                         {pageNumber}
                       </button>
                     );
@@ -381,7 +487,8 @@ export default function ProductListing() {
                   currentPage === totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}>
+                } border border-gray-300`}
+              >
                 <ChevronRight className="h-5 w-5" />
                 <span className="sr-only">Next</span>
               </button>
