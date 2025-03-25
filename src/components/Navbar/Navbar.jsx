@@ -86,11 +86,11 @@ const Navbar = () => {
                   className="text-gray-700 hover:text-green-600">
                   Weather Forecast
                 </Link>
-                <Link
+                {/* <Link
                   to="/help-center"
                   className="text-gray-700 hover:text-green-600">
                   Help Center
-                </Link>
+                </Link> */}
               </SignedIn>
             </div>
 
@@ -205,11 +205,11 @@ const Navbar = () => {
             <Link to="/weather" className="text-gray-700 hover:text-green-600">
               Weather Forecast
             </Link>
-            <Link
+            {/* <Link
               to="/help-center"
               className="text-gray-700 hover:text-green-600">
               Help Center
-            </Link>
+            </Link> */}
             <Link
               to="/profile"
               className="w-full text-center text-sm px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 mt-2">
