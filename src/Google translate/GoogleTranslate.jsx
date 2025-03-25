@@ -1,3 +1,4 @@
+// GoogleTranslate.js
 import { useEffect, useState } from "react";
 import { FaRedo } from "react-icons/fa";
 import { MdGTranslate } from "react-icons/md";
@@ -7,20 +8,17 @@ const GoogleTranslate = () => {
   const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
-    // Initialize Google Translate
     const googleTranslateElementInit = () => {
       new window.google.translate.TranslateElement(
         { pageLanguage: "en", includedLanguages: "mr,hi,ta,te,kn,ml,gu,pa,bn", autoDisplay: false },
         "google_translate_element"
       );
 
-      // Apply saved language preference
       if (localStorage.getItem("selectedLanguage")) {
         setTimeout(() => translateToLanguage(localStorage.getItem("selectedLanguage")), 500);
       }
     };
 
-    // Load Google Translate script dynamically
     const scriptId = "google-translate-script";
     if (!document.getElementById(scriptId)) {
       const script = document.createElement("script");
@@ -33,7 +31,6 @@ const GoogleTranslate = () => {
 
     window.googleTranslateElementInit = googleTranslateElementInit;
 
-    // Hide unwanted Google Translate UI elements
     const style = document.createElement("style");
     style.innerHTML = `
       .goog-te-banner-frame, .goog-te-balloon-frame, .goog-te-gadget-icon { display: none !important; }
@@ -55,19 +52,14 @@ const GoogleTranslate = () => {
   const resetToEnglish = () => {
     localStorage.setItem("selectedLanguage", "en");
     setSelectedLang("en");
-
-    // Remove the "googtrans" cookie properly for all paths
     document.cookie =
       "googtrans=; path=/; domain=" +
       window.location.hostname +
       "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-      
     document.cookie =
       "googtrans=; path=/; domain=." +
       window.location.hostname +
       "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-
-    // Force refresh to clear translation
     setTimeout(() => window.location.reload(), 500);
   };
 
@@ -93,23 +85,19 @@ const GoogleTranslate = () => {
     <>
       <div id="google_translate_element" style={{ display: "none" }}></div>
 
-      {/* Floating Translate Icons */}
       <div
         style={{
           position: "fixed",
-          bottom: "25px",
-          right: "25px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
+          bottom: "150px",  // Adjusted to make space for VoiceNavigation
+          right: "20px",
           zIndex: 1000,
         }}
       >
         <button
           onClick={() => setShowPopup(!showPopup)}
           style={{
-            width: "40px",
-            height: "40px",
+            width: "50px",
+            height: "50px",
             background: "green",
             color: "white",
             border: "none",
@@ -142,49 +130,56 @@ const GoogleTranslate = () => {
               alignItems: "center",
               justifyContent: "center",
               boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+              marginTop: "10px",
             }}
             title="Back to English"
           >
             <FaRedo />
           </button>
         )}
-      </div>
 
-      {/* Language Selection Popup */}
-      {showPopup && (
-        <div
-          style={{
-            position: "fixed",
-            bottom: "80px",
-            right: "20px",
-            background: "white",
-            borderRadius: "10px",
-            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
-            padding: "10px",
-            zIndex: 1001,
-          }}
-        >
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {indianLanguages.map((lang) => (
-              <button
-                key={lang.code}
-                onClick={() => handleLanguageSelect(lang.code)}
-                style={{
-                  padding: "10px",
-                  background: "transparent",
-                  border: "none",
-                  cursor: "pointer",
-                  textAlign: "left",
-                  fontSize: "16px",
-                  color: "black",
-                }}
-              >
-                {lang.name}
-              </button>
-            ))}
+        {showPopup && (
+          <div
+            style={{
+              position: "absolute",
+              bottom: "60px",
+              right: "0",
+              background: "white",
+              borderRadius: "10px",
+              boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+              padding: "10px",
+              zIndex: 1001,
+              width: "150px",
+              maxHeight: "300px",
+              overflowY: "auto",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {indianLanguages.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => handleLanguageSelect(lang.code)}
+                  style={{
+                    padding: "8px",
+                    background: "transparent",
+                    border: "none",
+                    cursor: "pointer",
+                    textAlign: "left",
+                    fontSize: "14px",
+                    color: "black",
+                    borderRadius: "5px",
+                    transition: "background 0.2s",
+                  }}
+                  onMouseEnter={(e) => e.target.style.background = "#f0f0f0"}
+                  onMouseLeave={(e) => e.target.style.background = "transparent"}
+                >
+                  {lang.name}
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </>
   );
 };
