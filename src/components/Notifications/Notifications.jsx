@@ -83,11 +83,15 @@ export default function Notifications() {
           },
         }
       );
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.message || "Failed to mark as read");
-
-      toast.success("Notification marked as read!");
+  
+      if (!response.ok) throw new Error("Failed to mark as read");
+  
+      // Update local state to reflect read status
+      setNotifications(prev =>
+        prev.map(notif =>
+          notif._id === notificationId ? { ...notif, isRead: true } : notif
+        )
+      );
     } catch (error) {
       console.error("Error marking notification as read:", error);
       toast.error("Failed to mark notification as read.");
@@ -127,6 +131,7 @@ export default function Notifications() {
       );
 
       await markNotificationAsRead(notificationId);
+
       toast.success(`Rental request ${decision} successfully!`);
     } catch (error) {
       console.error("Error updating request:", error);
@@ -135,8 +140,9 @@ export default function Notifications() {
   };
 
   // Initiate payment
-  const initiatePayment = async (notification) => {
+  const initiatePayment = async (notification ,notificationId) => {
     try {
+      markNotificationAsRead(notificationId);
       if (!window.Razorpay) {
         toast.error("Payment gateway not available. Refresh the page.");
         return;
@@ -185,7 +191,7 @@ export default function Notifications() {
   };
 
   // Verify payment
-  const verifyPayment = async (razorpayResponse, paymentId, token, notificationId) => {
+  const verifyPayment = async (razorpayResponse, paymentId, token) => {
     try {
       const response = await fetch(
         `https://main-backend-agrikart.vercel.app/api/payments/verify`,
@@ -203,17 +209,21 @@ export default function Notifications() {
           }),
         }
       );
-
+  
       const result = await response.json();
       if (!result.success) throw new Error("Payment verification failed");
-
+  
+      // First update payment status in state
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif._id === notificationId ? { ...notif, paymentStatus: "completed" } : notif
+          notif._id === notificationId 
+            ? { ...notif, paymentStatus: "completed" } 
+            : notif
         )
       );
+  
 
-      await markNotificationAsRead(notificationId);
+  
       toast.success("Payment successful!");
     } catch (error) {
       console.error("Payment verification failed:", error);
@@ -238,9 +248,10 @@ export default function Notifications() {
               <NotificationItem
                 key={notification._id}
                 notification={notification}
+                notificationId={notification._id}
                 onAccept={() => handleDecision(notification._id, "accepted")}
                 onReject={() => handleDecision(notification._id, "rejected")}
-                onPayment={() => initiatePayment(notification)}
+                onPayment={() => initiatePayment(notification, notification._id)}
               />
             ))
           ) : (

@@ -20,13 +20,43 @@ const NotificationItem = ({
   notification, 
   onAccept, 
   onReject, 
-  onPayment 
+  onPayment ,
+  notificationId
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [requesterProfile, setRequesterProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const { getToken } = useAuth();
+
+
+    const markNotificationAsRead = async (notificationId) => {
+      try {
+        const token = await getToken();
+        const response = await fetch(
+          `https://main-backend-agrikart.vercel.app/api/notifications/${notificationId}/read`,
+          {
+            method: "PATCH",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+    
+        if (!response.ok) throw new Error("Failed to mark as read");
+    
+        // Update local state to reflect read status
+        setNotifications(prev =>
+          prev.map(notif =>
+            notif._id === notificationId ? { ...notif, isRead: true } : notif
+          )
+        );
+      } catch (error) {
+        console.error("Error marking notification as read:", error);
+        toast.error("Failed to mark notification as read.");
+      }
+    };
 
   // Fetch user profile when profile popup is opened
   useEffect(() => {
@@ -262,7 +292,7 @@ const NotificationItem = ({
             {notification.relatedTo === "rental_response" && (
               <button
                 className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition text-white ${colors.buttonBg}`}
-                onClick={() => onPayment(notification)}
+                onClick={() => onPayment(notification,notificationId) }
               >
                 <FaMoneyBillWave />
                 <span>Make Payment</span>
