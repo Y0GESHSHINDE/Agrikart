@@ -54,7 +54,8 @@
   gap: 12px;
 }
 
-.cancel-button, .install-button {
+.cancel-button,
+.install-button {
   padding: 8px 16px;
   border-radius: 4px;
   border: none;
@@ -69,7 +70,7 @@
 }
 
 .install-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   font-weight: 500;
 }
@@ -98,7 +99,7 @@
     bottom: 0;
     padding: 0;
   }
-  
+
   .prompt-container {
     border-radius: 8px 8px 0 0;
     max-width: 100%;
