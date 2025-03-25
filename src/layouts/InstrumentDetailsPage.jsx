@@ -40,7 +40,6 @@ export default function InstrumentDetailPage() {
 
   // console.log(instrument._id);
 
-
   // Fetch equipment data based on `id`
   useEffect(() => {
     const fetchInstrument = async () => {
@@ -163,12 +162,12 @@ export default function InstrumentDetailPage() {
                         className="w-3/4 text-xl font-bold text-gray-900 sm:text-2xl md:text-[1.7rem] lg:text-3xl">
                         {instrument.equipmentName}
                       </h1>
-                      <span
+                      {/* <span
                         className="inline-flex h-fit w-fit rounded-lg bg-green-100 px-2 py-1 text-sm font-medium text-green-800 shadow-sm ring-1 ring-inset ring-green-200 sm:px-4 sm:py-1.5"
                         role="status"
                         aria-label={`Condition: ${instrument.condition}`}>
                         {instrument.condition}
-                      </span>
+                      </span> */}
                     </div>
                     <div className="mt-2 flex items-center gap-4">
                       <span className="flex items-center text-xs text-gray-600 sm:text-sm">
