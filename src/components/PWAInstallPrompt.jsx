@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import './PWAInstallPrompt.css'; // We'll create this next
+import React, { useState, useEffect } from "react";
+import "./PWAInstallPrompt.css"; // We'll create this next
 
 const PWAInstallPrompt = () => {
   const [installPrompt, setInstallPrompt] = useState(null);
@@ -12,26 +12,28 @@ const PWAInstallPrompt = () => {
       setShowPrompt(true);
     };
 
-    window.addEventListener('beforeinstallprompt', handler);
+    window.addEventListener("beforeinstallprompt", handler);
 
     // Check if the app is already installed
-    const isAppInstalled = window.matchMedia('(display-mode: standalone)').matches;
+    const isAppInstalled = window.matchMedia(
+      "(display-mode: standalone)"
+    ).matches;
     if (isAppInstalled) {
       setShowPrompt(false);
     }
 
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener("beforeinstallprompt", handler);
   }, []);
 
   const handleInstallClick = () => {
     if (!installPrompt) return;
-    
+
     installPrompt.prompt();
     installPrompt.userChoice.then((choiceResult) => {
-      if (choiceResult.outcome === 'accepted') {
-        console.log('User accepted the install prompt');
+      if (choiceResult.outcome === "accepted") {
+        console.log("User accepted the install prompt");
       } else {
-        console.log('User dismissed the install prompt');
+        console.log("User dismissed the install prompt");
       }
       setInstallPrompt(null);
       setShowPrompt(false);
@@ -51,8 +53,15 @@ const PWAInstallPrompt = () => {
           </div>
         </div>
         <div className="prompt-buttons">
-          <button onClick={() => setShowPrompt(false)} className="cancel-button">Not now</button>
-          <button onClick={handleInstallClick} className="install-button">Install</button>
+          <button
+            onClick={() => setShowPrompt(false)}
+            className="cancel-button"
+          >
+            Not now
+          </button>
+          <button onClick={handleInstallClick} className="install-button">
+            Install
+          </button>
         </div>
       </div>
     </div>
