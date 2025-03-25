@@ -176,7 +176,7 @@ const SwiperImageGallery = ({ images = [], placeholderImage = "/placeholder.svg"
 
         return (
             <div
-                className="absolute bottom-0 left-0 right-0 z-10 my-[4%] flex justify-center rounded-b-xl md:my-[4%] lg:my-[2.5%] xl:my-[2%]"
+                className="absolute bottom-0 left-0 right-0 z-10 my-[4%] flex justify-center rounded-b-xl md:my-[4%] lg:my-[2.5%] xl:my-[2%] "
                 role="group"
                 aria-label="Image pagination"
             >
