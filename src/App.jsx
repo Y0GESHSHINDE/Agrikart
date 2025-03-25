@@ -42,6 +42,7 @@ import NotificationsPage from "./layouts/NotificationsPage";
 import VoiceNavigation from "./components/VoiceNavigation/VoiceNavigation";
 import ContactForm from "./components/LandingPage/ContactForm";
 import PWAInstallPrompt from "./components/PWAInstallPrompt"; // Add this import
+import MyInstrumentByOther from "./components/Profile/MyInstrumentByOther";
 
 function App() {
   return (
@@ -151,6 +152,14 @@ function App() {
             element={
               <SignedIn>
                 <NotificationsPage />
+              </SignedIn>
+            }
+          />
+          <Route
+            path="/my-instruments"
+            element={
+              <SignedIn>
+                < MyInstrumentByOther/>
               </SignedIn>
             }
           />
