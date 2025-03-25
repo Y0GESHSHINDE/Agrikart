@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './../Navbar/Navbar';
-import Footer from '../LandingPage/Footer';
 import { useUser } from "@clerk/clerk-react";
 import RenterModal from './RenterModal'; // Import the new modal
 
@@ -58,7 +57,6 @@ function MyInstrumentByOther() {
           </h2>
           <p className="text-center text-gray-600">Loading...</p>
         </div>
-        <Footer />
       </div>
     );
   }
@@ -257,7 +255,6 @@ function MyInstrumentByOther() {
           />
         )}
       </div>
-      {/* <Footer /> */}
     </div>
   );
 }

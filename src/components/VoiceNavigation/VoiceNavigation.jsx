@@ -1,3 +1,4 @@
+// VoiceNavigation.js
 import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaMicrophone, FaMicrophoneSlash } from "react-icons/fa";
@@ -10,21 +11,14 @@ const VoiceNavigation = () => {
   const [error, setError] = useState("");
   const [isSpeechSupported, setIsSpeechSupported] = useState(true);
   const navigate = useNavigate();
-
-  // Use a ref to store the recognition instance
   const recognitionRef = useRef(null);
-
-  // Keep track of last command time to avoid duplicates
   const lastCommandTimeRef = useRef(0);
 
-  // Initialize speech recognition availability check
   useEffect(() => {
     const checkSpeechSupport = () => {
       const isSpeechRecognitionSupported =
         "SpeechRecognition" in window || "webkitSpeechRecognition" in window;
-
       setIsSpeechSupported(isSpeechRecognitionSupported);
-
       if (!isSpeechRecognitionSupported) {
         setError("Speech recognition is not supported in this browser");
       }
@@ -32,7 +26,6 @@ const VoiceNavigation = () => {
 
     checkSpeechSupport();
 
-    // Cleanup function
     return () => {
       if (recognitionRef.current) {
         try {
@@ -44,14 +37,12 @@ const VoiceNavigation = () => {
     };
   }, []);
 
-  // Process voice commands
   const processCommand = (command) => {
     if (!command) return;
 
     const cmd = command.toLowerCase().trim();
     console.log("Processing command:", cmd);
 
-    // Prevent duplicate command execution (commands executed within 1.5 seconds)
     const now = Date.now();
     if (now - lastCommandTimeRef.current < 1500) {
       console.log("Command ignored (too soon after last command)");
@@ -59,14 +50,12 @@ const VoiceNavigation = () => {
     }
     lastCommandTimeRef.current = now;
 
-    // Create command patterns for more flexible matching
     const matchCommand = (patterns) => {
       return patterns.some(
         (pattern) => cmd.includes(pattern) || cmd === pattern
       );
     };
 
-    // Navigation commands
     if (matchCommand(["go to home", "home", "go home"])) {
       navigate("/");
     } else if (matchCommand(["go to tools", "farm tools", "tools"])) {
@@ -92,7 +81,6 @@ const VoiceNavigation = () => {
     }
   };
 
-  // Create and configure recognition instance
   const createRecognitionInstance = () => {
     const SpeechRecognition =
       window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -111,7 +99,6 @@ const VoiceNavigation = () => {
     return recognition;
   };
 
-  // Start continuous listening mode
   const startListening = () => {
     if (!isSpeechSupported) {
       setError("Speech recognition is not supported in this browser");
@@ -119,7 +106,6 @@ const VoiceNavigation = () => {
     }
 
     try {
-      // Stop any existing recognition first
       if (recognitionRef.current) {
         try {
           recognitionRef.current.stop();
@@ -134,14 +120,12 @@ const VoiceNavigation = () => {
       recognitionRef.current = recognition;
 
       recognition.onresult = (event) => {
-        // Get the last result (most recent command)
         const lastResult = event.results[event.results.length - 1];
         if (lastResult.isFinal) {
           const command = lastResult[0].transcript;
           setTranscript(command);
           processCommand(command);
 
-          // Show transcript briefly then clear it
           setTimeout(() => {
             setTranscript("");
           }, 3000);
@@ -151,10 +135,8 @@ const VoiceNavigation = () => {
       recognition.onerror = (event) => {
         console.error("Speech recognition error:", event.error);
         if (event.error === "aborted") {
-          // This is usually fine - just means the recognition was stopped
           setError(null);
         } else if (event.error === "no-speech") {
-          // Don't show an error for no-speech, just log it
           console.log("No speech detected");
         } else {
           setError(`Error: ${event.error}`);
@@ -162,15 +144,12 @@ const VoiceNavigation = () => {
       };
 
       recognition.onend = () => {
-        // Only restart if we're still supposed to be listening
         if (isEnabled && isListening) {
           console.log("Recognition ended, restarting...");
           setTimeout(() => {
             try {
-              // Create a fresh instance instead of reusing the old one
               const newRecognition = createRecognitionInstance();
               if (newRecognition) {
-                // Configure the new instance with the same handlers
                 configureRecognitionHandlers(newRecognition);
                 newRecognition.start();
                 recognitionRef.current = newRecognition;
@@ -186,7 +165,6 @@ const VoiceNavigation = () => {
         }
       };
 
-      // Define a function to configure handlers (used for both initial and restarted instances)
       const configureRecognitionHandlers = (rec) => {
         rec.onresult = recognition.onresult;
         rec.onerror = recognition.onerror;
@@ -204,7 +182,6 @@ const VoiceNavigation = () => {
     }
   };
 
-  // Stop listening
   const stopListening = () => {
     if (recognitionRef.current) {
       try {
@@ -218,72 +195,115 @@ const VoiceNavigation = () => {
     setTranscript("");
   };
 
-  // Replace the two toggle functions with a single function to toggle voice functionality
   const toggleVoice = () => {
     const newEnabledState = !isEnabled;
     setIsEnabled(newEnabledState);
 
     if (!newEnabledState) {
-      // If turning off, stop listening
       stopListening();
     } else {
-      // If turning on, start listening immediately
       startListening();
     }
   };
 
   return (
     <SignedIn>
-      <div className="fixed bottom-24 right-8 z-50 flex flex-col items-start">
-        {/* Command transcript popup */}
+      <div style={{
+        position: "fixed",
+        bottom: "80px",
+        right: "20px",
+        zIndex: 1000,
+      }}>
         {isListening && transcript && (
-          <div className="mb-3 bg-white p-3 rounded-lg shadow-lg text-sm max-w-xs">
-            <p className="font-semibold">I heard:</p>
-            <p className="text-gray-700">"{transcript}"</p>
+          <div style={{
+            marginBottom: "10px",
+            backgroundColor: "white",
+            padding: "8px",
+            borderRadius: "8px",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+            maxWidth: "200px",
+            fontSize: "14px",
+          }}>
+            <p style={{ fontWeight: "bold", marginBottom: "4px" }}>I heard:</p>
+            <p style={{ color: "#333" }}>"{transcript}"</p>
           </div>
         )}
 
-        {/* Error message */}
         {error && (
-          <div className="mb-3 bg-red-100 p-2 rounded-lg text-xs text-red-600 max-w-xs">
+          <div style={{
+            marginBottom: "10px",
+            backgroundColor: "#fee2e2",
+            padding: "8px",
+            borderRadius: "8px",
+            color: "#b91c1c",
+            fontSize: "12px",
+            maxWidth: "200px",
+          }}>
             {error}
           </div>
         )}
 
-        {/* Listening indicator */}
         {isListening && (
-          <div className="mb-3 bg-green-100 p-2 rounded-lg text-xs text-green-700 flex items-center">
-            <div className="mr-2 h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-            Listening ...
+          <div style={{
+            marginBottom: "10px",
+            backgroundColor: "#dcfce7",
+            padding: "8px",
+            borderRadius: "8px",
+            color: "#166534",
+            fontSize: "12px",
+            display: "flex",
+            alignItems: "center",
+          }}>
+            <div style={{
+              marginRight: "8px",
+              width: "8px",
+              height: "8px",
+              backgroundColor: "#22c55e",
+              borderRadius: "50%",
+              animation: "pulse 1.5s infinite",
+            }}></div>
+            Listening...
           </div>
         )}
 
-        {/* Single mic button without text */}
         <button
           onClick={toggleVoice}
           disabled={!isSpeechSupported}
-          className={`rounded-full p-4 ${
-            isEnabled
-              ? isListening
-                ? "bg-green-500"
-                : "bg-green-600"
-              : "bg-gray-500"
-          } transition-all shadow-lg hover:shadow-xl relative ${
-            !isSpeechSupported ? "opacity-50 cursor-not-allowed" : ""
-          }`}
-          title={
-            isEnabled ? "Turn off voice navigation" : "Turn on voice navigation"
-          }
+          style={{
+            width: "50px",
+            height: "50px",
+            borderRadius: "50%",
+            backgroundColor: isEnabled ? (isListening ? "#10b981" : "#059669") : "#d1d5db",
+            color: "white",
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            boxShadow: "0 4px 6px rgba(0,0,0,0.1)",
+            position: "relative",
+            opacity: isSpeechSupported ? 1 : 0.5,
+          }}
+          title={isEnabled ? "Turn off voice navigation" : "Turn on voice navigation"}
         >
           {isEnabled ? (
             <>
-              <FaMicrophone className="text-white text-xl" />
+              <FaMicrophone style={{ fontSize: "20px" }} />
               {isListening && (
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-green-500 rounded-full animate-ping"></span>
+                <div style={{
+                  position: "absolute",
+                  top: "-2px",
+                  right: "-2px",
+                  width: "12px",
+                  height: "12px",
+                  backgroundColor: "#10b981",
+                  borderRadius: "50%",
+                  animation: "ping 1.5s infinite",
+                }}></div>
               )}
             </>
           ) : (
-            <FaMicrophoneSlash className="text-white text-xl" />
+            <FaMicrophoneSlash style={{ fontSize: "20px" }} />
           )}
         </button>
       </div>
