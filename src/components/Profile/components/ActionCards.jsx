@@ -13,10 +13,16 @@ const ActionCards = () => {
       icon: <FaTools className="text-2xl text-green-600" />
     },
     {
-      title: "Instrument Rented",
+      title: "Instrument rented by me",
       desc: "You have rented 3 instruments.",
       link: "/rented-instruments",
       icon: <FaHandshake className="text-2xl text-green-600" />
+    },
+    {
+      title: "My instrument rented by other",
+      desc: "you have rented 2 instruments to others.",
+      link: "#",
+      icon: <FaFileContract className="text-2xl text-green-600" />
     },
     {
       title: "Money Earned",
@@ -24,12 +30,7 @@ const ActionCards = () => {
       link: "/money-earned",
       icon: <FaMoneyBillWave className="text-2xl text-green-600" />
     },
-    {
-      title: "Contracts",
-      desc: "Active Contracts: 5",
-      link: "#",
-      icon: <FaFileContract className="text-2xl text-green-600" />
-    },
+
     {
       title: "History & Rating",
       desc: "Rating: 4.5",
