@@ -21,7 +21,7 @@ const ActionCards = () => {
     {
       title: "My instrument rented by other",
       desc: "you have rented 2 instruments to others.",
-      link: "#",
+      link: "/my-instruments",
       icon: <FaFileContract className="text-2xl text-green-600" />
     },
     {
