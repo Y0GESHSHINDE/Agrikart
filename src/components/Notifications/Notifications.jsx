@@ -10,9 +10,9 @@ import {
   FaTimesCircle,
   FaFilter,
   FaChevronDown,
-  FaTimes
+  FaTimes,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence } from "framer-motion";
 import Navbar from "../Navbar/Navbar";
 import { useUser, useAuth } from "@clerk/clerk-react";
 import NotificationItem from "./NotificationItem";
@@ -22,65 +22,11 @@ export default function Notifications() {
   const [notifications, setNotifications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('all');
-  const [searchTerm, setSearchTerm] = useState('');
+  const [activeTab, setActiveTab] = useState("all");
+  const [searchTerm, setSearchTerm] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const { user } = useUser();
   const { getToken } = useAuth();
-
-  // Filter option configurations
-  const filterOptions = {
-    type: [
-      { value: 'all', label: 'All', icon: FaList },
-      { value: 'rental', label: 'Rental Requests', icon: FaTractor },
-      { value: 'payment', label: 'Payments', icon: FaMoneyBillWave }
-    ],
-    status: [
-      { value: 'pending', label: 'Pending', icon: FaClock },
-      { value: 'accepted', label: 'Accepted', icon: FaCheckCircle },
-      { value: 'rejected', label: 'Rejected', icon: FaTimesCircle }
-    ]
-  };
-
-  // Get active filter labels
-  const getActiveFilterLabel = () => {
-    const activeFilter = [...filterOptions.type, ...filterOptions.status]
-      .find(filter => filter.value === activeTab);
-    return activeFilter?.label || 'All';
-  };
-
-  // Animation variants for filter container
-  const filterContainerVariants = {
-    hidden: { opacity: 0, y: -20 },
-    visible: { 
-      opacity: 1, 
-      y: 0,
-      transition: {
-        duration: 0.3,
-        ease: "easeOut"
-      }
-    },
-    exit: { 
-      opacity: 0, 
-      y: -20,
-      transition: {
-        duration: 0.2
-      }
-    }
-  };
-  
-  // Load Razorpay script
-  useEffect(() => {
-    const script = document.createElement("script");
-    script.src = "https://checkout.razorpay.com/v1/checkout.js";
-    script.async = true;
-    document.body.appendChild(script);
-    return () => {
-      if (document.body.contains(script)) {
-        document.body.removeChild(script);
-      }
-    };
-  }, []);
 
   // Fetch notifications from the API
   useEffect(() => {
@@ -107,19 +53,7 @@ export default function Notifications() {
 
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
-          const notificationsWithDetails = await Promise.all(
-            result.data.map(async (notification) => {
-              if (notification.relatedTo === "rental_request") {
-                const rentalDetails = await fetchRentalDetails(
-                  notification.relatedId,
-                  token
-                );
-                return { ...notification, rentalDetails };
-              }
-              return notification;
-            })
-          );
-          setNotifications(notificationsWithDetails);
+          setNotifications(result.data);
         } else {
           console.error("API response is not an array:", result);
           setNotifications([]);
@@ -134,36 +68,47 @@ export default function Notifications() {
     };
 
     fetchNotifications();
-  }, [user, getToken,notifications]); // Only re-run when user or getToken changes
+  }, [user, getToken]);
 
-  // Fetch rental details using relatedId
-  const fetchRentalDetails = async (relatedId, token) => {
+  // Mark notification as read
+  const markNotificationAsRead = async (notificationId) => {
     try {
+      console.log("Marking notification as read:", notificationId);
+      const token = await getToken();
+      console.log("Using Token:", token); // Debugging token
+
       const response = await fetch(
-        `https://main-backend-agrikart.vercel.app/api/rental-requests/${relatedId}`,
+        `https://main-backend-agrikart.vercel.app/api/notifications/${notificationId}/read`, // ✅ Fixed URL
         {
+          method: "PATCH", // ✅ PATCH is correct
           headers: {
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
         }
       );
 
+      const data = await response.json();
+      console.log("API Response:", data);
+
       if (!response.ok) {
-        throw new Error("Failed to fetch rental details");
+        throw new Error(data.message || "Failed to mark notification as read.");
       }
 
-      const result = await response.json();
-      return result.data;
+      console.log("✅ Notification marked as read successfully!");
+      toast.success("Notification marked as read successfully!"); // ✅ Toast message for success
     } catch (error) {
-      console.error("Error fetching rental details:", error);
-      return null;
+      console.error("❌ Error marking notification as read:", error);
+      toast.error("Failed to mark notification as read. Please try again!"); // ✅ Toast message for error
     }
   };
 
   // Handle Accept/Reject actions
-  const handleDecision = async (id, decision) => {
+  const handleDecision = async (notificationId, decision) => {
     try {
-      const notification = notifications.find((notif) => notif._id === id);
+      const notification = notifications.find(
+        (notif) => notif._id === notificationId
+      );
       if (!notification) {
         throw new Error("Notification not found");
       }
@@ -188,19 +133,26 @@ export default function Notifications() {
 
       const result = await response.json();
       if (!response.ok) {
-        throw new Error(result.message || "Failed to update rental request status");
+        throw new Error(
+          result.message || "Failed to update rental request status"
+        );
       }
 
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif._id === id ? { ...notif, status: decision } : notif
+          notif._id === notificationId ? { ...notif, status: decision } : notif
         )
       );
+
+      // Mark notification as read
+      await markNotificationAsRead(notificationId);
 
       toast.success(`Rental request ${decision} successfully!`);
     } catch (error) {
       console.error("Error updating rental request status:", error);
-      toast.error(error.message || "Failed to update request. Please try again.");
+      toast.error(
+        error.message || "Failed to update request. Please try again."
+      );
     }
   };
 
@@ -214,9 +166,9 @@ export default function Notifications() {
         `https://main-backend-agrikart.vercel.app/api/payments/create-order`,
         {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ rentalRequestId }),
         }
@@ -230,10 +182,17 @@ export default function Notifications() {
         amount: orderData.data.amount,
         currency: orderData.data.currency || "INR",
         name: "Agrikart",
-        description: `Rental payment for ${orderData.data.equipmentName || "equipment"}`,
+        description: `Rental payment for ${
+          orderData.data.equipmentName || "equipment"
+        }`,
         order_id: orderData.data.orderId,
         handler: function (response) {
-          verifyPayment(response, orderData.data.paymentId, token);
+          verifyPayment(
+            response,
+            orderData.data.paymentId,
+            token,
+            notification._id
+          );
         },
         prefill: {
           name: user?.fullName || "",
@@ -254,15 +213,20 @@ export default function Notifications() {
   };
 
   // Verify payment
-  const verifyPayment = async (razorpayResponse, paymentId, token) => {
+  const verifyPayment = async (
+    razorpayResponse,
+    paymentId,
+    token,
+    notificationId
+  ) => {
     try {
       const response = await fetch(
         `https://main-backend-agrikart.vercel.app/api/payments/verify`,
         {
           method: "POST",
-          headers: { 
+          headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
             razorpayOrderId: razorpayResponse.razorpay_order_id,
@@ -277,11 +241,15 @@ export default function Notifications() {
       if (result.success) {
         setNotifications((prev) =>
           prev.map((notif) =>
-            notif.relatedId === paymentId
+            notif._id === notificationId
               ? { ...notif, paymentStatus: "completed" }
               : notif
           )
         );
+
+        // Mark notification as read
+        await markNotificationAsRead(notificationId);
+
         toast.success("Payment successful!");
       } else {
         toast.error("Payment verification failed. Please contact support.");
@@ -293,184 +261,32 @@ export default function Notifications() {
   };
 
   // Filter notifications
-  const filteredNotifications = notifications
-    .filter(notification => {
-      const matchesSearch = 
-        notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        notification.message.toLowerCase().includes(searchTerm.toLowerCase());
+  const filteredNotifications = notifications.filter((notification) => {
+    const matchesSearch =
+      notification.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      notification.message.toLowerCase().includes(searchTerm.toLowerCase());
 
-      switch (activeTab) {
-        case 'all':
-          return matchesSearch;
-        case 'rental':
-          return matchesSearch && notification.relatedTo === 'rental_request';
-        case 'payment':
-          return matchesSearch && 
-            (notification.relatedTo === 'rental_response' || notification.relatedTo === 'payment_confirmation');
-        case 'pending':
-          return matchesSearch && notification.status === 'pending';
-        case 'accepted':
-          return matchesSearch && notification.status === 'accepted';
-        case 'rejected':
-          return matchesSearch && notification.status === 'rejected';
-        default:
-          return false;
-      }
-    });
-
-  // Filter button component with hover effect
-  const FilterButton = ({ icon: Icon, label, value }) => (
-    <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
-      className={`px-4 py-2 rounded-lg flex items-center justify-center transition-all duration-200
-        ${activeTab === value 
-          ? 'bg-green-100 text-green-700 ring-1 ring-green-200 shadow-sm' 
-          : 'text-gray-600 hover:bg-green-50 hover:text-green-600'}`}
-      onClick={() => setActiveTab(value)}
-    >
-      <Icon className={`mr-2 ${activeTab === value ? 'text-green-600' : ''}`} />
-      <span className="font-medium">{label}</span>
-    </motion.button>
-  );
-
-  // Reset filters
-  const resetFilters = () => {
-    setActiveTab('all');
-    setSearchTerm('');
-  };
-
-  // Render filters
-  const renderFilters = () => (
-    <div className="mb-6 space-y-4">
-      {/* Search Bar and Controls */}
-      <div className="flex flex-col gap-4 sm:flex-row">
-        {/* Search */}
-        <div className="relative flex-1">
-          <input
-            type="text"
-            placeholder="Search notifications..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl border border-gray-300 py-2.5 pl-10 pr-4 text-sm transition-all duration-200 hover:border-gray-400 focus:border-transparent focus:outline-none focus:ring-2 focus:ring-green-500 sm:text-base"
-          />
-          <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 transform text-gray-400" />
-        </div>
-
-        {/* Filter Controls */}
-        <div className="flex items-center gap-2">
-          {/* Active Filter Badge */}
-          {activeTab !== 'all' && (
-            <div className="flex items-center rounded-xl bg-green-100 px-3 py-2 text-green-700">
-              <span className="text-sm font-medium">{getActiveFilterLabel()}</span>
-              <button
-                onClick={resetFilters}
-                className="ml-2 transition-colors hover:text-green-800"
-              >
-                <FaTimes />
-              </button>
-            </div>
-          )}
-          
-          {/* Filter Toggle */}
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowFilters(!showFilters)}
-            className={`px-3 py-2.5 rounded-xl transition-all duration-200 flex items-center gap-2
-              ${showFilters 
-                ? 'bg-green-100 text-green-700 ring-1 ring-green-200 shadow-sm' 
-                : 'text-gray-600 hover:bg-gray-100'}`}
-          >
-            <FaFilter className="text-lg" />
-            <span className="text-sm font-medium">Filters</span>
-            <FaChevronDown 
-              className={`text-sm transition-transform duration-200 ${showFilters ? 'rotate-180' : ''}`}
-            />
-          </motion.button>
-        </div>
-      </div>
-
-      {/* Animated Filter Groups */}
-      <AnimatePresence>
-        {showFilters && (
-          <motion.div
-            variants={filterContainerVariants}
-            initial="hidden"
-            animate="visible"
-            exit="exit"
-            className="rounded-xl border border-gray-200/80 bg-white shadow-sm backdrop-blur-sm"
-          >
-            {/* Type Filters */}
-            <div className="border-b border-gray-100 p-4">
-              <h3 className="mb-3 flex items-center text-sm font-medium text-gray-500">
-                <FaList className="mr-2" />
-                Filter by Type
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {filterOptions.type.map(filter => (
-                  <FilterButton 
-                    key={filter.value}
-                    icon={filter.icon}
-                    label={filter.label}
-                    value={filter.value}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {/* Status Filters */}
-            <div className="p-4">
-              <h3 className="mb-3 flex items-center text-sm font-medium text-gray-500">
-                <FaClock className="mr-2" />
-                Filter by Status
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {filterOptions.status.map(filter => (
-                  <FilterButton 
-                    key={filter.value}
-                    icon={filter.icon}
-                    label={filter.label}
-                    value={filter.value}
-                  />
-                ))}
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </div>
-  );
-
-  if (loading) {
-    return (
-      <>
-        <Navbar />
-        <div className="container mx-auto px-2 py-6 sm:px-6 sm:py-12">
-          <h2 className="mb-6 text-center text-2xl font-bold text-green-700 sm:text-4xl">
-            <FaBell className="mr-2 inline-block" />
-            Rental Requests & Notifications
-          </h2>
-          <p className="text-center text-gray-600">Loading notifications...</p>
-        </div>
-      </>
-    );
-  }
-
-  if (error) {
-    return (
-      <>
-        <Navbar />
-        <div className="container mx-auto px-2 py-6 sm:px-6 sm:py-12">
-          <h2 className="mb-6 text-center text-2xl font-bold text-green-700 sm:text-4xl">
-            <FaBell className="mr-2 inline-block" />
-            Rental Requests & Notifications
-          </h2>
-          <p className="text-center text-red-500">{error}</p>
-        </div>
-      </>
-    );
-  }
+    switch (activeTab) {
+      case "all":
+        return matchesSearch;
+      case "rental":
+        return matchesSearch && notification.relatedTo === "rental_request";
+      case "payment":
+        return (
+          matchesSearch &&
+          (notification.relatedTo === "rental_response" ||
+            notification.relatedTo === "payment_confirmation")
+        );
+      case "pending":
+        return matchesSearch && notification.status === "pending";
+      case "accepted":
+        return matchesSearch && notification.status === "accepted";
+      case "rejected":
+        return matchesSearch && notification.status === "rejected";
+      default:
+        return false;
+    }
+  });
 
   return (
     <>
@@ -480,9 +296,6 @@ export default function Notifications() {
           <FaBell className="mr-2 inline-block" />
           Rental Requests & Notifications
         </h2>
-
-        {/* Search and Filters */}
-        {renderFilters()}
 
         {/* Notifications List */}
         <div className="mx-auto flex max-w-2xl flex-col gap-4">

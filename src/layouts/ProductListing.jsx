@@ -130,8 +130,12 @@ export default function ProductListing() {
   // Filter products based on selected filters
   const filteredProducts = equipmentData
     .filter((product) => {
+      // Exclude rented products
+      if (product.isRented) {
+        return false;
+      }
+
       // Category filter
-      console.log(product)
       if (
         selectedCategory !== "All" &&
         product.equipmentType !== selectedCategory
@@ -156,7 +160,7 @@ export default function ProductListing() {
         }
       }
 
-      // Rating filter (new)
+      // Rating filter
       if (selectedRating !== "All") {
         const minRating = parseFloat(selectedRating);
         if ((product.rating || 0) < minRating) {
@@ -164,7 +168,7 @@ export default function ProductListing() {
         }
       }
 
-      // Availability filter (new)
+      // Availability filter
       if (selectedAvailability === "InStock" && !product.inStock) {
         return false;
       }
@@ -183,7 +187,7 @@ export default function ProductListing() {
       return true;
     })
     .sort((a, b) => {
-      // Sort logic (new)
+      // Sort logic
       switch (sortBy) {
         case "PriceLowToHigh":
           return a.rentalPerHour - b.rentalPerHour;
@@ -245,8 +249,7 @@ export default function ProductListing() {
         <div className="md:hidden mb-4">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center justify-center w-full py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700"
-          >
+            className="flex items-center justify-center w-full py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
             <Filter className="w-4 h-4 mr-2" />
             {showMobileFilters ? "Hide Filters" : "Show Filters"}
           </button>
@@ -291,8 +294,7 @@ export default function ProductListing() {
                   setSearchQuery("");
                   setCurrentPage(1);
                 }}
-                className="text-sm text-green-700 hover:underline"
-              >
+                className="text-sm text-green-700 hover:underline">
                 Clear All Filters
               </button>
             </div>
@@ -302,8 +304,7 @@ export default function ProductListing() {
               <div>
                 <label
                   htmlFor="category"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
+                  className="block mb-1 text-sm font-medium text-gray-700">
                   Equipment Type
                 </label>
                 <div className="relative">
@@ -313,8 +314,7 @@ export default function ProductListing() {
                     value={selectedCategory}
                     onChange={(e) =>
                       handleFilterChange(setSelectedCategory, e.target.value)
-                    }
-                  >
+                    }>
                     {categories.map((category) => (
                       <option key={category} value={category}>
                         {category}
@@ -331,8 +331,7 @@ export default function ProductListing() {
               <div>
                 <label
                   htmlFor="priceRange"
-                  className="block mb-1 text-sm font-medium text-gray-700"
-                >
+                  className="block mb-1 text-sm font-medium text-gray-700">
                   Price Range
                 </label>
                 <div className="relative">
@@ -342,8 +341,7 @@ export default function ProductListing() {
                     value={selectedPriceRange}
                     onChange={(e) =>
                       handleFilterChange(setSelectedPriceRange, e.target.value)
-                    }
-                  >
+                    }>
                     {priceRanges.map((range) => (
                       <option key={range} value={range}>
                         {range}
@@ -375,8 +373,7 @@ export default function ProductListing() {
               <Link
                 key={product._id}
                 to={`/instrument/${product._id}`}
-                className="block"
-              >
+                className="block">
                 <article className="cursor-pointer overflow-hidden rounded-lg bg-white shadow-md transition-shadow duration-300 hover:shadow-lg">
                   <img
                     src={product.images.primaryImage.url || "/placeholder.svg"}
@@ -430,8 +427,7 @@ export default function ProductListing() {
                   currentPage === 1
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}
-              >
+                } border border-gray-300`}>
                 <ChevronLeft className="h-5 w-5" />
                 <span className="sr-only">Previous</span>
               </button>
@@ -454,8 +450,7 @@ export default function ProductListing() {
                           currentPage === pageNumber
                             ? "bg-green-600 text-white"
                             : "bg-white text-green-700 hover:bg-green-50"
-                        } border border-gray-300`}
-                      >
+                        } border border-gray-300`}>
                         {pageNumber}
                       </button>
                     );
@@ -487,8 +482,7 @@ export default function ProductListing() {
                   currentPage === totalPages
                     ? "bg-gray-100 text-gray-400 cursor-not-allowed"
                     : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}
-              >
+                } border border-gray-300`}>
                 <ChevronRight className="h-5 w-5" />
                 <span className="sr-only">Next</span>
               </button>
