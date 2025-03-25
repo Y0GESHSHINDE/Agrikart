@@ -32,6 +32,7 @@ export default function Notifications() {
   }, []);
 
   // Fetch notifications
+  // Fetch notifications
   useEffect(() => {
     const fetchNotifications = async () => {
       if (!user) {
@@ -52,7 +53,11 @@ export default function Notifications() {
 
         const result = await response.json();
         if (result.success && Array.isArray(result.data)) {
-          setNotifications(result.data);
+          // Filter notifications where isRead is false
+          const unreadNotifications = result.data.filter(
+            (notification) => !notification.read
+          );
+          setNotifications(unreadNotifications);
         } else {
           console.error("Invalid API response:", result);
           setNotifications([]);
@@ -67,7 +72,7 @@ export default function Notifications() {
     };
 
     fetchNotifications();
-  }, [user, getToken]);
+  }, [user, getToken, setNotifications, notifications]);
 
   // Mark notification as read
   const markNotificationAsRead = async (notificationId) => {
@@ -83,12 +88,12 @@ export default function Notifications() {
           },
         }
       );
-  
+
       if (!response.ok) throw new Error("Failed to mark as read");
-  
+
       // Update local state to reflect read status
-      setNotifications(prev =>
-        prev.map(notif =>
+      setNotifications((prev) =>
+        prev.map((notif) =>
           notif._id === notificationId ? { ...notif, isRead: true } : notif
         )
       );
@@ -101,7 +106,9 @@ export default function Notifications() {
   // Handle Accept/Reject actions
   const handleDecision = async (notificationId, decision) => {
     try {
-      const notification = notifications.find((notif) => notif._id === notificationId);
+      const notification = notifications.find(
+        (notif) => notif._id === notificationId
+      );
       if (!notification) throw new Error("Notification not found");
 
       const requestId = notification.relatedId;
@@ -140,9 +147,8 @@ export default function Notifications() {
   };
 
   // Initiate payment
-  const initiatePayment = async (notification ,notificationId) => {
+  const initiatePayment = async (notification, notificationId) => {
     try {
-      markNotificationAsRead(notificationId);
       if (!window.Razorpay) {
         toast.error("Payment gateway not available. Refresh the page.");
         return;
@@ -171,9 +177,17 @@ export default function Notifications() {
         amount: orderData.data.amount,
         currency: "INR",
         name: "Agrikart",
-        description: `Rental payment for ${orderData.data.equipmentName || "equipment"}`,
+        description: `Rental payment for ${
+          orderData.data.equipmentName || "equipment"
+        }`,
         order_id: orderData.data.orderId,
-        handler: (response) => verifyPayment(response, orderData.data.paymentId, token, notification._id),
+        handler: (response) =>
+          verifyPayment(
+            response,
+            orderData.data.paymentId,
+            token,
+            notification._id
+          ),
         prefill: {
           name: user?.fullName || "",
           email: user?.primaryEmailAddress?.emailAddress || "",
@@ -191,8 +205,9 @@ export default function Notifications() {
   };
 
   // Verify payment
-  const verifyPayment = async (razorpayResponse, paymentId, token) => {
+  const verifyPayment = async (razorpayResponse, paymentId, token, notificationId) => {
     try {
+      markNotificationAsRead(notificationId);
       const response = await fetch(
         `https://main-backend-agrikart.vercel.app/api/payments/verify`,
         {
@@ -209,21 +224,19 @@ export default function Notifications() {
           }),
         }
       );
-  
+
       const result = await response.json();
       if (!result.success) throw new Error("Payment verification failed");
-  
+
       // First update payment status in state
       setNotifications((prev) =>
         prev.map((notif) =>
-          notif._id === notificationId 
-            ? { ...notif, paymentStatus: "completed" } 
+          notif._id === notificationId
+            ? { ...notif, paymentStatus: "completed" }
             : notif
         )
       );
-  
 
-  
       toast.success("Payment successful!");
     } catch (error) {
       console.error("Payment verification failed:", error);
@@ -236,7 +249,8 @@ export default function Notifications() {
       <Navbar />
       <div className="container mx-auto px-4 py-6">
         <h2 className="mb-6 text-center text-2xl font-bold text-green-700">
-          <FaBell className="mr-2 inline-block" /> Rental Requests & Notifications
+          <FaBell className="mr-2 inline-block" /> Rental Requests &
+          Notifications
         </h2>
 
         {/* Notifications List */}
@@ -251,7 +265,9 @@ export default function Notifications() {
                 notificationId={notification._id}
                 onAccept={() => handleDecision(notification._id, "accepted")}
                 onReject={() => handleDecision(notification._id, "rejected")}
-                onPayment={() => initiatePayment(notification, notification._id)}
+                onPayment={() =>
+                  initiatePayment(notification, notification._id)
+                }
               />
             ))
           ) : (
