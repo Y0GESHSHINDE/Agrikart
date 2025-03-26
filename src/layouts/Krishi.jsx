@@ -39,8 +39,8 @@ const Krishi = () => {
     try {
       const response = await fetch(
         conversationId
-          ? "https://rag-chatbot-agrikart.onrender.com/conversation/continue"
-          : "https://rag-chatbot-agrikart.onrender.com/conversation/start",
+          ? "http://127.0.0.1:5000/conversation/continue"
+          : "http://127.0.0.1:5000/conversation/start",
         {
           method: "POST",
           headers: { "Content-Type": "application/json" },
