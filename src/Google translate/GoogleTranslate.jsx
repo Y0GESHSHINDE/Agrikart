@@ -52,14 +52,19 @@ const GoogleTranslate = () => {
   const resetToEnglish = () => {
     localStorage.setItem("selectedLanguage", "en");
     setSelectedLang("en");
+
+    // Remove the "googtrans" cookie properly for all paths
     document.cookie =
       "googtrans=; path=/; domain=" +
       window.location.hostname +
       "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+      
     document.cookie =
       "googtrans=; path=/; domain=." +
       window.location.hostname +
       "; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
+
+    // Force refresh to clear translation
     setTimeout(() => window.location.reload(), 500);
   };
 
