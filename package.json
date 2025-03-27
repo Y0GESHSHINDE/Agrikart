@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@clerk/clerk-react": "^5.22.13",
+    "@emailjs/browser": "^4.4.1",
     "axios": "^1.8.3",
     "framer-motion": "^12.5.0",
     "lodash": "^4.17.21",
