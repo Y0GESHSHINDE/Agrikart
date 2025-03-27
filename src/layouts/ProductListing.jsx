@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import Navbar from "../components/Navbar/Navbar";
 import {
   ChevronDown,
@@ -45,7 +45,10 @@ const StarRating = ({ rating }) => {
 
 export default function ProductListing() {
   const navigate = useNavigate();
-  const [selectedCategory, setSelectedCategory] = useState("All");
+  const [searchParams] = useSearchParams();
+  const categoryFromUrl = searchParams.get('category');
+
+  const [selectedCategory, setSelectedCategory] = useState(categoryFromUrl || "All");
   const [selectedPriceRange, setSelectedPriceRange] = useState("All");
   const [selectedRating, setSelectedRating] = useState("All");
   const [selectedAvailability, setSelectedAvailability] = useState("All");
@@ -59,6 +62,13 @@ export default function ProductListing() {
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const productsPerPage = 8;
+
+  // Update category when URL parameter changes
+  useEffect(() => {
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+    }
+  }, [categoryFromUrl]);
 
   // Fetch data from the API
   useEffect(() => {
@@ -84,7 +94,7 @@ export default function ProductListing() {
     };
 
     fetchData();
-  }, [equipmentData]);
+  }, []);
 
   // Available filter options for equipment type
   const categories = [
@@ -196,10 +206,9 @@ export default function ProductListing() {
         case "Rating":
           return (b.rating || 0) - (a.rating || 0);
         case "Newest":
-          // Assuming each product has a createdAt date
           return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
         default:
-          return 0; // Featured or default sorting
+          return 0;
       }
     });
 
@@ -293,6 +302,7 @@ export default function ProductListing() {
                   setSortBy("Featured");
                   setSearchQuery("");
                   setCurrentPage(1);
+                  navigate("/Listed-instruments");
                 }}
                 className="text-sm text-green-700 hover:underline">
                 Clear All Filters
@@ -312,9 +322,15 @@ export default function ProductListing() {
                     id="category"
                     className="block h-10 w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                     value={selectedCategory}
-                    onChange={(e) =>
-                      handleFilterChange(setSelectedCategory, e.target.value)
-                    }>
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      handleFilterChange(setSelectedCategory, value);
+                      if (value === "All") {
+                        navigate("/Listed-instruments");
+                      } else {
+                        navigate(`/Listed-instruments?category=${value}`);
+                      }
+                    }}>
                     {categories.map((category) => (
                       <option key={category} value={category}>
                         {category}
@@ -423,11 +439,11 @@ export default function ProductListing() {
               <button
                 onClick={prevPage}
                 disabled={currentPage === 1}
-                className={`flex items-center justify-center px-3 py-2 mr-2 rounded-md ${
+                className={`mr-2 flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 ${
                   currentPage === 1
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    ? "cursor-not-allowed bg-gray-100 text-gray-400"
                     : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}>
+                }`}>
                 <ChevronLeft className="h-5 w-5" />
                 <span className="sr-only">Previous</span>
               </button>
@@ -435,7 +451,6 @@ export default function ProductListing() {
               <div className="hidden sm:flex">
                 {[...Array(totalPages)].map((_, index) => {
                   const pageNumber = index + 1;
-                  // Show limited page numbers with ellipsis for better UX
                   if (
                     pageNumber === 1 ||
                     pageNumber === totalPages ||
@@ -446,11 +461,11 @@ export default function ProductListing() {
                       <button
                         key={pageNumber}
                         onClick={() => paginate(pageNumber)}
-                        className={`px-4 py-2 mx-1 rounded-md ${
+                        className={`mx-1 rounded-md border border-gray-300 px-4 py-2 ${
                           currentPage === pageNumber
                             ? "bg-green-600 text-white"
                             : "bg-white text-green-700 hover:bg-green-50"
-                        } border border-gray-300`}>
+                        }`}>
                         {pageNumber}
                       </button>
                     );
@@ -478,11 +493,11 @@ export default function ProductListing() {
               <button
                 onClick={nextPage}
                 disabled={currentPage === totalPages}
-                className={`flex items-center justify-center px-3 py-2 ml-2 rounded-md ${
+                className={`ml-2 flex items-center justify-center rounded-md border border-gray-300 px-3 py-2 ${
                   currentPage === totalPages
-                    ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                    ? "cursor-not-allowed bg-gray-100 text-gray-400"
                     : "bg-white text-green-700 hover:bg-green-50"
-                } border border-gray-300`}>
+                }`}>
                 <ChevronRight className="h-5 w-5" />
                 <span className="sr-only">Next</span>
               </button>
