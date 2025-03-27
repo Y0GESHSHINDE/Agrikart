@@ -142,6 +142,9 @@ const NotificationItem = ({
     if (notification.relatedTo === "rental_request") {
       return notification.status !== 'accepted' && notification.status !== 'rejected';
     }
+        if (notification.relatedTo === "negotiation_request") {
+      return notification.status !== 'accepted' && notification.status !== 'rejected';
+    }
     if (notification.relatedTo === "rental_response") {
       return !notification.paymentStatus || notification.paymentStatus !== 'completed';
     }
@@ -254,7 +257,7 @@ const NotificationItem = ({
         {/* Action Buttons */}
         {shouldShowActions() && (
           <div className={`p-4 bg-white border-t ${colors.divider}`}>
-            {notification.relatedTo === "rental_request" && (
+            {(notification.relatedTo === "rental_request " || notification.relatedTo === "negotiation_request" ) && (
               <div className="flex space-x-3">
                 <button
                   className={`flex-1 py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition
