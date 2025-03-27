@@ -1,8 +1,12 @@
 import React, { useState } from "react";
 import { useUser } from "@clerk/clerk-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-function AddInstrument() {
+function AddInstrument({ onClose }) {
   const { user } = useUser();
+  const navigate = useNavigate();
   const ownerID = user.id;
   const [formData, setFormData] = useState({
     equipmentName: "",
@@ -87,17 +91,38 @@ function AddInstrument() {
 
       const result = await response.json();
       console.log("Success:", result);
+      toast.success("Equipment added successfully!");
+      onClose(); // Close the form after successful submission
+      // Reset form after successful submission
+      setFormData({
+        equipmentName: "",
+        brand: "",
+        model: "",
+        chassisNumber: "",
+        description: "",
+        rentalPerHour: "",
+        rentalPerDay: "",
+        pickupLocation: "",
+        numberPlateNumber: "",
+        ownerId: ownerID,
+        primaryImage: null,
+        secondaryImage: null,
+        equipmentType: "",
+        isVehicle: false,
+      });
     } catch (error) {
       console.error("Error:", error);
+      toast.error("Failed to add equipment. Please try again.");
     }
   };
 
   return (
     <div className="min-h-screen bg-gray-100 py-8">
+      <ToastContainer position="top-right" autoClose={3000} />
       <form
         onSubmit={handleSubmit}
-        className="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-md">
-        <h2 className="text-2xl font-bold mb-6 text-center">Add Equipment</h2>
+        className="mx-auto max-w-2xl rounded-lg bg-white p-8 shadow-md">
+        <h2 className="mb-6 text-center text-2xl font-bold">Add Equipment</h2>
 
         <div className="space-y-4">
           {/* Equipment Name */}
@@ -110,7 +135,7 @@ function AddInstrument() {
               name="equipmentName"
               value={formData.equipmentName}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -124,7 +149,7 @@ function AddInstrument() {
               name="equipmentType"
               value={formData.equipmentType}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required>
               <option value="" disabled>
                 Select Equipment Type
@@ -161,7 +186,7 @@ function AddInstrument() {
               name="brand"
               value={formData.brand}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -176,7 +201,7 @@ function AddInstrument() {
               name="model"
               value={formData.model}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -191,7 +216,7 @@ function AddInstrument() {
               name="chassisNumber"
               value={formData.chassisNumber}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -205,7 +230,7 @@ function AddInstrument() {
               name="description"
               value={formData.description}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -220,7 +245,7 @@ function AddInstrument() {
               name="rentalPerHour"
               value={formData.rentalPerHour}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -235,7 +260,7 @@ function AddInstrument() {
               name="rentalPerDay"
               value={formData.rentalPerDay}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -250,7 +275,7 @@ function AddInstrument() {
               name="pickupLocation"
               value={formData.pickupLocation}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -265,7 +290,7 @@ function AddInstrument() {
               name="numberPlateNumber"
               value={formData.numberPlateNumber}
               onChange={handleChange}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
               required
             />
           </div>
@@ -277,7 +302,7 @@ function AddInstrument() {
               name="isVehicle"
               checked={formData.isVehicle}
               onChange={handleChange}
-              className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
             />
             <label className="ml-2 block text-sm text-gray-900">
               Is Vehicle
@@ -293,7 +318,7 @@ function AddInstrument() {
               type="file"
               name="primaryImage"
               onChange={handleChange}
-              className="mt-1 block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              className="mt-1 block w-full text-sm text-gray-900 file:mr-4 file:rounded-full file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
               required
             />
           </div>
@@ -307,7 +332,7 @@ function AddInstrument() {
               type="file"
               name="secondaryImage"
               onChange={handleChange}
-              className="mt-1 block w-full text-sm text-gray-900 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              className="mt-1 block w-full text-sm text-gray-900 file:mr-4 file:rounded-full file:border-0 file:bg-indigo-50 file:px-4 file:py-2 file:text-sm file:font-semibold file:text-indigo-700 hover:file:bg-indigo-100"
               required
             />
           </div>
@@ -316,7 +341,7 @@ function AddInstrument() {
           <div>
             <button
               type="submit"
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              className="w-full rounded-md bg-indigo-600 px-4 py-2 text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
               Submit
             </button>
           </div>

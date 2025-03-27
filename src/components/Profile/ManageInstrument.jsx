@@ -82,9 +82,9 @@ const ManageInstrument = () => {
           setInstruments((prevInstruments) =>
             prevInstruments.filter((instrument) => instrument._id !== id)
           );
-          toast.info("Equipment removed from the list.", {
+          toast.success("Equipment removed successfully!", {
             position: "top-right",
-            autoClose: 2000,
+            autoClose: 3000,
           });
           return;
         }
@@ -99,11 +99,16 @@ const ManageInstrument = () => {
   
       toast.success("Equipment removed successfully!", {
         position: "top-right",
-        autoClose: 2000,
+        autoClose: 3000,
       });
+
+      
     } catch (error) {
       console.error("Error deleting equipment:", error);
-      toast.error(error.message || "Failed to delete equipment");
+      toast.error(error.message || "Failed to delete equipment", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
   // Handle edit

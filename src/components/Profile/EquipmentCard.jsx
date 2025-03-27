@@ -42,7 +42,7 @@ const EquipmentCard = ({ instrument, viewMode, onUpdate, onDelete }) => {
           <img
             src={instrument.images.primaryImage.url}
             alt={instrument.equipmentName}
-            className=" h-full md:h-48  w-full object-cover rounded-t-lg sm:rounded-l-lg sm:rounded-tr-none transition-transform duration-300 group-hover:scale-105"
+            className="h-full w-full rounded-t-lg object-cover transition-transform duration-300 group-hover:scale-105 sm:rounded-l-lg sm:rounded-tr-none md:h-48"
             onError={(e) => {
               e.target.src =
                 "https://images.pexels.com/photos/2226458/pexels-photo-2226458.jpeg";
@@ -51,30 +51,30 @@ const EquipmentCard = ({ instrument, viewMode, onUpdate, onDelete }) => {
         </div>
 
         {/* Content Section */}
-        <div className="flex-1 p-5 flex flex-col justify-between">
+        <div className="flex flex-1 flex-col justify-between p-5">
           {/* Title & Description */}
           <div>
             <h4 className="text-lg font-semibold text-gray-900 group-hover:text-green-600">
               {instrument.equipmentName}
             </h4>
-            <p className="text-sm text-gray-600 mt-1">
+            <p className="mt-1 text-sm text-gray-600">
               {instrument.brand} {instrument.model}
             </p>
-            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+            <p className="mt-1 line-clamp-2 text-xs text-gray-500">
               {instrument.description}
             </p>
           </div>
 
           {/* Pricing Section */}
-          <div className="grid grid-cols-2 gap-3 mt-4">
-            <div className="flex items-center border border-gray-200 rounded-lg px-4 py-2 transition hover:border-green-500 hover:shadow-sm">
-              <Clock className="h-5 w-5 text-green-600 mr-2" />
+          <div className="mt-4 grid grid-cols-2 gap-3">
+            <div className="flex items-center rounded-lg border border-gray-200 px-2 py-2 transition hover:border-green-500 hover:shadow-sm sm:px-3">
+              <Clock className="mr-2 h-5 w-5 min-w-5 max-w-5 text-green-600" />
               <p className="text-xs font-semibold text-gray-900">
                 ₹{instrument.rentalPerHour}/hr
               </p>
             </div>
-            <div className="flex items-center border border-gray-200 rounded-lg px-4 py-2 transition hover:border-green-500 hover:shadow-sm">
-              <Calendar className="h-5 w-5 text-green-600 mr-2" />
+            <div className="flex items-center rounded-lg border border-gray-200 px-2 py-2 transition hover:border-green-500 hover:shadow-sm sm:px-3">
+              <Calendar className="mr-2 h-5 w-5 min-w-5 max-w-5 text-green-600" />
               <p className="text-xs font-semibold text-gray-900">
                 ₹{instrument.rentalPerDay}/day
               </p>
@@ -82,24 +82,24 @@ const EquipmentCard = ({ instrument, viewMode, onUpdate, onDelete }) => {
           </div>
 
           {/* Location Section */}
-          <div className="flex items-center border border-gray-200 rounded-lg px-4 py-2 mt-4 text-gray-600 hover:border-gray-300 transition">
-            <HiLocationMarker className="h-5 w-5 text-gray-500 mr-2" />
+          <div className="mt-4 flex items-center rounded-lg border border-gray-200 px-4 py-2 text-gray-600 transition hover:border-gray-300">
+            <HiLocationMarker className="mr-2 h-5 w-5 text-gray-500" />
             <span className="truncate text-sm">
               {instrument.pickupLocation}
             </span>
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 mt-4">
+          <div className="mt-4 flex gap-3">
             <button
               onClick={() => setIsModalOpen(true)}
-              className="flex-1 flex items-center justify-center gap-2 bg-green-500 text-white px-4 py-2 rounded-lg transition hover:bg-green-600">
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-green-500 px-4 py-2 text-white transition hover:bg-green-600">
               <HiPencil className="h-5 w-5" />
               <span className="text-sm font-medium">Edit</span>
             </button>
             <button
               onClick={handleDelete}
-              className="flex-1 flex items-center justify-center gap-2 bg-red-500 text-white px-4 py-2 rounded-lg transition hover:bg-red-600">
+              className="flex flex-1 items-center justify-center gap-2 rounded-lg bg-red-500 px-4 py-2 text-white transition hover:bg-red-600">
               <HiTrash className="h-5 w-5" />
               <span className="text-sm font-medium">Delete</span>
             </button>
