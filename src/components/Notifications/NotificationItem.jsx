@@ -20,82 +20,58 @@ const NotificationItem = ({
   notification, 
   onAccept, 
   onReject, 
-  onPayment ,
+  onPayment,
   notificationId
 }) => {
   const [showDetails, setShowDetails] = useState(false);
+  const [rentalDetails, setRentalDetails] = useState(null);
+  const [loadingDetails, setLoadingDetails] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [requesterProfile, setRequesterProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
   const { getToken } = useAuth();
 
+  // Fetch rental request details
+  const fetchRentalDetails = async () => {
+    if (!notification.relatedId) return;
 
-    const markNotificationAsRead = async (notificationId) => {
-      try {
-        const token = await getToken();
-        const response = await fetch(
-          `https://main-backend-agrikart.vercel.app/api/notifications/${notificationId}/read`,
-          {
-            method: "PATCH",
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-    
-        if (!response.ok) throw new Error("Failed to mark as read");
-    
-        // Update local state to reflect read status
-        setNotifications(prev =>
-          prev.map(notif =>
-            notif._id === notificationId ? { ...notif, isRead: true } : notif
-          )
-        );
-      } catch (error) {
-        console.error("Error marking notification as read:", error);
-        toast.error("Failed to mark notification as read.");
-      }
-    };
-
-  // Fetch user profile when profile popup is opened
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      if (!showProfile || !notification.userId) return;
-      
-      try {
-        setLoadingProfile(true);
-        const token = await getToken();
-        const response = await fetch(
-          `https://main-backend-agrikart.vercel.app/api/users/${notification.userId}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-
-        if (!response.ok) {
-          throw new Error("Failed to fetch user profile");
+    try {
+      setLoadingDetails(true);
+      const token = await getToken();
+      const response = await fetch(
+        `https://main-backend-agrikart.vercel.app/api/rental-requests/${notification.relatedId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
+      );
 
-        const result = await response.json();
-        if (!result.success) {
-          throw new Error(result.message || "Failed to fetch user profile");
-        }
-
-        setRequesterProfile(result.data);
-      } catch (error) {
-        console.error("Error fetching user profile:", error);
-        toast.error("Failed to load user profile");
-        setRequesterProfile(null);
-      } finally {
-        setLoadingProfile(false);
+      if (!response.ok) {
+        throw new Error("Failed to fetch rental details");
       }
-    };
 
-    fetchUserProfile();
-  }, [showProfile, notification.userId, getToken]);
+      const result = await response.json();
+      if (!result.success) {
+        throw new Error(result.message || "Failed to fetch rental details");
+      }
+
+      setRentalDetails(result.data);
+    } catch (error) {
+      console.error("Error fetching rental details:", error);
+      toast.error("Failed to load rental details");
+    } finally {
+      setLoadingDetails(false);
+    }
+  };
+
+  // Toggle details and fetch rental details if not already fetched
+  const toggleDetails = () => {
+    setShowDetails(!showDetails);
+    if (!showDetails && !rentalDetails) {
+      fetchRentalDetails();
+    }
+  };
 
   // Helper function to format date
   const formatDate = (dateString) => {
@@ -195,71 +171,87 @@ const NotificationItem = ({
         {/* View Request Button */}
         <div className={`px-4 py-2 ${colors.detailsBg}`}>
           <button
-            onClick={() => setShowDetails(!showDetails)}
+            onClick={toggleDetails}
             className={`w-full text-left flex items-center justify-between p-1 ${colors.text}`}
           >
             <div className="flex items-center space-x-2">
               <FaUser className={colors.iconColor} />
               <span>{showDetails ? 'Hide Details' : 'View Request Details'}</span>
             </div>
-            {showDetails ?
-              <FaChevronUp className={colors.iconColor} /> :
+            {showDetails ? (
+              <FaChevronUp className={colors.iconColor} />
+            ) : (
               <FaChevronDown className={colors.iconColor} />
-            }
+            )}
           </button>
         </div>
 
         {/* Rental Details Section */}
-        {showDetails && notification.relatedTo === "rental_request" && notification.rentalDetails && (
+        {showDetails && rentalDetails && (
           <div className={`px-4 pt-0.5 pb-4 ${colors.detailsBg}`}>
             <div className="space-y-3 px-2">
+              {/* Duration */}
               <div className="flex items-start space-x-1.5">
                 <div className="flex items-center space-x-2">
                   <FaCalendarAlt className={colors.iconColor} />
                   <p className={`text-sm font-medium ${colors.headerText}`}>Duration:</p>
                 </div>
                 <p className={`text-sm ${colors.contentText}`}>
-                  {formatDate(notification.rentalDetails.requestStartDate)} - {formatDate(notification.rentalDetails.requestEndDate)}
+                  {formatDate(rentalDetails.requestStartDate)} - {formatDate(rentalDetails.requestEndDate)}
                 </p>
               </div>
-              
+
+              {/* Total Days */}
               <div className="flex items-center space-x-1.5">
                 <div className="flex items-center space-x-2">
                   <FaClock className={colors.iconColor} />
                   <p className={`text-sm font-medium ${colors.headerText}`}>Total Days:</p>
                 </div>
-                <p className={`text-sm ${colors.contentText}`}>{notification.rentalDetails.totalDays} days</p>
+                <p className={`text-sm ${colors.contentText}`}>{rentalDetails.totalDays} days</p>
               </div>
 
+              {/* Total Cost */}
               <div className="flex items-center space-x-1.5">
                 <div className="flex items-center space-x-2">
                   <FaRupeeSign className={colors.iconColor} />
                   <p className={`text-sm font-medium ${colors.headerText}`}>Total Cost:</p>
                 </div>
-                <p className={`text-sm ${colors.contentText}`}>₹{notification.rentalDetails.totalCost}</p>
+                <p className={`text-sm ${colors.contentText}`}>₹{rentalDetails.totalCost}</p>
               </div>
 
+              {/* Message */}
               <div className="text-sm">
                 <p className={`font-medium ${colors.headerText}`}>Message:</p>
-                <p className={colors.contentText}>{notification.rentalDetails.message}</p>
+                <p className={colors.contentText}>{rentalDetails.message}</p>
+              </div>
+
+              {/* Equipment Details */}
+              <div className="space-y-2">
+                <p className={`text-sm font-medium ${colors.headerText}`}>Equipment Details:</p>
+                <p className={`text-sm ${colors.contentText}`}>
+                  <strong>Description:</strong> {rentalDetails.equipmentId.description}
+                </p>
+                <p className={`text-sm ${colors.contentText}`}>
+                  <strong>Rental Per Hour:</strong> ₹{rentalDetails.equipmentId.rentalPerHour}
+                </p>
+                <p className={`text-sm ${colors.contentText}`}>
+                  <strong>Rental Per Day:</strong> ₹{rentalDetails.equipmentId.rentalPerDay}
+                </p>
+                <p className={`text-sm ${colors.contentText}`}>
+                  <strong>Pickup Location:</strong> {rentalDetails.equipmentId.pickupLocation}
+                </p>
+                <p className={`text-sm ${colors.contentText}`}>
+                  <strong>Number Plate:</strong> {rentalDetails.equipmentId.numberPlateNumber}
+                </p>
+                <p className={`text-sm ${colors.contentText}`}>
+                  <strong>Equipment Type:</strong> {rentalDetails.equipmentId.equipmentType}
+                </p>
               </div>
             </div>
           </div>
         )}
 
-        {/* View Profile Button */}
-        <div className={`px-4 py-2 ${colors.detailsBg} border-t ${colors.divider}`}>
-          <button
-            onClick={() => setShowProfile(true)}
-            disabled={loadingProfile}
-            className={`w-full text-left flex items-center space-x-2 ${colors.text} ${colors.buttonHover} rounded p-1 transition-colors ${loadingProfile ? 'opacity-50 cursor-not-allowed' : ''}`}
-          >
-            <FaUserCircle className={`${loadingProfile ? 'animate-spin' : ''} ${colors.iconColor}`} />
-            <span>{loadingProfile ? 'Loading Profile...' : 'View Requester Profile'}</span>
-          </button>
-        </div>
-
-        {/* Action Buttons - Only shown when needed */}
+        {/* Action Buttons */}
         {shouldShowActions() && (
           <div className={`p-4 bg-white border-t ${colors.divider}`}>
             {notification.relatedTo === "rental_request" && (
@@ -292,7 +284,7 @@ const NotificationItem = ({
             {notification.relatedTo === "rental_response" && (
               <button
                 className={`w-full py-2 px-4 rounded-lg flex items-center justify-center space-x-2 transition text-white ${colors.buttonBg}`}
-                onClick={() => onPayment(notification,notificationId) }
+                onClick={() => onPayment(notification, notificationId)} // Ensure this function is correctly passed
               >
                 <FaMoneyBillWave />
                 <span>Make Payment</span>
@@ -301,14 +293,6 @@ const NotificationItem = ({
           </div>
         )}
       </motion.div>
-
-      {/* Profile Popup */}
-      <ProfilePopup
-        isOpen={showProfile}
-        onClose={() => setShowProfile(false)}
-        profile={requesterProfile}
-        isLoading={loadingProfile}
-      />
     </>
   );
 };
