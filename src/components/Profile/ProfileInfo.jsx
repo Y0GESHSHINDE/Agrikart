@@ -19,8 +19,16 @@ import EarningsGraph from "./components/EarningsGraph";
 const ProfileInfo = () => {
   const [showEditPopup, setShowEditPopup] = useState(false);
   const { userData, isLoading, fetchUserData, updateUserData } = useProfile();
-  const { formData, errors, isSubmitting, setIsSubmitting, handleInputChange, validateForm, setFormData } = useProfileForm();
-  
+  const {
+    formData,
+    errors,
+    isSubmitting,
+    setIsSubmitting,
+    handleInputChange,
+    validateForm,
+    setFormData,
+  } = useProfileForm();
+
   const { user, isLoaded, isSignedIn } = useUser();
 
   // Set initial form data when showing the modal
@@ -43,7 +51,7 @@ const ProfileInfo = () => {
   // Handle form submission
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
 
     setIsSubmitting(true);
@@ -56,15 +64,34 @@ const ProfileInfo = () => {
 
   // Combine API data with defaults
   const userInfo = {
-    profilePhoto: userData?.imgUrl || (isLoaded && isSignedIn ? user.imageUrl : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9W15Hh_7mgF-oO3Dl_M32EWBjJUo_cA8Uw&s"),
-    username: userData?.name || (isLoaded && isSignedIn ? user.fullName || user.username : "Loading..."),
-    email: userData?.email || (isLoaded && isSignedIn ? user.primaryEmailAddress?.emailAddress : "Loading..."),
-    mobileNumber: isLoaded && isSignedIn ? user.primaryPhoneNumber?.phoneNumber || "0000" : "Loading...",
-    onEdit: () => setShowEditPopup(true),
-    onRefresh: fetchUserData
-  };
+    profilePhoto:
+      userData?.imgUrl ||
+      (isLoaded && isSignedIn
+        ? user.imageUrl
+        : "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRZ9W15Hh_7mgF-oO3Dl_M32EWBjJUo_cA8Uw&s"),
 
- 
+    username:
+      userData?.name ||
+      (isLoaded && isSignedIn ? user.fullName || user.username : "Loading..."),
+    email:
+      userData?.email ||
+      (isLoaded && isSignedIn
+        ? user.primaryEmailAddress?.emailAddress
+        : "Loading..."),
+
+    mobileNumber:
+      isLoaded && isSignedIn
+        ? user.primaryPhoneNumber?.phoneNumber || "0000"
+        : "Loading...",
+
+        userId: user?.id,
+        isEquipmentOperator: userData?.isEquipmentOperator ,
+
+    onEdit: () => setShowEditPopup(true),
+
+    onRefresh: fetchUserData,
+  };
+  // console.log(userInfo);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -90,7 +117,7 @@ const ProfileInfo = () => {
                   farmSize: userData?.personalInfo?.farmSize || "",
                   soilType: userData?.personalInfo?.soilType || "",
                   waterSource: userData?.personalInfo?.waterSource || "",
-                  farmingMethod: userData?.personalInfo?.farmingMethods || ""
+                  farmingMethod: userData?.personalInfo?.farmingMethods || "",
                 }}
               />
               <AddressInformation
@@ -99,7 +126,7 @@ const ProfileInfo = () => {
                   city: userData?.address?.city || "",
                   state: userData?.address?.state || "",
                   pincode: userData?.address?.pincode || "",
-                  onEdit: () => setShowEditPopup(true)
+                  onEdit: () => setShowEditPopup(true),
                 }}
               />
             </div>
