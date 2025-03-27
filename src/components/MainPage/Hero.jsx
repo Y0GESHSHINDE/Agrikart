@@ -1,5 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { FaTools } from "react-icons/fa";
+import { LuBrainCircuit } from "react-icons/lu";
+import { TiWeatherPartlySunny } from "react-icons/ti";
+import { FaScrewdriverWrench } from "react-icons/fa6";
+import { FaUserCog } from "react-icons/fa";
+import { MdLiveHelp } from "react-icons/md";
 
 const Hero = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -85,43 +91,43 @@ const Hero = () => {
   }, [searchQuery]);
 
   return (
-    <div className="relative min-h-[600px] lg:min-h-screen w-full">
+    <div className="relative min-h-[600px] w-full lg:min-h-screen">
       {/* Background Image with Overlay */}
       <div
-        className="absolute inset-0 bg-cover bg-center z-0"
+        className="absolute inset-0 z-0 bg-cover bg-center"
         style={{
           backgroundImage:
             'url("https://images.unsplash.com/photo-1625246333195-78d9c38ad449?ixlib=rb-1.2.1&auto=format&fit=crop&w=2000&q=80")',
         }}>
-        <div className="absolute inset-0 bg-gradient-to-b from-black/50 via-black/40 to-black/70 z-10"></div>
+        <div className="absolute inset-0 z-10 bg-gradient-to-b from-black/50 via-black/40 to-black/70"></div>
       </div>
 
       {/* Content Container */}
-      <div className="relative z-20 flex flex-col items-center justify-center h-full px-4 py-10 sm:py-16 md:py-24 text-white container mx-auto">
+      <div className="container relative z-20 mx-auto flex h-full flex-col items-center justify-center px-4 py-10 text-white sm:py-16 md:py-24">
         {/* Heading with Highlight */}
-        <div className="text-center mb-6 sm:mb-8">
-          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold tracking-tight mt-2 mb-2 sm:mb-4">
+        <div className="mb-6 text-center sm:mb-8">
+          <h1 className="mb-2 mt-2 text-3xl font-bold tracking-tight sm:mb-4 sm:text-4xl md:text-5xl lg:text-7xl">
             Empowering Fields with Perfect Tools
           </h1>
-          <p className="text-base sm:text-lg md:text-xl max-w-3xl mx-auto text-gray-200">
+          <p className="mx-auto max-w-3xl text-base text-gray-200 sm:text-lg md:text-xl">
             Discover innovative farming solutions that increase yield, save
             time, and maximize your field's potential.
           </p>
         </div>
 
         {/* Search Field */}
-        <div className="w-full max-w-xl mb-8 sm:mb-12">
+        <div className="mb-8 w-full max-w-xl sm:mb-12">
           <div className="relative">
             <input
               type="text"
               placeholder="Search for tools..."
-              className="w-full py-3 sm:py-4 px-4 sm:px-6 pr-12 rounded-full bg-white bg-opacity-20 backdrop-blur-md border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-75 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 transition-all"
+              className="w-full rounded-full border border-white border-opacity-30 bg-white bg-opacity-20 px-4 py-3 pr-12 text-white placeholder-white placeholder-opacity-75 backdrop-blur-md transition-all focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50 sm:px-6 sm:py-4"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               onFocus={() => setShowResults(true)}
             />
             <button
-              className="absolute right-3 top-1/2 transform -translate-y-1/2 bg-green-500 text-white rounded-full p-1.5 sm:p-2 hover:bg-green-600 transition-all"
+              className="absolute right-3 top-1/2 -translate-y-1/2 transform rounded-full bg-green-500 p-1.5 text-white transition-all hover:bg-green-600 sm:p-2"
               onClick={() => searchProducts(searchQuery)}>
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -142,7 +148,7 @@ const Hero = () => {
             {showResults &&
               searchQuery &&
               (searchResults.length > 0 || loading) && (
-                <div className="absolute mt-2 w-full bg-white rounded-lg shadow-xl overflow-hidden z-50">
+                <div className="absolute z-50 mt-2 w-full overflow-hidden rounded-lg bg-white shadow-xl">
                   {loading ? (
                     <div className="p-4 text-center text-gray-600">
                       Loading...
@@ -160,22 +166,22 @@ const Hero = () => {
                               setShowResults(false);
                               setSearchQuery("");
                             }}>
-                            <div className="w-16 h-16 flex-shrink-0">
+                            <div className="h-16 w-16 flex-shrink-0">
                               <img
                                 src={product.imageUrl}
                                 alt={product.name}
-                                className="w-full h-full object-cover rounded"
+                                className="h-full w-full rounded object-cover"
                               />
                             </div>
                             <div className="ml-3 flex-grow">
                               <h3 className="font-medium text-gray-900">
                                 {product.name}
                               </h3>
-                              <p className="text-sm text-gray-600 line-clamp-1">
+                              <p className="line-clamp-1 text-sm text-gray-600">
                                 {product.description}
                               </p>
-                              <div className="flex justify-between items-center mt-1">
-                                <span className="text-green-600 font-medium">
+                              <div className="mt-1 flex items-center justify-between">
+                                <span className="font-medium text-green-600">
                                   ₹{product.price.toLocaleString()}
                                 </span>
                                 <span className="text-xs text-blue-600">
@@ -193,9 +199,9 @@ const Hero = () => {
           </div>
 
           {/* Search Tags */}
-          <div className="flex flex-wrap justify-center mt-3 sm:mt-4 gap-2">
+          <div className="mt-3 flex flex-wrap justify-center gap-2 sm:mt-4">
             <span
-              className="bg-white bg-opacity-20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
+              className="cursor-pointer rounded-full border border-white border-opacity-30 bg-white bg-opacity-20 px-2 py-1 text-xs transition-all hover:bg-opacity-30 sm:px-3 sm:text-sm"
               onClick={() => {
                 setSearchQuery("Agricultural Tools");
                 searchProducts("Agricultural Tools");
@@ -203,7 +209,7 @@ const Hero = () => {
               Agricultural Tools
             </span>
             <span
-              className="bg-white bg-opacity-20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
+              className="cursor-pointer rounded-full border border-white border-opacity-30 bg-white bg-opacity-20 px-2 py-1 text-xs transition-all hover:bg-opacity-30 sm:px-3 sm:text-sm"
               onClick={() => {
                 setSearchQuery("Field Equipment");
                 searchProducts("Field Equipment");
@@ -211,7 +217,7 @@ const Hero = () => {
               Field Equipment
             </span>
             <span
-              className="bg-white bg-opacity-20 px-2 sm:px-3 py-1 rounded-full text-xs sm:text-sm border border-white border-opacity-30 hover:bg-opacity-30 cursor-pointer transition-all"
+              className="cursor-pointer rounded-full border border-white border-opacity-30 bg-white bg-opacity-20 px-2 py-1 text-xs transition-all hover:bg-opacity-30 sm:px-3 sm:text-sm"
               onClick={() => {
                 setSearchQuery("Irrigation");
                 searchProducts("Irrigation");
@@ -222,189 +228,105 @@ const Hero = () => {
         </div>
 
         {/* Feature Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 w-full max-w-6xl mt-2 sm:mt-4">
+        <div className="mt-2 grid w-full max-w-6xl grid-cols-1 gap-4 sm:mt-4 sm:grid-cols-2 sm:gap-6 lg:grid-cols-3">
       
           {/* Farm Tools Card */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-green-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M3 10h11M9 21V3m6 18V3m6 7H10"
-                />
-              </svg>
+          <Link to="/listed-instruments" className="group rounded-xl border border-white border-opacity-20 bg-white bg-opacity-10 p-4 backdrop-blur-md transition-all hover:bg-opacity-20 sm:p-6">
+            <div className="mb-3 inline-block rounded-lg bg-green-500 bg-opacity-80 p-2 sm:mb-4 sm:p-3">
+              <FaTools className="h-6 w-6 text-white sm:h-8 sm:w-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+            <h3 className="mb-1 text-lg font-bold sm:mb-2 sm:text-xl">
               Farm Tools
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+            <p className="mb-3 text-sm text-gray-300 sm:mb-4 sm:text-base">
               Explore advanced tools to improve efficiency and productivity in
               farming.
             </p>
-            <Link
-              to="/listed-instruments"
-              className="text-green-400 group-hover:text-green-300 inline-flex items-center text-sm sm:text-base">
+            <span className="inline-flex items-center text-sm text-green-400 group-hover:text-green-300 sm:text-base">
               Explore
-            </Link>
-          </div>
+            </span>
+          </Link>
 
           {/* Krishi AI Card */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-blue-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M13 16V6a1 1 0 00-2 0v10a1 1 0 102 0zm-7-2a1 1 0 011-1h8a1 1 0 110 2H7a1 1 0 01-1-1zM5 12h14m-7-9v4"
-                />
-              </svg>
+          <Link to="/krishi" className="group rounded-xl border border-white border-opacity-20 bg-white bg-opacity-10 p-4 backdrop-blur-md transition-all hover:bg-opacity-20 sm:p-6">
+            <div className="mb-3 inline-block rounded-lg bg-blue-500 bg-opacity-80 p-2 sm:mb-4 sm:p-3">
+              <LuBrainCircuit className="h-6 w-6 text-white sm:h-8 sm:w-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+            <h3 className="mb-1 text-lg font-bold sm:mb-2 sm:text-xl">
               Krishi AI
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+            <p className="mb-3 text-sm text-gray-300 sm:mb-4 sm:text-base">
               AI-powered solutions to analyze crops and enhance farming
               techniques.
             </p>
-            <Link
-              to="/krishi"
-              className="text-blue-400 group-hover:text-blue-300 inline-flex items-center text-sm sm:text-base">
+            <span className="inline-flex items-center text-sm text-blue-400 group-hover:text-blue-300 sm:text-base">
               Discover
-            </Link>
-          </div>
+            </span>
+          </Link>
 
           {/* Check Weather Card */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-cyan-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 12h16M12 4v16"
-                />
-              </svg>
+          <Link to="/weather" className="group rounded-xl border border-white border-opacity-20 bg-white bg-opacity-10 p-4 backdrop-blur-md transition-all hover:bg-opacity-20 sm:p-6">
+            <div className="mb-3 inline-block rounded-lg bg-cyan-500 bg-opacity-80 p-2 sm:mb-4 sm:p-3">
+              <TiWeatherPartlySunny className="h-6 w-6 text-white sm:h-8 sm:w-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+            <h3 className="mb-1 text-lg font-bold sm:mb-2 sm:text-xl">
               Check Weather
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+            <p className="mb-3 text-sm text-gray-300 sm:mb-4 sm:text-base">
               Get the latest weather updates for your farming needs.
             </p>
-            <Link
-              to="/weather"
-              className="text-cyan-400 group-hover:text-cyan-300 inline-flex items-center text-sm sm:text-base">
+            <span className="inline-flex items-center text-sm text-cyan-400 group-hover:text-cyan-300 sm:text-base">
               Check Now
-            </Link>
-          </div>
+            </span>
+          </Link>
 
           {/* Manage Instruments Card */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-purple-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
+          <Link to="/manage-instruments" className="group rounded-xl border border-white border-opacity-20 bg-white bg-opacity-10 p-4 backdrop-blur-md transition-all hover:bg-opacity-20 sm:p-6">
+            <div className="mb-3 inline-block rounded-lg bg-purple-500 bg-opacity-80 p-2 sm:mb-4 sm:p-3">
+              <FaScrewdriverWrench className="h-6 w-6 text-white sm:h-8 sm:w-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+            <h3 className="mb-1 text-lg font-bold sm:mb-2 sm:text-xl">
               Manage Instruments
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+            <p className="mb-3 text-sm text-gray-300 sm:mb-4 sm:text-base">
               Keep track of all your rented and listed farming instruments.
             </p>
-            <Link
-              to="/manage-instruments"
-              className="text-purple-400 group-hover:text-purple-300 inline-flex items-center text-sm sm:text-base">
+            <span className="inline-flex items-center text-sm text-purple-400 group-hover:text-purple-300 sm:text-base">
               Manage Now
-            </Link>
-          </div>
+            </span>
+          </Link>
 
           {/* Manage Profile Card */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-yellow-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 12h14M12 5v14"
-                />
-              </svg>
+          <Link to="/profile" className="group rounded-xl border border-white border-opacity-20 bg-white bg-opacity-10 p-4 backdrop-blur-md transition-all hover:bg-opacity-20 sm:p-6">
+            <div className="mb-3 inline-block rounded-lg bg-yellow-500 bg-opacity-80 p-2 sm:mb-4 sm:p-3">
+              <FaUserCog className="h-6 w-6 text-white sm:h-8 sm:w-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+            <h3 className="mb-1 text-lg font-bold sm:mb-2 sm:text-xl">
               Manage Profile
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+            <p className="mb-3 text-sm text-gray-300 sm:mb-4 sm:text-base">
               Update your profile and preferences.
             </p>
-            <Link
-              to="/profile"
-              className="text-yellow-400 group-hover:text-yellow-300 inline-flex items-center text-sm sm:text-base">
+            <span className="inline-flex items-center text-sm text-yellow-400 group-hover:text-yellow-300 sm:text-base">
               Edit Profile
-            </Link>
-          </div>
+            </span>
+          </Link>
 
           {/* Help Center Card */}
-          <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-4 sm:p-6 hover:bg-opacity-20 transition-all border border-white border-opacity-20 group">
-            <div className="bg-red-500 bg-opacity-80 p-2 sm:p-3 rounded-lg inline-block mb-3 sm:mb-4">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 sm:h-8 sm:w-8 text-white"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor">
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M9 12h6m-3 3v-6m-7 6h14m-7-7V5m0 14v-4"
-                />
-              </svg>
+          <Link to="/contact-us" className="group rounded-xl border border-white border-opacity-20 bg-white bg-opacity-10 p-4 backdrop-blur-md transition-all hover:bg-opacity-20 sm:p-6">
+            <div className="mb-3 inline-block rounded-lg bg-red-500 bg-opacity-80 p-2 sm:mb-4 sm:p-3">
+              <MdLiveHelp className="h-6 w-6 text-white sm:h-8 sm:w-8" />
             </div>
-            <h3 className="text-lg sm:text-xl font-bold mb-1 sm:mb-2">
+            <h3 className="mb-1 text-lg font-bold sm:mb-2 sm:text-xl">
               Help Center
             </h3>
-            <p className="text-gray-300 text-sm sm:text-base mb-3 sm:mb-4">
+            <p className="mb-3 text-sm text-gray-300 sm:mb-4 sm:text-base">
               Get answers to your questions and support.
             </p>
-            <Link
-              to="/contact-us"
-              className="text-red-400 group-hover:text-red-300 inline-flex items-center text-sm sm:text-base">
+            <span className="inline-flex items-center text-sm text-red-400 group-hover:text-red-300 sm:text-base">
               Get Help
-            </Link>
-          </div>
+            </span>
+          </Link>
         </div>
       </div>
     </div>
