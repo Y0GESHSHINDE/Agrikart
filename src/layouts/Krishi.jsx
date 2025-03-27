@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { AiOutlineSend } from "react-icons/ai";
 import { FaUserCircle } from "react-icons/fa";
+import { BsVolumeUp, BsVolumeOff } from "react-icons/bs";
 import Agri from "../../public/images/Krishi.png";
 import Navbar from "../components/Navbar/Navbar";
 import ReactMarkdown from "react-markdown";
@@ -13,7 +14,9 @@ const Krishi = () => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
   const chatContainerRef = useRef(null);
+  const speechSynthRef = useRef(window.speechSynthesis);
 
   useEffect(() => {
     // Clear conversation_id when component mounts (page loads/reloads)
@@ -66,6 +69,36 @@ const Krishi = () => {
     setIsTyping(false);
   };
 
+  const handleTextToSpeech = (text) => {
+    // Cancel any ongoing speech
+    speechSynthRef.current.cancel();
+
+    if (isSpeaking) {
+      setIsSpeaking(false);
+      return;
+    }
+
+    // Strip markdown syntax for better speech
+    const plainText = text
+      .replace(/```[\s\S]*?```/g, "Code snippet omitted")
+      .replace(/\*\*(.*?)\*\*/g, "$1")
+      .replace(/\*(.*?)\*/g, "$1")
+      .replace(/\[(.*?)\]\((.*?)\)/g, "$1");
+
+    const utterance = new SpeechSynthesisUtterance(plainText);
+    utterance.onend = () => setIsSpeaking(false);
+
+    setIsSpeaking(true);
+    speechSynthRef.current.speak(utterance);
+  };
+
+  // Clean up speech synthesis when component unmounts
+  useEffect(() => {
+    return () => {
+      speechSynthRef.current.cancel();
+    };
+  }, []);
+
   return (
     <>
       <Navbar />
@@ -114,12 +147,27 @@ const Krishi = () => {
                 )}
 
                 <div
-                  className={`max-w-[75%] p-4 rounded-2xl text-md mb-2 shadow-md ${
+                  className={`max-w-[75%] p-4 rounded-2xl text-md mb-2 shadow-md relative ${
                     msg.sender === "user"
                       ? "bg-gradient-to-r from-green-500 to-green-600 text-white"
                       : "bg-gray-100 text-gray-800 border border-gray-200"
                   }`}
                 >
+                  {msg.sender === "ai" && (
+                    <button
+                      onClick={() => handleTextToSpeech(msg.text)}
+                      className="absolute top-2 right-1 p-1 rounded-full hover:bg-gray-200 transition-colors duration-200"
+                      aria-label={isSpeaking ? "Stop reading" : "Read aloud"}
+                      title={isSpeaking ? "Stop reading" : "Read aloud"}
+                    >
+                      {isSpeaking ? (
+                        <BsVolumeOff size={16} className="text-green-600" />
+                      ) : (
+                        <BsVolumeUp size={16} className="text-green-600" />
+                      )}
+                    </button>
+                  )}
+
                   {msg.sender === "ai" ? (
                     <div className="prose prose-sm max-w-none">
                       <ReactMarkdown
