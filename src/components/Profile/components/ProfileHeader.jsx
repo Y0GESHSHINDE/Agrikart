@@ -128,7 +128,7 @@ const ProfileHeader = ({ userInfo }) => {
           <div className="md flex justify-between gap-2 md:h-fit md:flex-col md:items-center md:self-center lg:flex-row lg:items-stretch lg:self-auto">
             <div className='flex flex-col gap-2 p-2'>
               <button
-                className="transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
+                className="flex transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
                 onClick={userInfo.onEdit}
               >
                 <div className="mx-auto inline-flex items-center gap-2">
@@ -136,11 +136,12 @@ const ProfileHeader = ({ userInfo }) => {
                   <span className='text-xs sm:text-base'>Edit Profile</span>
                 </div>
               </button>
-              <button className="transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10">
-                <div className="flex items-center gap-2" onClick={() => {
-                  toast.success("You hav successfully registered as operator");
-                }}>
-                  <FaScrewdriverWrench />
+              <button
+                className="flex transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
+                onClick={() => toast.success("You have successfully registered as operator")}
+              >
+                <div className="mx-auto inline-flex items-center gap-2">
+                  <FaScrewdriverWrench className='text-lg' />
                   <span className='text-xs sm:text-base'>Register as operator</span>
                 </div>
               </button>
