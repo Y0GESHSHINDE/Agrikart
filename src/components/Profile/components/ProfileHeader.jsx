@@ -1,5 +1,7 @@
 import React from 'react';
 import { FaEnvelope, FaPhone, FaMapMarkerAlt, FaCalendarAlt, FaBriefcase, FaMedal, FaChartLine, FaAward, FaEdit, FaSync } from 'react-icons/fa';
+import { FaScrewdriverWrench } from 'react-icons/fa6';
+import { toast } from 'react-toastify';
 
 const ProfileHeader = ({ userInfo }) => {
   // Handle optional profile fields with defaults
@@ -76,7 +78,7 @@ const ProfileHeader = ({ userInfo }) => {
             </div>
 
             {/* Badges section */}
-            <div className="md:flex flex-wrap  gap-2 pt-1">
+            <div className="flex-wrap gap-2 pt-1 md:flex">
               {badges.map((badge, index) => (
                 <span
                   key={index}
@@ -124,22 +126,35 @@ const ProfileHeader = ({ userInfo }) => {
 
           {/* Action buttons */}
           <div className="md flex justify-between gap-2 md:h-fit md:flex-col md:items-center md:self-center lg:flex-row lg:items-stretch lg:self-auto">
-            <button
-              className="transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
-              onClick={userInfo.onEdit}
-            >
-              <div className="flex items-center gap-2">
-                <FaEdit className="text-lg" />
-                <span>Edit Profile</span>
-              </div>
-            </button>
-            <button
-              className="w-full transform rounded-lg bg-green-200 p-1.5 text-green-600 transition duration-300 ease-in-out hover:scale-105 hover:bg-green-300 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:p-2"
-              onClick={userInfo.onRefresh}
-              title="Refresh profile data"
-            >
-              <FaSync className="mx-auto h-5 w-5" />
-            </button>
+            <div className='flex flex-col gap-2 p-2'>
+              <button
+                className="flex transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
+                onClick={userInfo.onEdit}
+              >
+                <div className="mx-auto inline-flex items-center gap-2">
+                  <FaEdit className="text-lg" />
+                  <span className='text-xs sm:text-base'>Edit Profile</span>
+                </div>
+              </button>
+              <button
+                className="flex transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
+                onClick={() => toast.success("You have successfully registered as operator")}
+              >
+                <div className="mx-auto inline-flex items-center gap-2">
+                  <FaScrewdriverWrench className='text-lg' />
+                  <span className='text-xs sm:text-base'>Register as operator</span>
+                </div>
+              </button>
+            </div>
+            <div className='self-center'>
+              <button
+                className="w-full transform rounded-lg bg-green-200 p-1.5 text-green-600 transition duration-300 ease-in-out hover:scale-105 hover:bg-green-300 hover:text-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:p-2"
+                onClick={userInfo.onRefresh}
+                title="Refresh profile data"
+              >
+                <FaSync className="mx-auto h-5 w-5" />
+              </button>
+            </div>
           </div>
         </div>
       </div>
