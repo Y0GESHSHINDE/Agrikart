@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   FaEnvelope,
   FaPhone,
@@ -15,14 +15,17 @@ import { FaScrewdriverWrench } from "react-icons/fa6";
 import { toast } from "react-toastify";
 
 const ProfileHeader = ({ userInfo }) => {
-  console.log(userInfo);
+  // console.log(userInfo);
+
+  // Local state for operator status
+  const [isOperator, setIsOperator] = useState(userInfo.isEquipmentOperator);
+
   // Handle optional profile fields with defaults
   const location = userInfo.location || "Not specified";
   const joinDate = userInfo.joinDate || "January 2023";
   const occupation = userInfo.occupation || "Professional";
   const bio =
     userInfo.bio || "No bio available. Tell us something about yourself!";
-  // New metrics replacing the old stats
   const metrics = userInfo.metrics || {
     activityStatus: "Very Active",
     reputation: 750,
@@ -33,55 +36,71 @@ const ProfileHeader = ({ userInfo }) => {
     "Top Contributor",
   ];
 
-  // Function to register the user as an operator
-  console.log(userInfo.userId);
-  const registerAsOperator = async () => {
+  // Function to toggle operator status
+  const toggleOperatorStatus = async () => {
     try {
       // Construct the API URL
       const apiUrl = `https://main-backend-agrikart.vercel.app/api/users/${userInfo.userId}/operator-status`;
 
       // Log the API URL and token for debugging
-      console.log('API URL:', apiUrl);
-      console.log('Authorization Token:', userInfo.token);
+      console.log("API URL:", apiUrl);
+      console.log("Authorization Token:", userInfo.token);
+
+      // Determine the new operator status
+      const newStatus = !isOperator;
 
       // Make the API call
       const response = await fetch(apiUrl, {
-        method: 'PATCH',
+        method: "PATCH",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
           Authorization: `Bearer ${userInfo.token}`, // Pass the user's token
         },
         body: JSON.stringify({
-          isEquipmentOperator: false, // Send the correct payload
+          isEquipmentOperator: newStatus, // Toggle the operator status
         }),
       });
 
       // Log the response status for debugging
-      console.log('Response Status:', response.status);
+      console.log("Response Status:", response.status);
 
       // Check if the response is not OK
       if (!response.ok) {
         const errorData = await response.json();
-        console.error('Error Data:', errorData);
-        throw new Error(errorData.message || 'Failed to update operator status');
+        console.error("Error Data:", errorData);
+        throw new Error(errorData.message || "Failed to update operator status");
       }
 
       // Parse the response JSON
       const data = await response.json();
-      console.log('Response Data:', data);
+      console.log("Response Data:", data);
 
       // Handle success
       if (data.success) {
-        toast.success('Operator status updated successfully!');
+        toast.success(
+          newStatus
+            ? "You have successfully registered as an operator!"
+            : "You have successfully unregistered as an operator!"
+        );
+
+        // Update the local state
+        setIsOperator(newStatus);
       } else {
-        throw new Error(data.message || 'Failed to update operator status');
+        throw new Error(data.message || "Failed to update operator status");
       }
     } catch (error) {
       // Log and display the error
-      console.error('Error:', error);
-      toast.error(error.message || 'An error occurred while updating operator status');
+      console.error("Error:", error);
+      toast.error(
+        error.message || "An error occurred while updating operator status"
+      );
     }
   };
+
+  // Sync the local state with the initial userInfo when the component mounts
+  useEffect(() => {
+    setIsOperator(userInfo.isEquipmentOperator);
+  }, [userInfo.isEquipmentOperator]);
 
   return (
     <div className="rounded-xl bg-white p-6 shadow-md">
@@ -127,9 +146,6 @@ const ProfileHeader = ({ userInfo }) => {
               )}
             </div>
 
-            {/* Bio section */}
-            {/* <p className="text-sm italic text-gray-600 md:pr-4">{bio}</p> */}
-
             <div className="grid grid-cols-1 gap-2 text-sm text-gray-600 sm:text-base md:grid-cols-2">
               <div className="flex items-center gap-2 overflow-hidden">
                 <span className="flex-shrink-0 text-green-600">
@@ -165,7 +181,6 @@ const ProfileHeader = ({ userInfo }) => {
               </div>
             </div>
 
-            {/* Badges section */}
             <div className="flex-wrap gap-2 pt-1 md:flex">
               {badges.map((badge, index) => (
                 <span
@@ -232,12 +247,14 @@ const ProfileHeader = ({ userInfo }) => {
               </button>
               <button
                 className="flex transform whitespace-nowrap rounded-lg bg-green-500 px-3 py-1.5 text-sm text-white transition duration-300 ease-in-out hover:scale-105 hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-opacity-50 sm:px-4 sm:py-2 sm:text-base md:px-10"
-                onClick={registerAsOperator} // Call the API function
+                onClick={toggleOperatorStatus} // Call the toggle function
               >
                 <div className="mx-auto inline-flex items-center gap-2">
                   <FaScrewdriverWrench className="text-lg" />
                   <span className="text-xs sm:text-base">
-                    Register as operator
+                    {isOperator
+                      ? "Unregister as Operator"
+                      : "Register as Operator"}
                   </span>
                 </div>
               </button>
