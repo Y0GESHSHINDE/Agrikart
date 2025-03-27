@@ -71,7 +71,7 @@ export default function NegotiateModal({
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/rental-requests/negotiate",
+        "https://main-backend-agrikart.vercel.app/api/rental-requests/negotiate",
         {
           method: "POST",
           headers: {
