@@ -113,13 +113,13 @@ const RenterModal = ({ renterId, onClose }) => {
                     <h4 className="font-semibold text-gray-800">Farming Details</h4>
                   </div>
                   <div className="pl-6 space-y-3">
-                    <div className="flex items-start">
+                    {/* <div className="flex items-start">
                       <FiHome className="text-gray-500 mt-1 mr-2 flex-shrink-0" />
                       <div>
                         <span className="text-sm text-gray-500">Farm Size</span>
                         <p className="text-gray-700">{renterData.personalInfo?.farmSize || "N/A"}</p>
                       </div>
-                    </div>
+                    </div> */}
                     <div className="flex items-start">
                       <FiLayers className="text-gray-500 mt-1 mr-2 flex-shrink-0" />
                       <div>

@@ -14,6 +14,7 @@ import RentNowModal from "./RentNowModal";
 import Navbar from "../components/Navbar/Navbar";
 import SwiperImageGallery from "../components/InstrumentDetails/SwiperImageGallery";
 import StarRating from "../components/InstrumentDetails/StarRating";
+import OwnerModal from "../components/Profile/OwnerModal"; // Import the OwnerModal component
 
 // Lazy loaded components
 const SimilarInstruments = lazy(() =>
@@ -37,8 +38,9 @@ export default function InstrumentDetailPage() {
   const [loading, setLoading] = useState(true); // Loading state
   const [error, setError] = useState(null); // Error state
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOwnerModalOpen, setIsOwnerModalOpen] = useState(false); // Owner Modal state
 
-  // console.log(instrument._id);
+  console.log(instrument);
 
   // Fetch equipment data based on `id`
   useEffect(() => {
@@ -202,13 +204,10 @@ export default function InstrumentDetailPage() {
                         Rent Now
                       </button>
                       <button
+                        onClick={() => setIsOwnerModalOpen(true)} // Open the OwnerModal
                         className="flex-1 rounded-lg border-2 border-green-600 px-3 py-2 text-sm font-semibold text-green-600 transition-all hover:bg-green-50 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 sm:flex-none sm:px-5 sm:py-2 sm:text-base"
-                        aria-label="Contact owner">
-                        <MessageSquare
-                          className="mr-2 inline-block h-4 w-4 sm:h-5 sm:w-5"
-                          aria-hidden="true"
-                        />
-                        Contact
+                        aria-label="Owner Details">
+                        Owner Details
                       </button>
                     </div>
                   </div>
@@ -224,7 +223,7 @@ export default function InstrumentDetailPage() {
                     Rental Rates
                   </h2>
                   <div
-                    className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-4 md:grid-cols-3 xl:gap-4"
+                    className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-2 xl:gap-6"
                     role="list"
                     aria-label="List of rental rates">
                     {[
@@ -240,27 +239,21 @@ export default function InstrumentDetailPage() {
                         rate: instrument.rentalPerDay,
                         unit: "day",
                       },
-                      {
-                        icon: Calendar,
-                        label: "Weekly",
-                        rate: instrument.rentalPerDay * 7,
-                        unit: "week",
-                      }, // Assuming weekly rate is 7x daily rate
                     ].map(({ icon: Icon, label, rate, unit }) => (
                       <div
                         key={label}
-                        className="flex items-center rounded-xl border border-gray-200 p-3 shadow-sm transition-all hover:border-green-500 hover:shadow-md sm:p-4"
+                        className="flex flex-col items-center justify-center rounded-xl border border-gray-200 p-4 shadow-sm transition-all hover:border-green-500 hover:shadow-md sm:p-6"
                         role="listitem">
                         <Icon
-                          className="mr-2 h-6 w-6 text-green-600 sm:mr-3 sm:h-8 sm:w-8"
+                          className="mb-3 h-8 w-8 text-green-600 sm:h-10 sm:w-10"
                           aria-hidden="true"
                         />
-                        <div>
-                          <p className="text-xs font-medium text-gray-600 sm:text-sm">
+                        <div className="text-center">
+                          <p className="text-sm font-medium text-gray-600 sm:text-base">
                             {label} Rate
                           </p>
                           <p
-                            className="text-base font-semibold text-gray-900 sm:text-lg"
+                            className="text-lg font-semibold text-gray-900 sm:text-xl"
                             aria-label={`${label} rate: ₹${rate} per ${unit}`}>
                             ₹{rate}/{unit}
                           </p>
@@ -379,6 +372,14 @@ export default function InstrumentDetailPage() {
         instrumentId={instrument._id}
         instrumentPrice={instrument.rentalPerHour}
       />
+
+      {/* Owner Details Modal */}
+      {isOwnerModalOpen && (
+        <OwnerModal
+          ownerId={instrument.ownerId} // Pass the ownerId to the OwnerModal
+          onClose={() => setIsOwnerModalOpen(false)} // Close the modal
+        />
+      )}
     </>
   );
 }
