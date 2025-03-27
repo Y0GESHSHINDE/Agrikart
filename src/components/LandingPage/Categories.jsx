@@ -124,14 +124,17 @@ const Categories = () => {
                   </button>
                 </SignedIn>
                 <SignedOut>
+
                   <SignInButton
-                    afterSignInUrl="/" // Redirect to home or a specific page after login
-                    afterSignUpUrl="/" // Redirect to home or a specific page after signup
+                    afterSignInUrl="/Listed-instruments" // Redirect to home or a specific page after login
+                    afterSignUpUrl="/Listed-instruments" // Redirect to home or a specific page after signup
+                    
                   >
-                    <button className="w-full bg-green-700  text-[12px] 2xl:text-[15px] font-semibold  text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2">
+                    <button className="w-full bg-green-700  text-[12px] 2xl:text-[15px] font-semibold  text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2" onClick={() => navigate("/Listed-instruments")} >
                       Browse {category.name}
                     </button>
                   </SignInButton>
+                  
                 </SignedOut>
               </div>
             </motion.div>
