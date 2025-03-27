@@ -246,24 +246,24 @@ export default function ProductListing() {
           Farming Equipment
         </h1>
 
-        <div className="md:hidden mb-4">
+        <div className="mb-4 md:hidden">
           <button
             onClick={() => setShowMobileFilters(!showMobileFilters)}
-            className="flex items-center justify-center w-full py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700">
-            <Filter className="w-4 h-4 mr-2" />
+            className="flex w-full items-center justify-center rounded-lg bg-green-600 py-2 text-sm font-medium text-white hover:bg-green-700">
+            <Filter className="mr-2 h-4 w-4" />
             {showMobileFilters ? "Hide Filters" : "Show Filters"}
           </button>
         </div>
 
         <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
           {/* Search Bar */}
-          <div className="relative flex items-center h-12 mb-3">
+          <div className="relative mb-3 flex h-12 items-center">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search className="h-5 w-5 text-gray-400" />
             </div>
             <input
               type="text"
-              className="block w-full h-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500 outline-none"
+              className="block h-full w-full rounded-lg border border-gray-300 bg-white pl-10 pr-4 text-sm text-gray-900 outline-none focus:border-green-500 focus:ring-green-500"
               placeholder="Search equipment..."
               value={searchQuery}
               onChange={(e) =>
@@ -276,7 +276,7 @@ export default function ProductListing() {
         {/* Filter Section with improved design */}
         <div className={`${showMobileFilters ? "block" : "hidden"} md:block`}>
           <div className="mb-6 rounded-lg bg-white p-5 shadow-md">
-            <div className="flex flex-wrap items-center justify-between mb-4">
+            <div className="mb-4 flex flex-wrap items-center justify-between">
               <div className="flex items-center space-x-2">
                 <Filter className="h-5 w-5 text-green-700" />
                 <h2 className="text-lg font-semibold text-green-800">
@@ -304,13 +304,13 @@ export default function ProductListing() {
               <div>
                 <label
                   htmlFor="category"
-                  className="block mb-1 text-sm font-medium text-gray-700">
+                  className="mb-1 block text-sm font-medium text-gray-700">
                   Equipment Type
                 </label>
                 <div className="relative">
                   <select
                     id="category"
-                    className="block w-full h-10 appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+                    className="block h-10 w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                     value={selectedCategory}
                     onChange={(e) =>
                       handleFilterChange(setSelectedCategory, e.target.value)
@@ -331,13 +331,13 @@ export default function ProductListing() {
               <div>
                 <label
                   htmlFor="priceRange"
-                  className="block mb-1 text-sm font-medium text-gray-700">
+                  className="mb-1 block text-sm font-medium text-gray-700">
                   Price Range
                 </label>
                 <div className="relative">
                   <select
                     id="priceRange"
-                    className="block w-full h-10 appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
+                    className="block h-10 w-full appearance-none rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm text-gray-900 focus:border-green-500 focus:ring-green-500"
                     value={selectedPriceRange}
                     onChange={(e) =>
                       handleFilterChange(setSelectedPriceRange, e.target.value)
@@ -368,7 +368,7 @@ export default function ProductListing() {
 
         {/* Product Grid */}
         {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 m-1">
+          <div className="m-1 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {currentProducts.map((product) => (
               <Link
                 key={product._id}
@@ -382,7 +382,7 @@ export default function ProductListing() {
                   />
                   <div className="p-4">
                     <div className="mb-2 flex items-start justify-between">
-                      <h3 className="line-clamp-2 text-lg font-semibold text-gray-900">
+                      <h3 className="line-clamp-1 text-lg font-semibold text-gray-900">
                         {product.equipmentName}
                       </h3>
                     </div>
@@ -392,7 +392,7 @@ export default function ProductListing() {
                       <StarRating rating={product.rating || 4.5} />
                     </div>
 
-                    <p className="mb-3 line-clamp-3 text-sm text-gray-600">
+                    <p className="mb-3 line-clamp-2 min-h-[2.5rem] text-sm text-gray-600">
                       {product.description}
                     </p>
                     <div className="flex items-center justify-between">
