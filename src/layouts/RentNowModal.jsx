@@ -16,6 +16,33 @@ export default function RentNowModal({
 
   if (!isOpen) return null;
 
+  const handleStartDateChange = (e) => {
+    const startDateTime = new Date(e.target.value);
+    const currentDateTime = new Date();
+    const endDateTimeInput = document.getElementById("endDateTime");
+
+    // Ensure the selected start date is not in the past
+    if (startDateTime < currentDateTime) {
+      e.target.value = ""; // Reset the start date input
+      return;
+    }
+
+    // Set the minimum value for the end date to be 1 hour after the start date
+    const minEndDateTime = new Date(startDateTime.getTime() + 60 * 60 * 1000);
+    endDateTimeInput.min = minEndDateTime.toISOString().slice(0, 16);
+  };
+
+  const handleEndDateChange = (e) => {
+    const startDateTimeInput = document.getElementById("startDateTime");
+    const startDateTime = new Date(startDateTimeInput.value);
+    const endDateTime = new Date(e.target.value);
+
+    // Ensure the end date is at least 1 hour after the start date
+    if (endDateTime <= new Date(startDateTime.getTime() + 60 * 60 * 1000)) {
+      e.target.value = ""; // Reset the end date input
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target);
@@ -52,24 +79,20 @@ export default function RentNowModal({
       );
 
       if (response.ok) {
-        console.log("Success toast triggered");
         toast.success("Rental request submitted successfully!", {
           position: "top-right",
           autoClose: 5000,
         });
-        // Delay closing the modal to ensure the toast is visible
         setTimeout(() => {
           onClose();
         }, 1000); // 1-second delay
       } else {
-        console.error("Failed to submit rental request:", response.statusText);
         toast.error("Failed to submit rental request. Please try again.", {
           position: "top-right",
           autoClose: 5000,
         });
       }
     } catch (error) {
-      console.error("Error submitting rental request:", error);
       toast.error("An error occurred. Please try again.", {
         position: "top-right",
         autoClose: 5000,
@@ -115,7 +138,9 @@ export default function RentNowModal({
                   className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                   required
                   autoFocus
+                  min={new Date().toISOString().slice(0, 16)} // Disable past dates
                   onClick={(e) => e.target.showPicker()}
+                  onChange={handleStartDateChange}
                 />
               </div>
 
@@ -133,6 +158,7 @@ export default function RentNowModal({
                   className="mt-1 block w-full rounded-lg border border-gray-300 px-3 py-2 shadow-sm focus:border-green-500 focus:outline-none focus:ring-1 focus:ring-green-500"
                   required
                   onClick={(e) => e.target.showPicker()}
+                  onChange={handleEndDateChange}
                 />
               </div>
 
